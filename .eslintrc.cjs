@@ -4,7 +4,11 @@ const config = {
   parserOptions: {
     project: true,
   },
-  plugins: ["@typescript-eslint"],
+  plugins: [
+    "@typescript-eslint",
+    // This plugin does a static evaluation of the JSX to spot accessibility issues in React apps.
+    "jsx-a11y",
+  ],
   extends: [
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended-type-checked",

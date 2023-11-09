@@ -20,8 +20,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Dropzone from "@/components/ui/dropzone";
 import { createSpotSchemaClient } from "@/schemas";
 
-export default function CreateSpotForm({ onSubmit }: { onSubmit: () => void }) {
-  const form = useForm<z.infer<typeof createSpotSchemaClient>>({
+type CreateSpotFormValues = z.infer<typeof createSpotSchemaClient>;
+
+export default function CreateSpotForm({
+  onSubmit,
+}: {
+  onSubmit: (formValues: CreateSpotFormValues) => void;
+}) {
+  const form = useForm<CreateSpotFormValues>({
     resolver: zodResolver(createSpotSchemaClient),
     defaultValues: {
       name: "",
@@ -36,8 +42,8 @@ export default function CreateSpotForm({ onSubmit }: { onSubmit: () => void }) {
     },
   });
 
-  function handleSubmit(values: z.infer<typeof createSpotSchemaClient>) {
-    onSubmit();
+  function handleSubmit(formValues: CreateSpotFormValues) {
+    onSubmit(formValues);
   }
 
   return (

@@ -5,13 +5,15 @@ const latitudeSchema = z.coerce
   .number()
   .min(-90)
   .max(90)
-  .transform((val) => (val === 0 ? undefined : val));
+  .transform((val) => (val === 0 ? undefined : val))
+  .optional();
 
 const longitudeSchema = z.coerce
   .number()
   .min(-180)
   .max(180)
-  .transform((val) => (val === 0 ? undefined : val));
+  .transform((val) => (val === 0 ? undefined : val))
+  .optional();
 
 export const createSpotSchemaServer = z.object({
   name: z.string().max(100).min(1, { message: "Required" }),

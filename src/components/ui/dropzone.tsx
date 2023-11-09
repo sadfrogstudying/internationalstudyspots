@@ -80,7 +80,7 @@ const Dropzone = React.forwardRef<HTMLDivElement, DivProps>(
           data-testid="dropzone"
           {...getRootProps({ "aria-label": name })}
           className={cn(
-            "flex h-9 w-full items-center rounded-md border border-input bg-transparent px-3 py-1 text-sm text-foreground shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+            "flex h-9 w-full items-center overflow-hidden rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
             acceptStyle,
             rejectStyle,
           )}
@@ -95,7 +95,7 @@ const Dropzone = React.forwardRef<HTMLDivElement, DivProps>(
           role="button"
         >
           <input {...getInputProps()} />
-          <div className="flex select-none items-center gap-2">
+          <div className="flex shrink-0 select-none items-center gap-2">
             <UploadIcon /> {getDragText()}
           </div>
         </div>

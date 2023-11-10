@@ -5,11 +5,12 @@ import { api } from "@/trpc/react";
 import { type typeToFlattenedError } from "zod";
 
 export default function CreatePage() {
-  const { mutate, data, isLoading, error } = api.post.createSpot.useMutation({
-    onSuccess: (res) => {
-      console.log(res);
-    },
-  });
+  const { mutate, data, isLoading, error } =
+    api.studySpot.createSpot.useMutation({
+      onSuccess: (res) => {
+        console.log(res);
+      },
+    });
 
   return (
     <div className="p-4">
@@ -61,7 +62,7 @@ export const parseZodClientError = (
   const fieldErrorsEntries = fieldErrors ? Object.entries(fieldErrors) : [];
   const errorMessages = fieldErrorsEntries.map(([key, value]) => [
     key,
-    value && value[0] ? value[0] : "",
+    value?.[0] ? value[0] : "",
   ]);
 
   return errorMessages;

@@ -46,12 +46,13 @@ const Dropzone = React.forwardRef<HTMLDivElement, DivProps>(
     useEffect(() => {
       // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
       return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-    }, []);
+    }, [files]);
 
     const thumbs = files.map((file) => (
       <div key={file.name}>
         <img
           src={file.preview}
+          alt="Preview of image you want to upload"
           // Revoke data uri after image is loaded
           onLoad={() => {
             URL.revokeObjectURL(file.preview);

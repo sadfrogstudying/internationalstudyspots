@@ -4,7 +4,6 @@ import { type Prisma } from "@prisma/client";
 import Image from "next/image";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
-import { Skeleton } from "../ui/skeleton";
 
 type Props = {
   images: Prisma.ImageGetPayload<Record<string, never>>[];
@@ -41,7 +40,6 @@ export default function ImageCarousel(props: Props) {
 
   return (
     <div className="relative">
-      <Skeleton className="absolute h-full w-full" />
       <Controls
         scrollPrev={scrollPrev}
         scrollNext={scrollNext}
@@ -49,7 +47,7 @@ export default function ImageCarousel(props: Props) {
         nextDisabled={nextBtnDisabled}
       />
       <div
-        className="relative h-fit w-full overflow-hidden rounded-md"
+        className="relative h-fit w-full overflow-hidden rounded-md bg-primary/10"
         ref={emblaMainRef}
       >
         <div className="flex touch-pan-y">

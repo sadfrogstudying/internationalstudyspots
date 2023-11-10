@@ -2,12 +2,16 @@
 
 import * as React from "react";
 import { api } from "@/trpc/react";
-import ImageCarousel from "./image-carousel";
-import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
 
 import { useInView } from "react-intersection-observer";
 import useDebounce from "@/hooks/use-debounce";
+import SkeletonGridItem from "./grid-item-skeleton";
+
+import dynamic from "next/dynamic";
+
+const GridItem = dynamic(() => import("./grid-item"), {
+  loading: () => <SkeletonGridItem />,
+});
 
 const PAGE_SIZE = 8;
 
@@ -28,7 +32,7 @@ export default function StudySpotGrid() {
   }, 250);
 
   const { ref } = useInView({
-    rootMargin: "400px",
+    rootMargin: "700px",
     onChange: (inView) => {
       if (inView) debouncedRequest();
     },
@@ -41,54 +45,11 @@ export default function StudySpotGrid() {
           <React.Fragment key={`page-${i}`}>
             {page.map((studySpot, i) => {
               return (
-                <Link
-                  key={studySpot.id}
-                  href={`/study-spot/${studySpot.slug}`}
-                  className="group relative rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  {/* Add offset to prevent disgusting "flasing" umount */}
-                  <UnmountAfter delay={i * 50 + 200}>
-                    <SkeletonGridItem
-                      className="animate-fade-out duration-250 absolute -z-10 w-full opacity-0"
-                      style={{
-                        animationDelay: `${i * 50}ms`,
-                        animationFillMode: "backwards",
-                      }}
-                    />
-                  </UnmountAfter>
-
-                  <div
-                    className="animate-fade-in duration-250 space-y-4"
-                    style={{
-                      animationDelay: `${i * 50}ms`,
-                      animationFillMode: "backwards",
-                    }}
-                  >
-                    <ImageCarousel
-                      images={studySpot.images}
-                      name={studySpot.name}
-                    />
-                    <ul>
-                      <li className="truncate text-ellipsis font-bold">
-                        {studySpot.state}, {studySpot.country}
-                      </li>
-                      <li>
-                        <h2 className="truncate text-ellipsis">
-                          {studySpot.name}
-                        </h2>
-                      </li>
-                      <li className="truncate text-ellipsis">
-                        {studySpot.venueType}
-                      </li>
-                      <li className="truncate text-ellipsis">
-                        Wifi: {studySpot.wifi ? "Yes" : "No"}
-                      </li>
-                      <li className="truncate text-ellipsis">
-                        Power Outlets: {studySpot.powerOutlets ? "Yes" : "No"}
-                      </li>
-                    </ul>
-                  </div>
-                </Link>
+                <GridItem
+                  studySpot={studySpot}
+                  i={i}
+                  key={`study-spot-${studySpot.id}`}
+                />
               );
             })}
           </React.Fragment>
@@ -111,41 +72,3 @@ export default function StudySpotGrid() {
     </React.Fragment>
   );
 }
-
-const SkeletonGridItem = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => {
-  return (
-    <div className={`space-y-4 ${className}`} {...props}>
-      <Skeleton className="aspect-square w-full sm:aspect-[3/4]" />
-      <div>
-        <Skeleton className="h-6 w-1/3 border border-white" />
-        <Skeleton className="h-6 w-3/4 border border-white" />
-        <Skeleton className="h-6 w-1/4 border border-white" />
-        <Skeleton className="h-6 w-1/3 border border-white" />
-        <Skeleton className="h-6 w-1/3 border border-white" />
-      </div>
-    </div>
-  );
-};
-
-const UnmountAfter = ({
-  children,
-  delay,
-}: {
-  children: React.ReactNode;
-  delay: number;
-}) => {
-  const [mounted, setMounted] = React.useState(true);
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      setMounted(false);
-    }, delay);
-
-    return () => clearTimeout(timeout);
-  }, [delay]);
-
-  return mounted ? children : null;
-};

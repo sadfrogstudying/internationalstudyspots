@@ -52,7 +52,7 @@ export default function CreatePage() {
   );
 }
 
-export const parseZodClientError = (
+const parseZodClientError = (
   zodError:
     | typeToFlattenedError<string[] | undefined, string>
     | null

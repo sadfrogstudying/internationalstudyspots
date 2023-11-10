@@ -5,6 +5,15 @@
 await import("./src/env.mjs");
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+  images: {
+    minimumCacheTTL: 60 * 60 * 24, // 1 day
+    remotePatterns: [
+      {
+        hostname: "dh0bdxvf05sxo.cloudfront.net",
+      },
+    ],
+  },
+};
 
 export default config;

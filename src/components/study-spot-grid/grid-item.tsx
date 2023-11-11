@@ -7,6 +7,7 @@ import SkeletonGridItem from "./grid-item-skeleton";
 
 import { type RouterOutputs } from "@/trpc/shared";
 import { Wifi, WifiOff, Zap, ZapOff } from "lucide-react";
+import UnmountAfter from "../unmount-after";
 type Spot = NonNullable<RouterOutputs["studySpot"]["bySlug"]>;
 
 export default function GridItem({
@@ -25,7 +26,7 @@ export default function GridItem({
       {/* Add offset to prevent disgusting "flasing" umount */}
       <UnmountAfter delay={i * 50 + 200}>
         <SkeletonGridItem
-          className="animate-fade-out duration-250 absolute -z-10 w-full opacity-0"
+          className="duration-250 absolute -z-10 w-full animate-fade-out opacity-0"
           style={{
             animationDelay: `${i * 50}ms`,
             animationFillMode: "backwards",
@@ -34,7 +35,7 @@ export default function GridItem({
       </UnmountAfter>
 
       <div
-        className="animate-fade-in duration-250 space-y-4"
+        className="duration-250 animate-fade-in space-y-4"
         style={{
           animationDelay: `${i * 50}ms`,
           animationFillMode: "backwards",
@@ -49,13 +50,21 @@ export default function GridItem({
             <h2 className="truncate text-ellipsis">{studySpot.name}</h2>
           </li>
           <li className="truncate text-ellipsis">{studySpot.venueType}</li>
-          <li>
+          <li className="mt-2">
             <ul className="flex gap-2">
               <li className="truncate text-ellipsis">
-                {studySpot.wifi ? <Wifi /> : <WifiOff />}
+                {studySpot.wifi ? (
+                  <Wifi />
+                ) : (
+                  <WifiOff className="text-neutral-200" />
+                )}
               </li>
               <li className="truncate text-ellipsis">
-                {studySpot.powerOutlets ? <Zap /> : <ZapOff />}
+                {studySpot.powerOutlets ? (
+                  <Zap />
+                ) : (
+                  <ZapOff className="text-neutral-200" />
+                )}
               </li>
             </ul>
           </li>
@@ -64,23 +73,3 @@ export default function GridItem({
     </Link>
   );
 }
-
-const UnmountAfter = ({
-  children,
-  delay,
-}: {
-  children: React.ReactNode;
-  delay: number;
-}) => {
-  const [mounted, setMounted] = React.useState(true);
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      setMounted(false);
-    }, delay);
-
-    return () => clearTimeout(timeout);
-  }, [delay]);
-
-  return mounted ? children : null;
-};

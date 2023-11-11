@@ -32,7 +32,7 @@ export default function StudySpotGrid() {
   }, 250);
 
   const { ref } = useInView({
-    rootMargin: "700px",
+    rootMargin: "800px",
     onChange: (inView) => {
       if (inView) debouncedRequest();
     },
@@ -40,7 +40,7 @@ export default function StudySpotGrid() {
 
   return (
     <React.Fragment>
-      <div className="animate-fade-in relative grid w-full grid-cols-2 gap-8 duration-1000 lg:grid-cols-4">
+      <div className="relative grid w-full animate-fade-in grid-cols-2 gap-8 duration-1000 lg:grid-cols-3 lg:gap-4 lg:gap-y-8 xl:grid-cols-4">
         {data?.pages.map((page, i) => (
           <React.Fragment key={`page-${i}`}>
             {page.map((studySpot, i) => {
@@ -66,9 +66,9 @@ export default function StudySpotGrid() {
           Array.from(Array(Math.ceil(PAGE_SIZE)).keys()).map((x) => (
             <SkeletonGridItem key={`skele-${x}`} />
           ))}
-      </div>
 
-      <div ref={ref} />
+        <div ref={ref} />
+      </div>
     </React.Fragment>
   );
 }

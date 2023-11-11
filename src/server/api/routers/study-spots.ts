@@ -35,4 +35,15 @@ export const studySpotRouter = createTRPCRouter({
       console.log(input);
       return true;
     }),
+
+  getCountries: publicProcedure.query(async ({ ctx }) => {
+    const countries = await ctx.db.studySpot.findMany({
+      select: {
+        country: true,
+      },
+      distinct: ["country"],
+    });
+
+    return countries;
+  }),
 });

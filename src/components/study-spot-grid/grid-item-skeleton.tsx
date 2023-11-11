@@ -1,4 +1,4 @@
-import { Skeleton } from "../ui/skeleton";
+import { Skeleton, SkeletonText } from "../ui/skeleton";
 
 export default function SkeletonGridItem({
   className,
@@ -8,10 +8,10 @@ export default function SkeletonGridItem({
     <div className={`space-y-4 ${className}`} {...props}>
       <Skeleton className="aspect-square w-full sm:aspect-[3/4]" />
       <div>
-        <Skeleton className="h-6 w-1/3 border border-white" />
-        <Skeleton className="h-6 w-3/4 border border-white" />
-        <Skeleton className="h-6 w-1/4 border border-white" />
-        <div className="flex">
+        <SkeletonText className="w-1/3" />
+        <SkeletonText className="w-3/4" />
+        <SkeletonText className="w-1/4" />
+        <div className="mt-2 flex gap-2">
           <Skeleton className="h-6 w-6 border border-white" />
           <Skeleton className="h-6 w-6 border border-white" />
         </div>

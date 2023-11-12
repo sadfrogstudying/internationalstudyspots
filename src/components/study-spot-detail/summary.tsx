@@ -6,8 +6,12 @@ import { type RouterOutputs } from "@/trpc/shared";
 import { cn } from "@/lib/utils";
 type StudySpot = RouterOutputs["studySpot"]["bySlug"];
 
-export default function Summary({ studySpot }: { studySpot?: StudySpot }) {
-  const durationTiming = 250;
+export default function Summary({
+  studySpot,
+}: {
+  studySpot?: Partial<StudySpot>;
+}) {
+  const durationTiming = 500;
   const animationDuration = `duration-${durationTiming}`;
   const timingOffset = 200;
 

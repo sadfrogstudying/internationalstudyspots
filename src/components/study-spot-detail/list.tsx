@@ -54,8 +54,8 @@ export default function List({ studySpot }: { studySpot?: StudySpot }) {
     <ul className="w-full overflow-hidden">
       {studySpot ? (
         list.map((x, i) => {
-          const animationDelay = i * 50;
-          const durationTiming = 250;
+          const animationDelay = 0;
+          const durationTiming = 500;
           const animationDuration = `duration-${durationTiming}`;
           const timingOffset = 200;
 

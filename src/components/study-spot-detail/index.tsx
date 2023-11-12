@@ -16,13 +16,22 @@ export default function StudySpotDetail({ slug }: Props) {
     refetchOnWindowFocus: false,
   });
 
+  const apiUtils = api.useUtils();
+  // If user was on grid page, will use that to optimistically render some data quickly
+  // It will be replaced with the fresh data when query completes
+  const cachedGetAllQuery = apiUtils.studySpot.getAll.getInfiniteData({})
+    ?.pages;
+  const cachedStudySpot = cachedGetAllQuery
+    ?.flatMap((page) => page)
+    .find((studySpot) => studySpot.slug === slug);
+
   return (
     <div className="max-w-7xl space-y-12 p-4">
       <Hero studySpot={data} />
 
       <div>
         <Separator className="mb-2" />
-        <Summary studySpot={data} />
+        <Summary studySpot={data || cachedStudySpot} />
       </div>
 
       <div className="space-y-2">

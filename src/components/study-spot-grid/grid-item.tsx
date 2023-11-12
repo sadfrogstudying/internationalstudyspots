@@ -10,8 +10,12 @@ import { Wifi, WifiOff, Zap, ZapOff } from "lucide-react";
 import SkeletonGridItem from "./grid-item-skeleton";
 import ImageCarousel from "./image-carousel";
 import UnmountAfter from "../unmount-after";
+import { Skeleton } from "../ui/skeleton";
 
-const TooltipBase = dynamic(() => import("./tooltip-base"), { ssr: false });
+const TooltipBase = dynamic(() => import("./tooltip-base"), {
+  ssr: false,
+  loading: () => <Skeleton className="h-6 w-6" />,
+});
 
 type Spot = RouterOutputs["studySpot"]["getAll"][number];
 

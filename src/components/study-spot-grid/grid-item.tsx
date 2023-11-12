@@ -1,13 +1,18 @@
 "use client";
 
 import * as React from "react";
-import ImageCarousel from "./image-carousel";
 import Link from "next/link";
-import SkeletonGridItem from "./grid-item-skeleton";
-
+import dynamic from "next/dynamic";
 import { type RouterOutputs } from "@/trpc/shared";
+
 import { Wifi, WifiOff, Zap, ZapOff } from "lucide-react";
+
+import SkeletonGridItem from "./grid-item-skeleton";
+import ImageCarousel from "./image-carousel";
 import UnmountAfter from "../unmount-after";
+
+const TooltipBase = dynamic(() => import("./tooltip-base"), { ssr: false });
+
 type Spot = NonNullable<RouterOutputs["studySpot"]["bySlug"]>;
 
 export default function GridItem({
@@ -54,16 +59,24 @@ export default function GridItem({
             <ul className="flex gap-2">
               <li className="truncate text-ellipsis">
                 {studySpot.wifi ? (
-                  <Wifi />
+                  <TooltipBase content={"Has Wifi"}>
+                    <Wifi />
+                  </TooltipBase>
                 ) : (
-                  <WifiOff className="text-neutral-200" />
+                  <TooltipBase content={"Doesn't Have Wifi"}>
+                    <WifiOff className="text-neutral-200" />
+                  </TooltipBase>
                 )}
               </li>
               <li className="truncate text-ellipsis">
                 {studySpot.powerOutlets ? (
-                  <Zap />
+                  <TooltipBase content={"Has Power Outlets"}>
+                    <Zap />
+                  </TooltipBase>
                 ) : (
-                  <ZapOff className="text-neutral-200" />
+                  <TooltipBase content={"Doesn't Have Power Outlets"}>
+                    <ZapOff className="text-neutral-200" />
+                  </TooltipBase>
                 )}
               </li>
             </ul>

@@ -10,8 +10,18 @@ export async function getManyHandler(
     orderBy: {
       createdAt: "desc",
     },
-    include: {
+    select: {
+      id: true,
+      slug: true,
       images: true,
+      name: true,
+      country: true,
+      state: true,
+      venueType: true,
+      city: true,
+      address: true,
+      powerOutlets: true,
+      wifi: true,
     },
   });
 

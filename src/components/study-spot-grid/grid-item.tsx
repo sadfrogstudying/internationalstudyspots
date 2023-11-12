@@ -13,7 +13,7 @@ import UnmountAfter from "../unmount-after";
 
 const TooltipBase = dynamic(() => import("./tooltip-base"), { ssr: false });
 
-type Spot = NonNullable<RouterOutputs["studySpot"]["bySlug"]>;
+type Spot = RouterOutputs["studySpot"]["getAll"][number];
 
 export default function GridItem({
   studySpot,
@@ -22,10 +22,22 @@ export default function GridItem({
   studySpot: Spot;
   i: number;
 }) {
+  const {
+    id,
+    slug,
+    images,
+    name,
+    state,
+    country,
+    venueType,
+    wifi,
+    powerOutlets,
+  } = studySpot;
+
   return (
     <Link
-      key={studySpot.id}
-      href={`/study-spot/${studySpot.slug}`}
+      key={id}
+      href={`/study-spot/${slug}`}
       className="group relative rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       {/* Add offset to prevent disgusting "flasing" umount */}
@@ -46,19 +58,19 @@ export default function GridItem({
           animationFillMode: "backwards",
         }}
       >
-        <ImageCarousel images={studySpot.images} name={studySpot.name} />
+        <ImageCarousel images={images} name={name} />
         <ul>
           <li className="truncate text-ellipsis font-bold">
-            {studySpot.state}, {studySpot.country}
+            {state}, {country}
           </li>
           <li>
-            <h2 className="truncate text-ellipsis">{studySpot.name}</h2>
+            <h2 className="truncate text-ellipsis">{name}</h2>
           </li>
-          <li className="truncate text-ellipsis">{studySpot.venueType}</li>
+          <li className="truncate text-ellipsis">{venueType}</li>
           <li className="mt-2">
             <ul className="flex gap-2">
               <li className="truncate text-ellipsis">
-                {studySpot.wifi ? (
+                {wifi ? (
                   <TooltipBase content={"Has Wifi"}>
                     <Wifi />
                   </TooltipBase>
@@ -69,7 +81,7 @@ export default function GridItem({
                 )}
               </li>
               <li className="truncate text-ellipsis">
-                {studySpot.powerOutlets ? (
+                {powerOutlets ? (
                   <TooltipBase content={"Has Power Outlets"}>
                     <Zap />
                   </TooltipBase>

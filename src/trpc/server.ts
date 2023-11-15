@@ -8,6 +8,9 @@ import { cookies } from "next/headers";
 import { type AppRouter } from "@/server/api/root";
 import { getUrl, transformer } from "./shared";
 
+// The context also exposes your tRPC proxy client. This lets you call
+// your procedures with async/await without needing to create an additional
+// vanilla client.
 export const api = createTRPCProxyClient<AppRouter>({
   transformer,
   links: [

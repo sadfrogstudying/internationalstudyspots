@@ -31,18 +31,24 @@ export async function generateMetadata(
   const slug = params.slug;
 
   // fetch data
-  const studySpot = await getUnique(db, {
-    where: {
-      slug,
-    },
-  });
+  const { name, state, country, wifi, powerOutlets } =
+    (await getUnique(db, {
+      where: {
+        slug,
+      },
+    })) || {};
+
+  const wifiString = wifi && "Has wifi.";
+  const powerOutletsString = powerOutlets && "Has power outlets.";
+  const descriptionString = `${name} in ${state}, ${country}. ${wifiString} ${powerOutletsString}`;
 
   // optionally access and extend (rather than replace) parent metadata
   // const previousImages = (await parent).openGraph?.images ?? []
-
   return {
-    title: studySpot?.name ?? "Study Spot",
-    description: studySpot?.description ?? "A page about a study spot",
+    title: name
+      ? `${name} - International Study Spots`
+      : "International Study Spots",
+    description: descriptionString,
     // openGraph: {
     //   images: ['/some-specific-page-image.jpg', ...previousImages],
     // },

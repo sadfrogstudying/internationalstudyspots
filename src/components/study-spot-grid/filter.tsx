@@ -6,6 +6,7 @@ import UnmountAfter from "../unmount-after";
 import { useFilterApi } from "./filter-context";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
+import { cn } from "@/lib/utils";
 
 const filtersToRender = [
   { readable: "Power Outlets", name: "powerOutlets" },
@@ -14,13 +15,14 @@ const filtersToRender = [
 ] as const;
 
 export default function Filter() {
-  const { data, isFetched, isError } = api.studySpot.getCountries.useQuery(
-    undefined,
-    {
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-    },
-  );
+  const {
+    data: countries,
+    isFetched,
+    isError,
+  } = api.studySpot.getCountries.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
 
   const { toggleFilter, confirmFilters, clearFilters, filters } =
     useFilterApi();
@@ -49,13 +51,17 @@ export default function Filter() {
 
       <div>
         <h3 className="font-bold">Countries</h3>
-
         {!isError ? (
           <>
             <ul>
-              {data?.map((x, i) => (
-                <ListItem key={x.country} i={i}>
-                  {x.country}
+              {countries?.map((country, i) => (
+                <ListItem
+                  key={country}
+                  className="flex items-center gap-2 text-neutral-500"
+                  i={i}
+                >
+                  <Checkbox id={country.toLowerCase()} disabled />
+                  <label htmlFor={country.toLowerCase()}>{country}</label>
                 </ListItem>
               ))}
             </ul>
@@ -77,7 +83,15 @@ export default function Filter() {
   );
 }
 
-function ListItem({ i, children }: { i: number; children: React.ReactNode }) {
+function ListItem({
+  i,
+  children,
+  className,
+}: {
+  i: number;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <li className="relative">
       <UnmountAfter delay={i * 50 + 200}>
@@ -90,7 +104,7 @@ function ListItem({ i, children }: { i: number; children: React.ReactNode }) {
         />
       </UnmountAfter>
       <span
-        className="animate-fade-in duration-500"
+        className={cn(`animate-fade-in duration-500`, className)}
         style={{
           animationDelay: `${i * 50}ms`,
           animationFillMode: "backwards",

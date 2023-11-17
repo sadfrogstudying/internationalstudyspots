@@ -53,6 +53,6 @@ export const studySpotRouter = createTRPCRouter({
       distinct: ["country"],
     });
 
-    return countries;
+    return countries.map((x) => x.country);
   }),
 });

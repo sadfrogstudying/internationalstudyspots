@@ -1,12 +1,16 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { api } from "@/trpc/react";
+
+import { useFilterData } from "../study-spot-grid/filter-context";
+
 import { Separator } from "../ui/separator";
 import Hero from "./hero";
 import Summary from "./summary";
-import List from "./list";
-import AllImages from "./all-images";
-import { useFilterData } from "../study-spot-grid/filter-context";
+
+const List = dynamic(() => import("./list"));
+const AllImages = dynamic(() => import("./all-images"));
 
 interface Props {
   slug: string;

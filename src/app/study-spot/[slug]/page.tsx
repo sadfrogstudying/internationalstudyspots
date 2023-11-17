@@ -36,7 +36,7 @@ export async function generateMetadata(
       where: {
         slug,
       },
-    })) || {};
+    })) ?? {};
 
   const wifiString = wifi && "Has wifi.";
   const powerOutletsString = powerOutlets && "Has power outlets.";

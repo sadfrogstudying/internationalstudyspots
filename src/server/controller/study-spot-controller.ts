@@ -22,6 +22,7 @@ export async function getManyHandler(
       address: true,
       powerOutlets: true,
       wifi: true,
+      naturalViews: true,
     },
   });
 

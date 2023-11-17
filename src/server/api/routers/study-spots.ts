@@ -1,7 +1,7 @@
-import { object, number, string, boolean } from "zod";
+import { object, number, string } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import { createSpotSchemaServer } from "@/schemas";
+import { createSpotSchemaServer, spotBooleanSchema } from "@/schemas";
 import {
   getUnique,
   getManyHandler,
@@ -12,21 +12,16 @@ export const studySpotRouter = createTRPCRouter({
     .input(
       object({
         cursor: number().optional(),
-        where: object({
-          powerOutlets: boolean().optional(),
-          wifi: boolean().optional(),
-        }),
+        where: spotBooleanSchema.partial(),
       }),
     )
     .query(async ({ ctx, input }) => {
       const { cursor, where } = input;
-
       const spots = await getManyHandler(ctx.db, {
         ...(cursor && { skip: 1, cursor: { id: cursor } }),
         ...(where && {
           where: {
-            powerOutlets: where.powerOutlets,
-            wifi: where.wifi,
+            ...where,
           },
         }),
       });

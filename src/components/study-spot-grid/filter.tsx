@@ -3,11 +3,15 @@
 import { api } from "@/trpc/react";
 import { SkeletonText } from "../ui/skeleton";
 import UnmountAfter from "../unmount-after";
+import { useFilterApi } from "./filter-context";
+import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
 
-const filters = [
-  { category: "Display", options: ["Grid Mode"] },
-  { category: "Sort", options: ["Power Outlets", "Wifi", "Natural Views"] },
-];
+const filtersToRender = [
+  { readable: "Power Outlets", name: "powerOutlets" },
+  { readable: "Wifi", name: "wifi" },
+  { readable: "Natural Views", name: "naturalViews" },
+] as const;
 
 export default function Filter() {
   const { data, isFetched, isError } = api.studySpot.getCountries.useQuery(
@@ -18,20 +22,30 @@ export default function Filter() {
     },
   );
 
+  const { toggleFilter, confirmFilters, clearFilters, filters } =
+    useFilterApi();
+
   return (
     <div className="space-y-4 pt-0">
-      {filters.map((filter) => {
-        return (
-          <div key={filter.category}>
-            <h3 className="font-bold">{filter.category}</h3>
-            <ul>
-              {filter.options.map((option) => {
-                return <li key={`${filter.category}-${option}`}>{option}</li>;
-              })}
-            </ul>
-          </div>
-        );
-      })}
+      <div>
+        <h3 className="font-bold">Filter</h3>
+        <ul>
+          {filtersToRender.map((filter) => {
+            return (
+              <li key={filter.name} className="flex items-center gap-2">
+                <Checkbox
+                  id={filter.name.toLowerCase()}
+                  onCheckedChange={() => toggleFilter(filter.name)}
+                  checked={filters[filter.name]}
+                />
+                <label htmlFor={filter.name.toLowerCase()}>
+                  {filter.readable}
+                </label>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
 
       <div>
         <h3 className="font-bold">Countries</h3>
@@ -51,6 +65,13 @@ export default function Filter() {
         ) : (
           <div className="text-destructive">Error getting countries...</div>
         )}
+      </div>
+
+      <div className="flex w-fit flex-col gap-2">
+        <Button onClick={confirmFilters}>Confirm</Button>
+        <Button onClick={clearFilters} variant="outline">
+          Clear Filters
+        </Button>
       </div>
     </div>
   );

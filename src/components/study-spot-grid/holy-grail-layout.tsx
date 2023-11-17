@@ -2,10 +2,12 @@
 
 import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
-import Filter from "./filter";
 import Info from "./info";
 import { Button } from "../ui/button";
 
+const Filter = dynamic(() => import("./filter"), {
+  loading: () => <div className="flex flex-col gap-4">LOADING</div>,
+});
 const SheetBase = dynamic(() => import("./sheet-base"), {
   loading: () => <Button variant="ghost">Loading...</Button>,
 });

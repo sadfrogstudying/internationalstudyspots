@@ -6,6 +6,7 @@ import Hero from "./hero";
 import Summary from "./summary";
 import List from "./list";
 import AllImages from "./all-images";
+import { useFilterData } from "../study-spot-grid/filter-context";
 
 interface Props {
   slug: string;
@@ -16,13 +17,17 @@ export default function StudySpotDetail({ slug }: Props) {
     refetchOnWindowFocus: false,
   });
 
+  const { appliedFilters } = useFilterData();
+
   const apiUtils = api.useUtils();
   // If user was on grid page, will use that to optimistically render some data quickly
   // It will be replaced with the fresh data when query completes
-  const cachedGetAllQuery = apiUtils.studySpot.getAll.getInfiniteData({})
-    ?.pages;
-  const cachedStudySpot = cachedGetAllQuery
-    ?.flatMap((page) => page)
+  // Remember, need to call it with the same args as the query in the grid
+  const cachedStudySpot = apiUtils.studySpot.getAll
+    .getInfiniteData({
+      where: { ...appliedFilters },
+    })
+    ?.pages?.flatMap((page) => page)
     .find((studySpot) => studySpot.slug === slug);
 
   return (
@@ -31,7 +36,7 @@ export default function StudySpotDetail({ slug }: Props) {
 
       <div>
         <Separator className="mb-2" />
-        <Summary studySpot={data || cachedStudySpot} />
+        <Summary studySpot={data ?? cachedStudySpot} />
       </div>
 
       <div className="space-y-2">

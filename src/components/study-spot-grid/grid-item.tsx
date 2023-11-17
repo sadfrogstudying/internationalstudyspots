@@ -5,7 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { type RouterOutputs } from "@/trpc/shared";
 
-import { Wifi, WifiOff, Zap, ZapOff } from "lucide-react";
+import { Wifi, WifiOff, Zap, ZapOff, TreePine } from "lucide-react";
 
 import SkeletonGridItem from "./grid-item-skeleton";
 import ImageCarousel from "./image-carousel";
@@ -36,6 +36,7 @@ export default function GridItem({
     venueType,
     wifi,
     powerOutlets,
+    naturalViews,
   } = studySpot;
 
   return (
@@ -73,7 +74,7 @@ export default function GridItem({
           <li className="truncate text-ellipsis">{venueType}</li>
           <li className="mt-2">
             <ul className="flex gap-2">
-              <li className="truncate text-ellipsis">
+              <li>
                 {wifi ? (
                   <TooltipBase content={"Has Wifi"}>
                     <Wifi />
@@ -84,7 +85,7 @@ export default function GridItem({
                   </TooltipBase>
                 )}
               </li>
-              <li className="truncate text-ellipsis">
+              <li>
                 {powerOutlets ? (
                   <TooltipBase content={"Has Power Outlets"}>
                     <Zap />
@@ -92,6 +93,17 @@ export default function GridItem({
                 ) : (
                   <TooltipBase content={"Doesn't Have Power Outlets"}>
                     <ZapOff className="text-neutral-200" />
+                  </TooltipBase>
+                )}
+              </li>
+              <li>
+                {naturalViews ? (
+                  <TooltipBase content={"Has Natural Views"}>
+                    <TreePine />
+                  </TooltipBase>
+                ) : (
+                  <TooltipBase content={"Doesn't Have Natural Views"}>
+                    <TreePine className="text-neutral-200" />
                   </TooltipBase>
                 )}
               </li>

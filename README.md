@@ -23,3 +23,49 @@ import { type StudySpot } from "@prisma/client";
 
 const studySpots: StudySpot[] = [];
 ```
+
+Wrapping/Mirroring a HTML Element
+
+```tsx
+// implementation
+export interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
+  specialProp?: string;
+}
+export function Button(props: ButtonProps) {
+  const { specialProp, ...rest } = props;
+  // do something with specialProp
+  return <button {...rest} />;
+}
+```
+
+Infer type from zod schema
+
+```tsx
+const spotBooleanSchema = z.object({
+  powerOutlets: z.boolean(),
+  wifi: z.boolean(),
+});
+
+type A = z.infer<typeof spotBooleanSchema>;
+```
+
+Prisma - filtering with `where` and `OR`
+
+```ts
+const spots = await getManyHandler(ctx.db, {
+  ...(cursor && { skip: 1, cursor: { id: cursor } }),
+  ...(where && {
+    where: {
+      where.powerOutlets: true,
+      OR: [
+        {
+          country: {
+            equals: "Australia",
+          },
+        },
+        { country: { equals: "Japan" } },
+      ],
+    },
+  }),
+});
+```

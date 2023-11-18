@@ -15,7 +15,7 @@ const longitudeSchema = z.coerce
   .transform((val) => (val === 0 ? undefined : val))
   .optional();
 
-const stringSchema = string().max(100).min(1).optional();
+const stringSchema = string().max(100).optional();
 
 export const spotBooleanSchema = z.object({
   powerOutlets: boolean(),

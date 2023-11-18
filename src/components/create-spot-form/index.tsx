@@ -10,7 +10,8 @@ import { createSpotSchemaClient } from "@/schemas";
 import BooleanInputs from "./boolean-inputs";
 import StringInputs from "./string-inputs";
 import NumberInputs from "./number-inputs";
-import ImageInputs from "./images.inputs";
+import ImageInputs from "./images-inputs";
+import LocationInputs from "./location-inputs";
 
 type CreateSpotFormValues = z.infer<typeof createSpotSchemaClient>;
 
@@ -78,6 +79,10 @@ export default function CreateSpotForm({
 
         <div className="grid grid-cols-2 gap-4">
           <BooleanInputs form={form} />
+        </div>
+
+        <div className="grid grid-cols-2">
+          <LocationInputs form={form} />
         </div>
 
         <div>

@@ -61,7 +61,13 @@ export default function Filter() {
                   i={i}
                 >
                   <Checkbox id={country.toLowerCase()} disabled />
-                  <label htmlFor={country.toLowerCase()}>{country}</label>
+                  <label
+                    aria-disabled
+                    className="cursor-not-allowed"
+                    htmlFor={country.toLowerCase()}
+                  >
+                    {country}
+                  </label>
                 </ListItem>
               ))}
             </ul>

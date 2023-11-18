@@ -13,15 +13,25 @@ export default function CreatePage() {
     });
 
   return (
-    <div className="p-4">
+    <div className="space-y-4 p-4">
       <h1 className="mb-4 font-bold">Create Page 🤡</h1>
-      <div className="max-w-md border p-4">
+      <p>
+        Only the fields marked with{" "}
+        <span className="rounded bg-violet-300 px-2">Required</span> are
+        required!
+      </p>
+      <div className="rounded border p-4">
         <CreateSpotForm
           onSubmit={(formValues) => {
             // pretend to convert images to urls
             const imageUrls = formValues.images.map(
               (image) => `www.s3.com/${image.name}`,
             );
+
+            return console.log({
+              ...formValues,
+              images: imageUrls,
+            });
 
             mutate({
               ...formValues,

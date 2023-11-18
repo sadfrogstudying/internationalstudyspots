@@ -15,7 +15,7 @@ const longitudeSchema = z.coerce
   .transform((val) => (val === 0 ? undefined : val))
   .optional();
 
-const stringSchema = string().max(100).optional();
+const stringSchema = string().max(100).min(1).optional();
 
 export const spotBooleanSchema = z.object({
   powerOutlets: boolean(),
@@ -29,9 +29,9 @@ export const spotBooleanSchema = z.object({
 export type SpotBooleanSchema = z.infer<typeof spotBooleanSchema>;
 
 export const spotStringSchema = z.object({
-  name: stringSchema,
+  name: string().max(100).min(1, { message: "Name is required." }),
   website: stringSchema,
-  description: stringSchema,
+  description: string().max(2000).optional(),
   noiseLevel: stringSchema,
   venueType: stringSchema,
   placeId: stringSchema,
@@ -50,26 +50,24 @@ export const spotStringSchema = z.object({
   studyBreakFacilities: stringSchema,
 });
 
+export const imageSchema = z.object({
+  images: z
+    .string()
+    .array()
+    .min(1, { message: "At least one image is required." }),
+});
+
 export const spotNumberSchema = z.object({
   latitude: latitudeSchema,
   longitude: longitudeSchema,
 });
 
 const spotSchema = spotStringSchema
+  .merge(imageSchema)
   .merge(spotNumberSchema)
   .merge(spotBooleanSchema);
 
-export const createSpotSchemaServer = z.object({
-  name: string().max(100).min(1, { message: "Required" }),
-  description: string().max(2000).optional(),
-  wifi: boolean(),
-  latitude: latitudeSchema,
-  longitude: longitudeSchema,
-  images: z
-    .string()
-    .array()
-    .min(1, { message: "At least one image is required." }),
-});
+export const createSpotSchemaServer = spotSchema;
 
 export const createSpotSchemaClient = createSpotSchemaServer.extend({
   images: FileListImagesSchema({ minFiles: 1 }),

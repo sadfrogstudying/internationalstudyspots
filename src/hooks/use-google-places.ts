@@ -15,7 +15,7 @@ const cacheKey = "sfgpk"; // Key to identify our data in sessionStorage
 const cacheMaxAge = 0.25 * 60 * 60; // 15 minutes in seconds
 
 const getCachedData = (): CachedData => {
-  return JSON.parse(sessionStorage.getItem(cacheKey) || "{}") as CachedData;
+  return JSON.parse(sessionStorage.getItem(cacheKey) ?? "{}") as CachedData;
 };
 
 const useGooglePlaces = () => {
@@ -61,12 +61,12 @@ const useGooglePlaces = () => {
         if (status !== google.maps.places.PlacesServiceStatus.OK)
           return alert(status);
 
-        setPredictions(predictions || []);
+        setPredictions(predictions ?? []);
 
         // adding new predictions to cache
         const cachedData = getCachedData();
         cachedData[inputValue] = {
-          data: predictions || [],
+          data: predictions ?? [],
           maxAge: Date.now() + cacheMaxAge * 1000,
         };
         sessionStorage.setItem(cacheKey, JSON.stringify(cachedData));
@@ -90,7 +90,7 @@ const useGooglePlaces = () => {
       },
       {} as CachedData,
     );
-    const cachedPredictions = reducedCachedData[val]?.data || null;
+    const cachedPredictions = reducedCachedData[val]?.data ?? null;
     if (cachedPredictions) {
       return setPredictions(cachedPredictions);
     } else {

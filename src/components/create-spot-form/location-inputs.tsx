@@ -17,7 +17,9 @@ export default function LocationInputs({
 }: {
   form: UseFormReturn<CreateSpotFormValues>;
 }) {
-  const onSelectedPlaceReady = () => {};
+  const onSelectedPlaceReady = () => {
+    console.log("onSelectedPlaceReady");
+  };
 
   return (
     <>

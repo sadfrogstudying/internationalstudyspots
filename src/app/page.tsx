@@ -1,6 +1,7 @@
 import StudySpotGrid from "@/components/study-spot-grid";
 import HolyGrailLayout from "@/components/study-spot-grid/holy-grail-layout";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -14,7 +15,11 @@ export default function Home() {
           diviner - society has need of all these. The imagination must be
           addressed. <br /> - <i>Ralph Waldo Emerson</i> 🦧🍎
         </p>
-        <Button>Add New</Button>
+        <Button asChild>
+          <Link href="/create" className="block">
+            Add New
+          </Link>
+        </Button>
       </section>
 
       <HolyGrailLayout>

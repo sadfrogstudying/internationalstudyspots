@@ -1,8 +1,13 @@
 "use client";
 
-import CreateSpotForm from "@/components/create-spot-form";
 import { api } from "@/trpc/react";
 import { type typeToFlattenedError } from "zod";
+import dynamic from "next/dynamic";
+
+const CreateSpotFormV2 = dynamic(
+  () => import("@/components/create-spot-form/index-v2"),
+  { ssr: false, loading: () => <div className="py-4">Loading...</div> },
+);
 
 export default function CreatePage() {
   const { mutate, data, isLoading, error } =
@@ -13,15 +18,12 @@ export default function CreatePage() {
     });
 
   return (
-    <div className="space-y-4 p-4">
-      <h1 className="mb-4 font-bold">Create Page 🤡</h1>
-      <p>
-        Only the fields marked with{" "}
-        <span className="rounded bg-violet-300 px-2">Required</span> are
-        required!
-      </p>
+    <div className="space-y-4 p-8 lg:p-4">
       <div className="rounded border p-4">
-        <CreateSpotForm
+        <h1 className="mb-4 text-lg font-bold underline">
+          Create New Spot ⭐️
+        </h1>
+        <CreateSpotFormV2
           onSubmit={(formValues) => {
             // pretend to convert images to urls
             const imageUrls = formValues.images.map(

@@ -230,8 +230,8 @@ interface Page {
 
 const inputs: Page[] = [
   { inputs: [...inputsRequired], category: "Required", hasAccordion: false },
-  { inputs: [...inputsLocation], category: "Location", hasAccordion: true },
-  { inputs: [...inputsGeneral], category: "General", hasAccordion: true },
+  { inputs: [...inputsLocation], category: "Location 📍", hasAccordion: true },
+  { inputs: [...inputsGeneral], category: "General 🤖", hasAccordion: true },
 ];
 
 export default inputs;

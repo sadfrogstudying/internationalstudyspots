@@ -14,7 +14,11 @@
 
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import CreateSpotForm from "@/components/create-spot-form";
+import CreateSpotFormV2 from "@/components/create-spot-form/index-v2";
+import { createSpotSchemaClient } from "@/schemas";
+import { z } from "zod";
+
+type CreateSpotFormValues = z.infer<typeof createSpotSchemaClient>;
 
 beforeAll(() => {
   // @radix-ui/react-checkbox depends on @radix-ui/react-use-size
@@ -26,9 +30,12 @@ beforeAll(() => {
   }));
 });
 
-const mockCreate = jest.fn(() => {});
+const mockCreate = jest.fn((formValues: CreateSpotFormValues) => {
+  return formValues;
+});
 
 const uploadImage = async () => {
+  global.URL.revokeObjectURL = jest.fn();
   const dropzone = screen.getByLabelText(/images/i);
   expect(dropzone).not.toHaveValue();
   window.URL.createObjectURL = jest.fn().mockImplementation(() => "url");
@@ -42,30 +49,34 @@ const uploadImage = async () => {
   expect(await screen.findByText(file.name)).toBeInTheDocument();
 };
 
+const openFormAccordions = async () => {
+  fireEvent.click(screen.getByRole("button", { name: /location/i }));
+  fireEvent.click(screen.getByRole("button", { name: /general/i }));
+};
+
 it("should display required errors when all values are invalid", async () => {
-  render(<CreateSpotForm onSubmit={mockCreate} />);
+  render(<CreateSpotFormV2 onSubmit={mockCreate} />);
   fireEvent.submit(screen.getByRole("button", { name: /submit/i }));
   expect(await screen.findAllByRole("alert")).toHaveLength(2);
   expect(mockCreate).not.toBeCalled();
 });
 
 it("should display matching error when latitude is too high", async () => {
-  render(<CreateSpotForm onSubmit={mockCreate} />);
+  render(<CreateSpotFormV2 onSubmit={mockCreate} />);
+
+  await openFormAccordions();
 
   fireEvent.input(screen.getByRole("textbox", { name: /name/i }), {
     target: {
       value: "Fuglen Tokyo",
     },
   });
-  fireEvent.input(screen.getByRole("textbox", { name: /description/i }), {
-    target: {
-      value: "A cafe in Tokyo",
-    },
-  });
   await uploadImage();
-  fireEvent.change(screen.getByRole("spinbutton", { name: /latitude/i }), {
+
+  fireEvent.input(screen.getByRole("textbox", { name: /website/i }), {
     target: {
-      value: 900,
+      value:
+        "https://www.facebook.com/%E9%96%8B%E9%9A%86%E5%AE%AE-%E7%94%98%E5%96%AE%E5%92%96%E5%95%A1-14856785186",
     },
   });
 
@@ -76,7 +87,7 @@ it("should display matching error when latitude is too high", async () => {
 });
 
 it("should not display error when value is valid", async () => {
-  render(<CreateSpotForm onSubmit={mockCreate} />);
+  render(<CreateSpotFormV2 onSubmit={mockCreate} />);
 
   fireEvent.input(screen.getByRole("textbox", { name: /name/i }), {
     target: {
@@ -86,8 +97,14 @@ it("should not display error when value is valid", async () => {
 
   await uploadImage();
 
+  fireEvent.input(screen.getByRole("textbox", { name: /venue type/i }), {
+    target: {
+      value: "Cafe",
+    },
+  });
+
   // submit form
   fireEvent.click(screen.getByRole("button", { name: /submit/i }));
-  screen.debug();
   await waitFor(() => expect(mockCreate).toHaveBeenCalledTimes(1));
+  expect(Object.keys(mockCreate.mock.results[0]?.value).length).toBe(29);
 });

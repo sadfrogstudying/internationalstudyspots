@@ -39,10 +39,15 @@ export default function TextInput<
           <FormLabel className="flex gap-1">
             {input.label}
 
-            {input.required && <span className="text-orange-500">*</span>}
+            {input.required && (
+              <span className="text-orange-500" aria-hidden>
+                *
+              </span>
+            )}
           </FormLabel>
           <FormControl>
             <Input
+              role="textbox"
               placeholder={input.placeholder}
               {...field}
               required={input.required}

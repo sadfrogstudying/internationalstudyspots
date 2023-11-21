@@ -74,3 +74,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+.leaflet-bottom,
+.leaflet-control,
+.leaflet-pane,
+.leaflet-top {
+  z-index: 0 !important;
+}
+.leaflet-container {
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+}

@@ -44,7 +44,6 @@ const Map = ({
 }: Props | PropsWithInfoPanel) => {
   const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
   const [userCoords, setUserCoords] = useState<LatLng | null>(null);
-  console.log(allMarkerData);
   const clearSelectedMarker = () => setSelectedMarker(null);
 
   const defaultIcon = new L.Icon({

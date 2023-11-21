@@ -6,7 +6,7 @@ import Info from "./info";
 import { Button } from "../ui/button";
 
 const Filter = dynamic(() => import("./filter"), {
-  loading: () => <div className="flex flex-col gap-4">LOADING</div>,
+  loading: () => <div />,
 });
 const SheetBase = dynamic(() => import("./sheet-base"), {
   loading: () => <Button variant="ghost">Loading...</Button>,

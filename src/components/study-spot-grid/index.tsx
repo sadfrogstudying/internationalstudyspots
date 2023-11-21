@@ -24,6 +24,7 @@ export default function StudySpotGrid() {
         where: {
           ...appliedFilters,
         },
+        take: 8,
       },
       {
         getNextPageParam: (lastQuery) => lastQuery[lastQuery.length - 1]?.id,

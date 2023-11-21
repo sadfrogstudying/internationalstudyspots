@@ -8,13 +8,14 @@ import { cn } from "@/lib/utils";
 type Props = {
   images: Prisma.ImageGetPayload<Record<string, never>>[];
   name: string;
+  sizes?: string;
 };
 
 export default function ImageCarousel(props: Props) {
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
 
-  const { images, name } = props;
+  const { images, name, sizes } = props;
   const [emblaMainRef, emblaApi] = useEmblaCarousel({});
 
   const scrollPrev = useCallback(
@@ -39,7 +40,7 @@ export default function ImageCarousel(props: Props) {
   }, [emblaApi, onSelect]);
 
   return (
-    <div className="relative">
+    <div className="relative h-full">
       <Controls
         scrollPrev={scrollPrev}
         scrollNext={scrollNext}
@@ -64,7 +65,7 @@ export default function ImageCarousel(props: Props) {
                 width={image.width}
                 height={image.height}
                 className="aspect-square object-cover sm:aspect-[3/4]"
-                sizes="(max-width: 1024px) 40vw, 22vw"
+                sizes={sizes}
               />
             </div>
           ))}

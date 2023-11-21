@@ -63,7 +63,11 @@ export default function GridItem({
           animationFillMode: "backwards",
         }}
       >
-        <ImageCarousel images={images} name={name} />
+        <ImageCarousel
+          images={images}
+          name={name}
+          sizes="(max-width: 1024px) 40vw, 22vw"
+        />
         <ul>
           <li className="truncate text-ellipsis font-bold">
             {state}, {country}

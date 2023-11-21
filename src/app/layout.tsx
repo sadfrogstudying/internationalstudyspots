@@ -1,16 +1,11 @@
 import "@/styles/globals.css";
-
-import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 
 import { TRPCReactProvider } from "@/trpc/react";
+import { UserProvider } from "@auth0/nextjs-auth0/client";
+
 import Header from "@/components/header";
 import { FilterController } from "@/components/study-spot-grid/filter-context";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
 
 export const metadata = {
   title: "International Study Spots",
@@ -26,12 +21,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`font-sans ${inter.variable} antialiased`}>
+      <body className="antialiased">
         <TRPCReactProvider cookies={cookies().toString()}>
-          <FilterController>
-            <Header />
-            {children}
-          </FilterController>
+          <UserProvider>
+            <FilterController>
+              <Header />
+              {children}
+            </FilterController>
+          </UserProvider>
         </TRPCReactProvider>
       </body>
     </html>

@@ -6,7 +6,6 @@ export async function getManyHandler(
 ) {
   const spots = await db.studySpot.findMany({
     ...args,
-    take: 8,
     orderBy: {
       createdAt: "desc",
     },
@@ -23,6 +22,8 @@ export async function getManyHandler(
       powerOutlets: true,
       wifi: true,
       naturalViews: true,
+      latitude: true,
+      longitude: true,
     },
   });
 

@@ -12,18 +12,15 @@ export const studySpotRouter = createTRPCRouter({
     .input(
       object({
         cursor: number().optional(),
-        where: spotBooleanSchema.partial(),
-      }),
+        where: spotBooleanSchema.partial().optional(),
+        take: number().optional(),
+      }).optional(),
     )
     .query(async ({ ctx, input }) => {
-      const { cursor, where } = input;
+      const { cursor, ...rest } = input ?? {};
       const spots = await getManyHandler(ctx.db, {
         ...(cursor && { skip: 1, cursor: { id: cursor } }),
-        ...(where && {
-          where: {
-            ...where,
-          },
-        }),
+        ...rest,
       });
 
       return spots;

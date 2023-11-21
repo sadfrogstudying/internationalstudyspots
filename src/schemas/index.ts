@@ -62,7 +62,7 @@ export const spotNumberSchema = z.object({
   longitude: longitudeSchema,
 });
 
-const spotSchema = spotStringSchema
+export const spotSchema = spotStringSchema
   .merge(imageSchema)
   .merge(spotNumberSchema)
   .merge(spotBooleanSchema);

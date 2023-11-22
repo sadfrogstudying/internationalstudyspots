@@ -48,7 +48,7 @@ export default function ImageCarousel(props: Props) {
         nextDisabled={nextBtnDisabled}
       />
       <div
-        className="relative h-fit w-full overflow-hidden rounded-md bg-primary/10"
+        className="relative h-fit w-full overflow-hidden bg-primary/10"
         ref={emblaMainRef}
       >
         <div className="flex touch-pan-y">
@@ -86,6 +86,8 @@ function Controls({
   prevDisabled: boolean;
   nextDisabled: boolean;
 }) {
+  const disabledClass =
+    "opacity-0 group-focus-within:opacity-0 group-hover:opacity-0";
   return (
     <div className="user pointer-events-none absolute z-10 grid h-full w-full grid-rows-3">
       <div />
@@ -93,8 +95,7 @@ function Controls({
         <button
           className={cn(
             `pointer-events-auto h-fit w-fit rounded bg-white p-2 opacity-0 shadow-md transition-opacity focus:opacity-100 active:bg-lime-200 group-focus-within:opacity-100 group-hover:opacity-100 ${
-              prevDisabled &&
-              "opacity-0 group-focus-within:opacity-0 group-hover:opacity-0"
+              prevDisabled && disabledClass
             }`,
           )}
           aria-label="Previous image"
@@ -109,8 +110,7 @@ function Controls({
         <button
           className={cn(
             `pointer-events-auto h-fit w-fit rounded bg-white p-2 opacity-0 shadow-md transition-opacity focus:opacity-100 active:bg-lime-200 group-focus-within:opacity-100 group-hover:opacity-100 ${
-              nextDisabled &&
-              "opacity-0 group-focus-within:opacity-0 group-hover:opacity-0"
+              nextDisabled && disabledClass
             }`,
           )}
           aria-label="Next image"

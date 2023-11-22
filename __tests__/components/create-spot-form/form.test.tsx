@@ -14,7 +14,7 @@
 
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import CreateSpotFormV2 from "@/components/create-spot-form/index-v2";
+import CreateSpotFormV2 from "@/components/create-spot-form";
 import { createSpotSchemaClient } from "@/schemas";
 import { z } from "zod";
 

@@ -5,7 +5,7 @@ import { type typeToFlattenedError } from "zod";
 import dynamic from "next/dynamic";
 
 const CreateSpotFormV2 = dynamic(
-  () => import("@/components/create-spot-form/index-v2"),
+  () => import("@/components/create-spot-form"),
   { ssr: false, loading: () => <div className="py-4">Loading...</div> },
 );
 

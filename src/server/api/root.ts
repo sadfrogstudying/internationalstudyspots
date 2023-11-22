@@ -1,5 +1,5 @@
-import { studySpotRouter } from "@/server/api/routers/study-spots";
-import { userRouter } from "@/server/api/routers/users";
+import { studySpotRouter } from "@/server/api/routers/study-spot";
+import { userRouter } from "@/server/api/routers/user";
 import { createTRPCRouter } from "@/server/api/trpc";
 
 /**

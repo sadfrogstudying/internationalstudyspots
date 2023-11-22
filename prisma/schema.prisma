@@ -17,6 +17,11 @@ model User {
     email               String        @unique
     description         String        @default("")
     profilePicture      Image?        @relation("ProfilePicture")
+    city                String        @default("")
+    country             String        @default("")
+    interests           String        @default("")
+    occupation          String        @default("")
+    tagline             String        @default("")
     createdSpots        StudySpot[]
     createdPendingEdits PendingEdit[]
     authoredImages      Image[]

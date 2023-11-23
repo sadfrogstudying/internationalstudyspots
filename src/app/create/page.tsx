@@ -10,12 +10,11 @@ const CreateSpotFormV2 = dynamic(
 );
 
 export default function CreatePage() {
-  const { mutate, data, isLoading, error } =
-    api.studySpot.createSpot.useMutation({
-      onSuccess: (res) => {
-        console.log(res);
-      },
-    });
+  const { mutate, data, isLoading, error } = api.studySpot.create.useMutation({
+    onSuccess: (res) => {
+      console.log(res);
+    },
+  });
 
   return (
     <div className="space-y-4 p-8 lg:p-4">
@@ -29,11 +28,6 @@ export default function CreatePage() {
             const imageUrls = formValues.images.map(
               (image) => `www.s3.com/${image.name}`,
             );
-
-            return console.log({
-              ...formValues,
-              images: imageUrls,
-            });
 
             mutate({
               ...formValues,
@@ -54,9 +48,12 @@ export default function CreatePage() {
           )}
 
           {error && !error?.data?.zodError && (
-            <p className="text-[0.8rem] font-medium text-destructive">
-              An error occured on the server, please try again.
-            </p>
+            <div className="text-destructive" role="alert">
+              <div className="text-sm font-bold">
+                An error occured on the server, please try again.
+              </div>
+              <p className="text-[0.8rem]">Message: {error.message}</p>
+            </div>
           )}
         </div>
       </div>

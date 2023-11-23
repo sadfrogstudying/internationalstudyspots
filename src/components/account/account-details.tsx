@@ -1,68 +1,13 @@
-"use client";
-
-import StudySpotGrid from "@/components/study-spot-grid";
-import { Skeleton, SkeletonText } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
-import { AvatarIcon } from "@radix-ui/react-icons";
-import { type VariantProps, cva } from "class-variance-authority";
+import { Skeleton, SkeletonText } from "../ui/skeleton";
 import Image from "next/image";
+import { AvatarIcon } from "@radix-ui/react-icons";
 import { Fragment } from "react";
-import dynamic from "next/dynamic";
-import { type typeToFlattenedError } from "zod";
+import { type VariantProps, cva } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+import StudySpotGrid from "../study-spot-grid";
 
-const CreateUserForm = dynamic(() => import("@/components/create-user-form"), {
-  ssr: false,
-  loading: () => <span>Loading Form...</span>,
-});
-
-export default function Account() {
-  const { data } = api.user.currentBySession.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-    retry: 2,
-  });
-
-  const { mutate, isLoading, error } = api.user.create.useMutation();
-
-  if (!data)
-    return (
-      <div>
-        <CreateUserForm
-          onSubmit={(formValues) => {
-            const imageUrl = formValues.profilePicture.map(
-              (image) => `https://picsum.photos/seed/${image.name}/200/300`,
-            )[0];
-
-            mutate({
-              ...formValues,
-              profilePicture: imageUrl,
-            });
-          }}
-        />
-
-        <div className="mt-8">
-          {isLoading && <p>Submitting...</p>}
-
-          {data && <p className="text-green-500">Submitted!</p>}
-
-          {!!error?.data?.zodError && (
-            <ServerZodError
-              errors={parseZodClientError(error?.data?.zodError)}
-            />
-          )}
-
-          {error && !error?.data?.zodError && (
-            <div className="text-destructive" role="alert">
-              <div className="font-bold">
-                An error occured on the server, please try again.
-              </div>
-              <p className="text-[0.8rem]">Message: {error.message}</p>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-
+export default function AccountDetails() {
   return (
     <>
       <div className="max-w-6xl grid-cols-[3.5fr_7fr] flex-wrap gap-4 md:grid">
@@ -147,7 +92,7 @@ function Left() {
         <ul className="grid grid-cols-2">
           <li>
             <a
-              href="https://www.instagram.com/portrait_of_innocent_x/"
+              href="https://www.instagram.com/dogs.lovers/"
               className="text-bold text-blue-600 hover:underline"
               target="_blank"
             >
@@ -156,7 +101,7 @@ function Left() {
           </li>
           <li>
             <a
-              href="https://www.facebook.com/PeiPeiMusic"
+              href="https://www.instagram.com/dogs.lovers/"
               className="text-bold text-blue-600 hover:underline"
               target="_blank"
             >
@@ -165,7 +110,7 @@ function Left() {
           </li>
           <li>
             <a
-              href="https://twitter.com/peipeimusic"
+              href="https://www.instagram.com/dogs.lovers/"
               className="text-bold text-blue-600 hover:underline"
               target="_blank"
             >
@@ -174,7 +119,7 @@ function Left() {
           </li>
           <li>
             <a
-              href="https://www.facebook.com/PeiPeiMusic"
+              href="https://www.instagram.com/dogs.lovers/"
               className="text-bold text-blue-600 hover:underline"
               target="_blank"
             >
@@ -183,7 +128,7 @@ function Left() {
           </li>
           <li>
             <a
-              href="https://twitter.com/peipeimusic"
+              href="https://www.instagram.com/dogs.lovers/"
               className="text-bold text-blue-600 hover:underline"
               target="_blank"
             >
@@ -250,7 +195,7 @@ function Right() {
           reiciendis!
         </p>
       </Section>
-      <Section title="Study Spots">
+      <Section title="Study Spots Found by Pei Pei">
         <div className="p-2">
           <StudySpotGrid />
         </div>
@@ -307,46 +252,5 @@ function Section({ children, title, variant }: SectionProps) {
       <h3 className={cn(headerVariants({ variant }))}>{title}</h3>
       <div className={cn(contentVariants({ variant }))}>{children}</div>
     </section>
-  );
-}
-
-const parseZodClientError = (
-  zodError:
-    | typeToFlattenedError<string[] | undefined, string>
-    | null
-    | undefined,
-) => {
-  const fieldErrors = zodError?.fieldErrors;
-  const fieldErrorsEntries = fieldErrors ? Object.entries(fieldErrors) : [];
-  const errorMessages = fieldErrorsEntries.map(([key, value]) => [
-    key,
-    value?.[0] ? value[0] : "",
-  ]);
-
-  return errorMessages;
-};
-
-function ServerZodError({ errors }: { errors: string[][] }) {
-  return (
-    <>
-      <div>
-        {errors.length !== 0 && (
-          <strong className="text-[0.8rem] text-destructive">
-            Server validation failed:
-          </strong>
-        )}
-        <ul className="list-disc pl-4">
-          {errors.map((x) => (
-            <li
-              key={x[0]}
-              className="text-[0.8rem] font-medium text-destructive"
-              role="alert"
-            >
-              <strong className="capitalize">{x[0]}</strong>: {x[1]}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
   );
 }

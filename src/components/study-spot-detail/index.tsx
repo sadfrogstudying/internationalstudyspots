@@ -51,9 +51,6 @@ export default function StudySpotDetail({ slug }: Props) {
       <div>
         <Separator className="mb-2" />
         <AllImages studySpot={data} />
-        <div className="space-y-4">
-          <i className="block"> page slug: {slug}</i>
-        </div>
       </div>
     </div>
   );

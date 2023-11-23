@@ -1,11 +1,16 @@
 import { object, number, string } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 import { createSpotSchemaServer, spotBooleanSchema } from "@/schemas";
 import {
   getUnique,
   getManyHandler,
 } from "@/server/controller/study-spot-controller";
+import { TRPCError } from "@trpc/server";
 
 export const studySpotRouter = createTRPCRouter({
   getAll: publicProcedure
@@ -35,12 +40,12 @@ export const studySpotRouter = createTRPCRouter({
     return spot;
   }),
 
-  createSpot: publicProcedure
-    .input(createSpotSchemaServer)
-    .mutation(({ input }) => {
-      console.log(input);
-      return true;
-    }),
+  create: protectedProcedure.input(createSpotSchemaServer).mutation(() => {
+    throw new TRPCError({
+      code: "NOT_IMPLEMENTED",
+      message: "Not implemented",
+    });
+  }),
 
   getCountries: publicProcedure.query(async ({ ctx }) => {
     const countries = await ctx.db.studySpot.findMany({

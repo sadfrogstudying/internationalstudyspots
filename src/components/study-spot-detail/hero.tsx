@@ -8,7 +8,7 @@ type StudySpot = RouterOutputs["studySpot"]["bySlug"];
 export default function Hero({ studySpot }: { studySpot?: StudySpot }) {
   return (
     <>
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
         {studySpot ? (
           studySpot?.images.slice(0, 5).map((image, i) => (
             <div className="relative" key={image.id}>

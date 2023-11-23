@@ -6,6 +6,7 @@ import {
   Clock,
   Coffee,
   Ear,
+  Flower,
   Flower2,
   Globe,
   Landmark,
@@ -50,6 +51,8 @@ export default function List({ studySpot }: { studySpot?: StudySpot }) {
     (entry) => !ignoredKeys.includes(entry[0]),
   );
 
+  console.log(list);
+
   return (
     <ul className="w-full overflow-hidden">
       {studySpot ? (
@@ -78,7 +81,7 @@ export default function List({ studySpot }: { studySpot?: StudySpot }) {
 
               <div
                 className={cn(
-                  "flex animate-fade-in flex-wrap gap-4",
+                  "grid animate-fade-in grid-cols-[3fr_4fr] flex-wrap gap-4 md:grid-cols-[1fr_4fr]",
                   animationDuration,
                 )}
                 style={{
@@ -86,14 +89,15 @@ export default function List({ studySpot }: { studySpot?: StudySpot }) {
                   animationFillMode: "backwards",
                 }}
               >
-                <div className="flex w-56 flex-shrink-0 items-start font-bold">
+                <div className="flex items-start font-bold">
                   <div className="flex items-center gap-2">
                     {readableKeys[x[0]]?.icon ?? <div className="h-4 w-4" />}
                     {readableKeys[x[0]]?.humanReadable}
                   </div>
                 </div>
-                <div className="w-1/2 overflow-hidden truncate">
-                  {x[1]?.toString()}
+
+                <div className="overflow-hidden sm:truncate">
+                  {x[1] ? x[1].toString() : "N/A"}
                 </div>
               </div>
             </li>
@@ -185,6 +189,10 @@ const readableKeys: Partial<
   },
   drinks: { humanReadable: "Drinks", icon: <Coffee className="h-4 w-4" /> },
   food: { humanReadable: "Food", icon: <Utensils className="h-4 w-4" /> },
+  naturalViews: {
+    humanReadable: "Natural Views",
+    icon: <Flower className="h-4 w-4" />,
+  },
   studyBreakFacilities: {
     humanReadable: "Study Break Facilities",
     icon: <Armchair className="h-4 w-4" />,

@@ -18,7 +18,7 @@ export default function HolyGrailLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="flex flex-col gap-8 p-8 lg:flex-row lg:p-4">
+    <section className="flex flex-col gap-8 p-4 lg:flex-row">
       <div className="grid grid-cols-2 border-y border-black lg:hidden">
         <SheetBase
           trigger={<Button variant="ghost">Filters</Button>}

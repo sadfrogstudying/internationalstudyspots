@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main className="flex flex-col gap-12 text-sm">
-      <section className="max-w-2xl space-y-4 px-8 py-4 lg:px-4">
+      <section className="max-w-2xl space-y-4 px-4 py-4">
         <p>An index of beautiful study spots around the world.</p>
         <Button variant="success" asChild>
           <Link href="/create" className="block">

@@ -5,13 +5,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../ui/form";
+} from "@/components/ui/form";
 import {
   type ControllerProps,
   type FieldPath,
   type FieldValues,
 } from "react-hook-form";
-import { Input } from "../../ui/input";
+import { Input } from "@/components/ui/input";
 
 interface Input {
   label: string;

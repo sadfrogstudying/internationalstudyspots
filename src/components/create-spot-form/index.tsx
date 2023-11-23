@@ -6,19 +6,19 @@ import type z from "zod";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { createSpotSchemaClient } from "@/schemas";
-import TextInput from "./input/text-input";
-import ImageInput from "./input/image-input";
-import CheckboxInput from "./input/checkbox-input";
-import { AccordionItem } from "./accordion-item";
+import TextInput from "@/components/input/text-input";
+import ImageInput from "@/components/input/image-input";
+import CheckboxInput from "@/components/input/checkbox-input";
+import TextAreaInput from "@/components/input/textarea-input";
+import { AccordionItem } from "../form/accordion-item";
 import inputs, { type Input } from "./form-config";
 import { Accordion } from "../ui/accordion";
 
 import dynamic from "next/dynamic";
 import { Label } from "../ui/label";
-import TextAreaInput from "./input/textarea-input";
 
 const LocationSearchInput = dynamic(
-  () => import("@/components/create-spot-form/location-search"),
+  () => import("@/components/input/location-search"),
   { ssr: false, loading: () => <LocationSearchLoading /> },
 );
 

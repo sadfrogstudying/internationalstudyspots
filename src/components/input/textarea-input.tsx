@@ -4,21 +4,23 @@ import {
   FormField,
   FormItem,
   FormLabel,
-} from "../../ui/form";
+  FormMessage,
+} from "@/components/ui/form";
 import {
   type ControllerProps,
   type FieldPath,
   type FieldValues,
 } from "react-hook-form";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Input {
   label: string;
   description: string;
+  placeholder: string;
   required: boolean;
 }
 
-export default function CheckboxInput<
+export default function TextAreaInput<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
@@ -33,21 +35,26 @@ export default function CheckboxInput<
       control={props.control}
       name={props.name}
       render={({ field }) => (
-        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+        <FormItem>
+          <FormLabel className="flex gap-1">
+            {input.label}
+
+            {input.required && (
+              <span className="text-orange-500" aria-hidden>
+                *
+              </span>
+            )}
+          </FormLabel>
           <FormControl>
-            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+            <Textarea
+              role="textbox"
+              placeholder={input.placeholder}
+              {...field}
+              required={input.required}
+            />
           </FormControl>
-          <div className="space-y-1 leading-none">
-            <FormLabel className="flex gap-1">
-              {input.label}
-              {input.required && (
-                <span className="text-orange-500" aria-hidden>
-                  *
-                </span>
-              )}
-            </FormLabel>
-            <FormDescription>{input.description}</FormDescription>
-          </div>
+          <FormDescription>{input.description}</FormDescription>
+          <FormMessage />
         </FormItem>
       )}
     />

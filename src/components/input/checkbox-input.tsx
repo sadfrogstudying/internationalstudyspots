@@ -4,14 +4,13 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from "../../ui/form";
+} from "@/components/ui/form";
 import {
   type ControllerProps,
   type FieldPath,
   type FieldValues,
 } from "react-hook-form";
-import Dropzone from "@/components/ui/dropzone";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface Input {
   label: string;
@@ -19,7 +18,7 @@ interface Input {
   required: boolean;
 }
 
-export default function ImageInput<
+export default function CheckboxInput<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
@@ -34,25 +33,21 @@ export default function ImageInput<
       control={props.control}
       name={props.name}
       render={({ field }) => (
-        <FormItem>
-          <FormLabel className="flex gap-1">
-            {input.label}
-
-            {input.required && (
-              <span className="text-orange-500" aria-hidden>
-                *
-              </span>
-            )}
-          </FormLabel>
+        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
           <FormControl>
-            <Dropzone
-              ref={field.ref}
-              onChange={(files) => field.onChange(files)}
-              name={field.name}
-            />
+            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
           </FormControl>
-          <FormDescription>{input.description}</FormDescription>
-          <FormMessage />
+          <div className="space-y-1 leading-none">
+            <FormLabel className="flex gap-1">
+              {input.label}
+              {input.required && (
+                <span className="text-orange-500" aria-hidden>
+                  *
+                </span>
+              )}
+            </FormLabel>
+            <FormDescription>{input.description}</FormDescription>
+          </div>
         </FormItem>
       )}
     />

@@ -4,12 +4,12 @@ import { type UseFormReturn, useForm } from "react-hook-form";
 import { Form } from "../ui/form";
 import { Accordion } from "../ui/accordion";
 import inputs, { type Input } from "./form-config";
-import { AccordionItem } from "../create-spot-form/accordion-item";
-import TextInput from "../create-spot-form/input/text-input";
-import ImageInput from "../create-spot-form/input/image-input";
-import CheckboxInput from "../create-spot-form/input/checkbox-input";
-import LocationSearchInput from "../create-spot-form/location-search";
-import TextAreaInput from "../create-spot-form/input/textarea-input";
+import { AccordionItem } from "../form/accordion-item";
+import TextInput from "@/components/input/text-input";
+import ImageInput from "@/components/input/image-input";
+import CheckboxInput from "@/components/input/checkbox-input";
+import TextAreaInput from "@/components/input/textarea-input";
+import LocationSearchInput from "@/components/input/location-search";
 import { Button } from "../ui/button";
 
 export default function CreateUserForm({
@@ -48,13 +48,9 @@ export default function CreateUserForm({
           {inputs.map(({ inputs, category, hasAccordion }) => {
             return hasAccordion ? (
               <AccordionItem label={category} key={`accordion-${category}`}>
-                <div className="rounded border border-neutral-400">
-                  <div className="grid grid-cols-1 gap-4 border-l-4 border-neutral-400 p-4 sm:grid-cols-2 md:grid-cols-4">
-                    {inputs.map((input) => {
-                      return GenerateInput(input, form);
-                    })}
-                  </div>
-                </div>
+                {inputs.map((input) => {
+                  return GenerateInput(input, form);
+                })}
               </AccordionItem>
             ) : (
               <div

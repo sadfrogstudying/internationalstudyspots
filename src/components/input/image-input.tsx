@@ -5,22 +5,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../ui/form";
+} from "@/components/ui/form";
 import {
   type ControllerProps,
   type FieldPath,
   type FieldValues,
 } from "react-hook-form";
-import { Textarea } from "@/components/ui/textarea";
+import Dropzone from "@/components/ui/dropzone";
 
 interface Input {
   label: string;
   description: string;
-  placeholder: string;
   required: boolean;
 }
 
-export default function TextAreaInput<
+export default function ImageInput<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
@@ -46,11 +45,10 @@ export default function TextAreaInput<
             )}
           </FormLabel>
           <FormControl>
-            <Textarea
-              role="textbox"
-              placeholder={input.placeholder}
-              {...field}
-              required={input.required}
+            <Dropzone
+              ref={field.ref}
+              onChange={(files) => field.onChange(files)}
+              name={field.name}
             />
           </FormControl>
           <FormDescription>{input.description}</FormDescription>

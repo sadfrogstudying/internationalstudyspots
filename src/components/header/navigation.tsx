@@ -10,47 +10,18 @@ import MobileMenu from "./mobile-menu";
 export default function Navigation() {
   const { user, isLoading } = useUser();
 
-  const { data } = api.user.currentBySession.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-  });
-
   return (
     <NavigationLayout>
       {user && !isLoading && (
         <>
-          <Link
-            href="/create"
-            className="pointer-events-auto text-right underline"
-          >
-            Create
-          </Link>
-
-          <a
-            href="/api/auth/logout"
-            className="pointer-events-auto text-right underline"
-          >
-            Logout
-          </a>
-
-          <Link
-            href="/account"
-            className="pointer-events-auto rounded text-right"
-          >
-            <Avatar className="h-9 w-9 shadow">
-              <AvatarImage
-                src={data?.profilePicture?.url}
-                className="object-cover"
-              />
-              <AvatarFallback />
-            </Avatar>
-          </Link>
+          <AuthedNav />
         </>
       )}
 
       {!user && !isLoading && (
         <>
           <a
-            href="/api/auth/login"
+            href="/api/auth/login?returnTo=/account"
             className="pointer-events-auto text-right underline"
           >
             Login
@@ -81,6 +52,48 @@ function NavigationLayout({ children }: { children: React.ReactNode }) {
       <nav className="hidden h-9 items-center gap-4 text-base md:flex">
         {children}
       </nav>
+    </>
+  );
+}
+
+function AuthedNav() {
+  const { data, isLoading } = api.user.currentBySession.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+
+  if (!data && !isLoading)
+    return (
+      <Button
+        variant="success"
+        className="pointer-events-auto font-bold"
+        asChild
+      >
+        <Link href="/account">🔥 Finish Account Setup 🔥</Link>
+      </Button>
+    );
+
+  return (
+    <>
+      <Link href="/create" className="pointer-events-auto text-right underline">
+        Add Spot
+      </Link>
+
+      <a
+        href="/api/auth/logout"
+        className="pointer-events-auto text-right underline"
+      >
+        Logout
+      </a>
+
+      <Link href="/account" className="pointer-events-auto rounded text-right">
+        <Avatar className="h-9 w-9 shadow">
+          <AvatarImage
+            src={data?.profilePicture?.url}
+            className="object-cover"
+          />
+          <AvatarFallback />
+        </Avatar>
+      </Link>
     </>
   );
 }

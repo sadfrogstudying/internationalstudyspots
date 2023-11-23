@@ -10,7 +10,7 @@ export default function Home() {
         <p>An index of beautiful study spots around the world.</p>
         <Button variant="success" asChild>
           <Link href="/create" className="block">
-            Add New
+            Add Spot
           </Link>
         </Button>
       </section>

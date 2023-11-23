@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { createUserServerSchema } from "@/schemas/user";
+import { TRPCError } from "@trpc/server";
 
 export const userRouter = createTRPCRouter({
   currentBySession: protectedProcedure
@@ -21,4 +23,11 @@ export const userRouter = createTRPCRouter({
 
       return user;
     }),
+
+  create: protectedProcedure.input(createUserServerSchema).mutation(() => {
+    throw new TRPCError({
+      code: "NOT_IMPLEMENTED",
+      message: "Not implemented",
+    });
+  }),
 });

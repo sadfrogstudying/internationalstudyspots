@@ -1,88 +1,40 @@
-"use client";
+import { type CreateUserClient, createUserClientSchema } from "@/schemas/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type UseFormReturn, useForm } from "react-hook-form";
-import type z from "zod";
-
-import { Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { createSpotSchemaClient } from "@/schemas";
-import TextInput from "./input/text-input";
-import ImageInput from "./input/image-input";
-import CheckboxInput from "./input/checkbox-input";
-import { AccordionItem } from "./accordion-item";
-import inputs, { type Input } from "./form-config";
+import { Form } from "../ui/form";
 import { Accordion } from "../ui/accordion";
+import inputs, { type Input } from "./form-config";
+import { AccordionItem } from "../create-spot-form/accordion-item";
+import TextInput from "../create-spot-form/input/text-input";
+import ImageInput from "../create-spot-form/input/image-input";
+import CheckboxInput from "../create-spot-form/input/checkbox-input";
+import LocationSearchInput from "../create-spot-form/location-search";
+import TextAreaInput from "../create-spot-form/input/textarea-input";
+import { Button } from "../ui/button";
 
-import dynamic from "next/dynamic";
-import { Label } from "../ui/label";
-import TextAreaInput from "./input/textarea-input";
-
-const LocationSearchInput = dynamic(
-  () => import("@/components/create-spot-form/location-search"),
-  { ssr: false, loading: () => <LocationSearchLoading /> },
-);
-
-const LocationSearchLoading = () => (
-  <div className="space-y-2">
-    <Label asChild>
-      <div>Search Location</div>
-    </Label>
-    <Button variant="outline" className="w-full justify-between">
-      Loading...
-    </Button>
-  </div>
-);
-
-type CreateSpotFormValues = z.infer<typeof createSpotSchemaClient>;
-
-export default function CreateSpotFormV2({
+export default function CreateUserForm({
   onSubmit,
 }: {
-  onSubmit: (formValues: CreateSpotFormValues) => void;
+  onSubmit: (formValues: CreateUserClient) => void;
 }) {
-  const form = useForm<CreateSpotFormValues>({
-    resolver: zodResolver(createSpotSchemaClient),
+  const form = useForm<CreateUserClient>({
+    resolver: zodResolver(createUserClientSchema),
     defaultValues: {
-      // string
-      name: "",
-      website: "",
+      // strings
+      username: "",
       description: "",
-      noiseLevel: "",
-      venueType: "",
-      placeId: "",
-      address: "",
-      country: "",
       city: "",
-      state: "",
-      comfort: "",
-      views: "",
-      temperature: "",
-      music: "",
-      lighting: "",
-      distractions: "",
-      crowdedness: "",
-      proximityToAmenities: "",
-      studyBreakFacilities: "",
-
-      // number
-      latitude: 0,
-      longitude: 0,
-
-      // boolean
-      wifi: false,
-      powerOutlets: false,
-      canStudyForLong: undefined,
-      sunlight: undefined,
-      drinks: undefined,
-      food: undefined,
-      naturalViews: undefined,
+      country: "",
+      interests: "",
+      occupation: "",
+      tagline: "",
 
       // images
-      images: [],
+      profilePicture: [],
     },
   });
 
-  function handleSubmit(formValues: CreateSpotFormValues) {
+  function handleSubmit(formValues: CreateUserClient) {
     onSubmit(formValues);
   }
 
@@ -92,7 +44,7 @@ export default function CreateSpotFormV2({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex-gap-2 flex flex-col"
       >
-        <Accordion type="multiple" className="w-full">
+        <Accordion type="multiple" className="w-full space-y-4">
           {inputs.map(({ inputs, category, hasAccordion }) => {
             return hasAccordion ? (
               <AccordionItem label={category} key={`accordion-${category}`}>
@@ -118,7 +70,6 @@ export default function CreateSpotFormV2({
             );
           })}
         </Accordion>
-
         <Button className="mt-4" type="submit">
           Submit
         </Button>
@@ -129,7 +80,7 @@ export default function CreateSpotFormV2({
 
 export function GenerateInput(
   input: Input,
-  form: UseFormReturn<CreateSpotFormValues>,
+  form: UseFormReturn<CreateUserClient>,
 ) {
   if (input.inputType === "text")
     return (

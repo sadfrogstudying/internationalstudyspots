@@ -1,42 +1,9 @@
 import { type CreateUserClient } from "@/schemas/user";
+import { type Input } from "../form/input-generator";
 
-interface Text {
-  name: keyof CreateUserClient;
-  label: string;
-  description: string;
-  placeholder: string;
-  required: boolean;
-  inputType: "text";
-}
-interface TextArea {
-  name: keyof CreateUserClient;
-  label: string;
-  description: string;
-  placeholder: string;
-  required: boolean;
-  inputType: "textarea";
-}
-interface Image {
-  name: keyof CreateUserClient;
-  label: string;
-  description: string;
-  required: boolean;
-  inputType: "image";
-}
-interface Checkbox {
-  name: keyof CreateUserClient;
-  label: string;
-  description: string;
-  required: boolean;
-  inputType: "checkbox";
-}
-interface LocationSearch {
-  inputType: "locationSearch";
-}
+type CreateUserInput = Input<CreateUserClient>;
 
-export type Input = Text | TextArea | Image | Checkbox | LocationSearch;
-
-const inputsRequired: Input[] = [
+const inputsRequired: CreateUserInput[] = [
   {
     name: "username",
     label: "Username",
@@ -95,7 +62,7 @@ const inputsRequired: Input[] = [
 ];
 
 interface Page {
-  inputs: Input[];
+  inputs: CreateUserInput[];
   category: string;
   hasAccordion: boolean;
 }

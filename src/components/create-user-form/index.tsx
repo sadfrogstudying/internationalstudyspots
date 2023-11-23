@@ -1,16 +1,12 @@
 import { type CreateUserClient, createUserClientSchema } from "@/schemas/user";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type UseFormReturn, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Form } from "../ui/form";
 import { Accordion } from "../ui/accordion";
-import inputs, { type Input } from "./form-config";
+import inputs from "./form-config";
 import { AccordionItem } from "../form/accordion-item";
-import TextInput from "@/components/input/text-input";
-import ImageInput from "@/components/input/image-input";
-import CheckboxInput from "@/components/input/checkbox-input";
-import TextAreaInput from "@/components/input/textarea-input";
-import LocationSearchInput from "@/components/input/location-search";
 import { Button } from "../ui/button";
+import { InputGenerator } from "../form/input-generator";
 
 export default function CreateUserForm({
   onSubmit,
@@ -48,9 +44,13 @@ export default function CreateUserForm({
           {inputs.map(({ inputs, category, hasAccordion }) => {
             return hasAccordion ? (
               <AccordionItem label={category} key={`accordion-${category}`}>
-                {inputs.map((input) => {
-                  return GenerateInput(input, form);
-                })}
+                <div className="rounded border border-neutral-400">
+                  <div className="grid grid-cols-1 gap-4 border-l-4 border-neutral-400 p-4 sm:grid-cols-2 md:grid-cols-4">
+                    {inputs.map((input) => {
+                      return InputGenerator(input, form);
+                    })}
+                  </div>
+                </div>
               </AccordionItem>
             ) : (
               <div
@@ -59,7 +59,7 @@ export default function CreateUserForm({
               >
                 <div className="grid grid-cols-1 gap-4 border-l-4 border-neutral-400 p-4 sm:grid-cols-2 md:grid-cols-4">
                   {inputs.map((input) => {
-                    return GenerateInput(input, form);
+                    return InputGenerator(input, form);
                   })}
                 </div>
               </div>
@@ -71,78 +71,5 @@ export default function CreateUserForm({
         </Button>
       </form>
     </Form>
-  );
-}
-
-export function GenerateInput(
-  input: Input,
-  form: UseFormReturn<CreateUserClient>,
-) {
-  if (input.inputType === "text")
-    return (
-      <TextInput
-        key={`input-${input.name}`}
-        input={{
-          label: input.label,
-          description: input.description,
-          placeholder: input.placeholder,
-          required: input.required,
-        }}
-        name={input.name}
-        {...form}
-      />
-    );
-  if (input.inputType === "image")
-    return (
-      <ImageInput
-        key={`input-${input.name}`}
-        input={{
-          label: input.label,
-          description: input.description,
-          required: input.required,
-        }}
-        name={input.name}
-        {...form}
-      />
-    );
-  if (input.inputType === "checkbox")
-    return (
-      <CheckboxInput
-        key={`input-${input.name}`}
-        input={{
-          label: input.label,
-          description: input.description,
-          required: input.required,
-        }}
-        name={input.name}
-        {...form}
-      />
-    );
-  if (input.inputType === "locationSearch")
-    return (
-      <LocationSearchInput
-        key={`input-locationSearch`}
-        onSelectedPlaceReady={() => console.log("READY")}
-      />
-    );
-  if (input.inputType === "textarea")
-    return (
-      <TextAreaInput
-        key={`input-${input.name}`}
-        input={{
-          label: input.label,
-          description: input.description,
-          placeholder: input.placeholder,
-          required: input.required,
-        }}
-        name={input.name}
-        {...form}
-      />
-    );
-  return (
-    <LocationSearchInput
-      key={`input-locationSearch`}
-      onSelectedPlaceReady={() => console.log("READY")}
-    />
   );
 }

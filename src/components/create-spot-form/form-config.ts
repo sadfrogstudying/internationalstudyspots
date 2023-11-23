@@ -1,45 +1,9 @@
-import { type createSpotSchemaClient } from "@/schemas";
-import { type z } from "zod";
+import { type CreateSpotFormValues } from "@/schemas";
+import { type Input } from "../form/input-generator";
 
-type CreateSpotFormValues = z.infer<typeof createSpotSchemaClient>;
+type CreateSpotInput = Input<CreateSpotFormValues>;
 
-interface Text {
-  name: keyof CreateSpotFormValues;
-  label: string;
-  description: string;
-  placeholder: string;
-  required: boolean;
-  inputType: "text";
-}
-interface TextArea {
-  name: keyof CreateSpotFormValues;
-  label: string;
-  description: string;
-  placeholder: string;
-  required: boolean;
-  inputType: "textarea";
-}
-interface Image {
-  name: keyof CreateSpotFormValues;
-  label: string;
-  description: string;
-  required: boolean;
-  inputType: "image";
-}
-interface Checkbox {
-  name: keyof CreateSpotFormValues;
-  label: string;
-  description: string;
-  required: boolean;
-  inputType: "checkbox";
-}
-interface LocationSearch {
-  inputType: "locationSearch";
-}
-
-export type Input = Text | TextArea | Image | Checkbox | LocationSearch;
-
-const inputsRequired: Input[] = [
+const inputsRequired: CreateSpotInput[] = [
   {
     name: "name",
     label: "Name",
@@ -78,7 +42,7 @@ const inputsRequired: Input[] = [
     inputType: "checkbox",
   },
 ];
-const inputsLocation: Input[] = [
+const inputsLocation: CreateSpotInput[] = [
   {
     inputType: "locationSearch",
   },
@@ -123,7 +87,7 @@ const inputsLocation: Input[] = [
     inputType: "text",
   },
 ];
-const inputsGeneral: Input[] = [
+const inputsGeneral: CreateSpotInput[] = [
   {
     name: "website",
     label: "Website",
@@ -223,7 +187,7 @@ const inputsGeneral: Input[] = [
 ];
 
 interface Page {
-  inputs: Input[];
+  inputs: CreateSpotInput[];
   category: string;
   hasAccordion: boolean;
 }

@@ -72,3 +72,5 @@ export const createSpotSchemaServer = spotSchema;
 export const createSpotSchemaClient = createSpotSchemaServer.extend({
   images: FileListImagesSchema({ minFiles: 1 }),
 });
+
+export type CreateSpotFormValues = z.infer<typeof createSpotSchemaClient>;

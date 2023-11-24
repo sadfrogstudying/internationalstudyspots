@@ -2,7 +2,6 @@ import "@/styles/globals.css";
 import { cookies } from "next/headers";
 
 import { TRPCReactProvider } from "@/trpc/react";
-import { UserProvider } from "@auth0/nextjs-auth0/client";
 
 import Header from "@/components/header";
 import { FilterController } from "@/components/study-spot-grid/filter-context";
@@ -30,12 +29,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`antialiased ${abel.className}`}>
         <TRPCReactProvider cookies={cookies().toString()}>
-          <UserProvider>
-            <FilterController>
-              <Header />
-              {children}
-            </FilterController>
-          </UserProvider>
+          <FilterController>
+            <Header />
+            {children}
+          </FilterController>
         </TRPCReactProvider>
       </body>
     </html>

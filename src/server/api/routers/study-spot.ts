@@ -1,10 +1,6 @@
 import { object, number, string } from "zod";
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { createSpotSchemaServer, spotBooleanSchema } from "@/schemas";
 import {
   getUnique,
@@ -40,7 +36,7 @@ export const studySpotRouter = createTRPCRouter({
     return spot;
   }),
 
-  create: protectedProcedure.input(createSpotSchemaServer).mutation(() => {
+  create: publicProcedure.input(createSpotSchemaServer).mutation(() => {
     throw new TRPCError({
       code: "NOT_IMPLEMENTED",
       message: "Not implemented",

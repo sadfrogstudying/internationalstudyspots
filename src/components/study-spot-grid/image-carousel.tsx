@@ -1,12 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 import useEmblaCarousel, { type EmblaCarouselType } from "embla-carousel-react";
-import { type Prisma } from "@prisma/client";
 import Image from "next/image";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  images: Prisma.ImageGetPayload<Record<string, never>>[];
+  images: {
+    id: number | string;
+    url: string;
+    width: number;
+    height: number;
+  }[];
   name: string;
   sizes?: string;
 };

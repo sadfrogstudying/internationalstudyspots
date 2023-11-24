@@ -10,14 +10,13 @@ import "leaflet/dist/leaflet.css";
 
 import { cn } from "@/lib/utils";
 import MapInfoPanel from "./map-info-panel";
-import { type Prisma } from "@prisma/client";
 
 export type MarkerData = {
   index: number;
   name: string;
   address: string;
   latlng: [number, number];
-  images: Prisma.ImageGetPayload<Record<string, never>>[];
+  images: { id: number | string; url: string; width: number; height: number }[];
   slug: string;
 };
 

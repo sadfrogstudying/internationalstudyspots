@@ -24,7 +24,7 @@ export default function Account() {
 
   if (!data)
     return (
-      <div>
+      <div className="space-y-4">
         {!showPreview && (
           <>
             <CreateUserForm

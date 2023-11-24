@@ -1,5 +1,4 @@
-import { api } from "@/trpc/react";
-import { Skeleton, SkeletonText } from "../ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 import Image from "next/image";
 import { AvatarIcon } from "@radix-ui/react-icons";
 import { Fragment } from "react";
@@ -23,13 +22,6 @@ export default function AccountDetails() {
 }
 
 function Left() {
-  const { data } = api.user.currentBySession.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-    retry: 2,
-  });
-
-  const { username, profilePicture } = data ?? {};
-
   const generalInfo = [
     { label: "Member Since", value: "3/1/2010" },
     { label: "Last Login", value: "3/1/2010" },
@@ -43,38 +35,16 @@ function Left() {
   return (
     <>
       <div className="relative">
-        <h2 className="text-xl font-bold">
-          {username ?? <SkeletonText className="w-36" />}
-        </h2>
-        {username ? (
-          <ul>
-            <li className="inline">Indie / </li>
-            <li className="inline">Pop / </li>
-            <li className="inline">Rock </li>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio
-            molestiae repellat consequatur earum id odio eum quis quibusdam
-            reprehenderit, molestias expedita autem impedit ab quidem alias
-            commodi. Eligendi, itaque explicabo!
-          </ul>
-        ) : (
-          <ul>
-            <SkeletonText className="w-64" />
-          </ul>
-        )}
+        <h2 className="text-xl font-bold">Pei Pei</h2>
+        <ul>
+          <li className="inline">Indie / </li>
+          <li className="inline">Pop / </li>
+          <li className="inline">Rock </li>
+        </ul>
       </div>
       <section className="relative flex flex-wrap items-center gap-4 rounded">
         <div>
-          {profilePicture ? (
-            <Image
-              src={profilePicture?.url}
-              width={profilePicture?.width}
-              height={profilePicture?.height}
-              alt={profilePicture?.name ?? "Profile Picture"}
-              className="aspect-square w-36 overflow-hidden object-cover"
-            />
-          ) : (
-            <Skeleton className="aspect-square w-36" />
-          )}
+          <Skeleton className="aspect-square w-36" />
         </div>
 
         <div className="flex flex-col">

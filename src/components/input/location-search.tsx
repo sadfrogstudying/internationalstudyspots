@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ChevronsUpDown, MapPinIcon } from "lucide-react";
 
 import Script from "next/script";
-import { env } from "@/env.mjs";
+import { env } from "@/env";
 import useGooglePlaces from "@/hooks/use-google-places";
 import Image from "next/image";
 

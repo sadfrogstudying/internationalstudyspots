@@ -8,7 +8,11 @@ import MobileMenu from "./mobile-menu";
 export default function Navigation() {
   return (
     <NavigationLayout>
-      <Button variant="success" className="pointer-events-auto text-right">
+      <Button
+        variant="success"
+        className="pointer-events-auto text-right"
+        asChild
+      >
         <Link href="/create" className="pointer-events-auto">
           Add Spot
         </Link>

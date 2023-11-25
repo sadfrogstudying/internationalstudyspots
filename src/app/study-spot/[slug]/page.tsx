@@ -9,7 +9,11 @@ import {
   // type ResolvingMetadata
 } from "next";
 
-export const dynamicParams = false;
+/**
+ * true: Dynamic segments not included in generateStaticParams are generated on demand.
+ * false: Dynamic segments not included in generateStaticParams will return a 404.
+ */
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
   const slugs = await getAllSlugs(db);

@@ -8,6 +8,9 @@ import MobileMenu from "./mobile-menu";
 export default function Navigation() {
   return (
     <NavigationLayout>
+      <Link href="/" className="pointer-events-auto flex flex-wrap gap-x-2">
+        Map
+      </Link>
       <Button
         variant="success"
         className="pointer-events-auto text-right"

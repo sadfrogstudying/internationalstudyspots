@@ -1,6 +1,6 @@
-import { MarkerData } from "@/components/map";
+import {type MarkerData } from "@/components/map";
 import { api } from "@/trpc/server";
-import { Metadata } from "next";
+import { type Metadata } from "next";
 import LazyMap from "@/components/map/lazy-map";
 
 /**

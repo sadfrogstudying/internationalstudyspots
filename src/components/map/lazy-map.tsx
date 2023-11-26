@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { ComponentProps } from "react";
+import { type ComponentProps } from "react";
 
 const Map = dynamic(() => import("@/components/map"), { ssr: false });
 

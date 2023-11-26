@@ -13,16 +13,17 @@ const CreateUserForm = dynamic(() => import("@/components/create-user-form"), {
 });
 
 export default function Account() {
-  const { data } = api.user.currentBySession.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-    retry: 2,
-  });
-
-  const { mutate, isLoading, error } = api.user.create.useMutation();
+  const userExists = false;
+  const {
+    mutate,
+    isLoading,
+    error,
+    data: createSuccess,
+  } = api.user.create.useMutation();
 
   const [showPreview, setShowPreview] = useState(false);
 
-  if (!data)
+  if (!userExists)
     return (
       <div className="space-y-4">
         {!showPreview && (
@@ -43,7 +44,7 @@ export default function Account() {
             <div className="mt-8">
               {isLoading && <p>Submitting...</p>}
 
-              {data && <p className="text-green-500">Submitted!</p>}
+              {createSuccess && <p className="text-green-500">Submitted!</p>}
 
               {!!error?.data?.zodError && (
                 <ServerZodError

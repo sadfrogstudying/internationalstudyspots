@@ -17,5 +17,7 @@ export const userRouter = createTRPCRouter({
       code: "NOT_IMPLEMENTED",
       message: "Not implemented",
     });
+
+    return true;
   }),
 });

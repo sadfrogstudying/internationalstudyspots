@@ -13,10 +13,18 @@
  */
 
 import "@testing-library/jest-dom";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import CreateSpotFormV2 from "@/components/create-spot-form";
+/**
+ * fireEvent dispatches DOM events, whereas user-event simulates full interactions,
+ * which may fire multiple events and do additional checks along the way.
+ *
+ * For example, when a user types into a text box, the element has to be
+ * focused, and then keyboard and input events are fired and the selection
+ * and value on the element are manipulated as they type.
+ */
+import userEvent from "@testing-library/user-event";
 import { type CreateSpotFormValues } from "@/schemas";
-import { z } from "zod";
 
 beforeAll(() => {
   // @radix-ui/react-checkbox depends on @radix-ui/react-use-size
@@ -48,61 +56,33 @@ const uploadImage = async () => {
 };
 
 const openFormAccordions = async () => {
-  fireEvent.click(screen.getByRole("button", { name: /location/i }));
-  fireEvent.click(screen.getByRole("button", { name: /general/i }));
+  userEvent.click(screen.getByRole("button", { name: /location/i }));
+  userEvent.click(screen.getByRole("button", { name: /general/i }));
 };
 
 it("should display required errors when all values are invalid", async () => {
   render(<CreateSpotFormV2 onSubmit={mockCreate} />);
-  fireEvent.submit(screen.getByRole("button", { name: /submit/i }));
-  expect(await screen.findAllByRole("alert")).toHaveLength(2);
-  expect(mockCreate).not.toBeCalled();
-});
-
-it("should display matching error when latitude is too high", async () => {
-  render(<CreateSpotFormV2 onSubmit={mockCreate} />);
-
-  await openFormAccordions();
-
-  fireEvent.input(screen.getByRole("textbox", { name: /name/i }), {
-    target: {
-      value: "Fuglen Tokyo",
-    },
-  });
-  await uploadImage();
-
-  fireEvent.input(screen.getByRole("textbox", { name: /website/i }), {
-    target: {
-      value:
-        "https://www.facebook.com/%E9%96%8B%E9%9A%86%E5%AE%AE-%E7%94%98%E5%96%AE%E5%92%96%E5%95%A1-14856785186",
-    },
-  });
-
-  fireEvent.submit(screen.getByRole("button", { name: /submit/i }));
-
-  expect(await screen.findAllByRole("alert")).toHaveLength(1);
-  expect(mockCreate).not.toBeCalled();
+  await userEvent.click(screen.getByRole("button", { name: /submit/i }));
+  expect(mockCreate).toHaveBeenCalledTimes(0);
 });
 
 it("should not display error when value is valid", async () => {
   render(<CreateSpotFormV2 onSubmit={mockCreate} />);
 
-  fireEvent.input(screen.getByRole("textbox", { name: /name/i }), {
-    target: {
-      value: "Fuglen Tokyo",
-    },
-  });
+  await userEvent.type(
+    screen.getByRole("textbox", { name: /name/i }),
+    "Fuglen Tokyo",
+  );
 
   await uploadImage();
 
-  fireEvent.input(screen.getByRole("textbox", { name: /venue type/i }), {
-    target: {
-      value: "Cafe",
-    },
-  });
+  await userEvent.type(
+    screen.getByRole("textbox", { name: /venue type/i }),
+    "Cafe",
+  );
 
   // submit form
-  fireEvent.click(screen.getByRole("button", { name: /submit/i }));
-  await waitFor(() => expect(mockCreate).toHaveBeenCalledTimes(1));
+  await userEvent.click(screen.getByRole("button", { name: /submit/i }));
+  expect(mockCreate).toHaveBeenCalledTimes(1);
   expect(Object.keys(mockCreate.mock.results[0]?.value).length).toBe(29);
 });

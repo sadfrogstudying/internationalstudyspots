@@ -47,7 +47,6 @@ export default function TextAreaInput<
           </FormLabel>
           <FormControl>
             <Textarea
-              role="textbox"
               placeholder={input.placeholder}
               {...field}
               required={input.required}

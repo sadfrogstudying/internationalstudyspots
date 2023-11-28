@@ -47,7 +47,7 @@ export default function TextInput<
           </FormLabel>
           <FormControl>
             <Input
-              role="textbox"
+              type="text"
               placeholder={input.placeholder}
               {...field}
               required={input.required}

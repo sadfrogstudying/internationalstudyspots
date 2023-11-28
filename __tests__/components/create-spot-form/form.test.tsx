@@ -26,6 +26,24 @@ import CreateSpotFormV2 from "@/components/create-spot-form";
 import userEvent from "@testing-library/user-event";
 import { type CreateSpotFormValues } from "@/schemas";
 
+/**
+ * When users interact in the browser by e.g. pressing keyboard
+ * keys, they interact with a UI layer
+ *
+ * The UI layer and trusted events are not programmatically available.
+ *
+ * Therefore user-event has to apply workarounds and mock the UI layer
+ * to simulate user interactions like they would happen in the browser.
+ *
+ * https://testing-library.com/docs/user-event/setup/
+ */
+function setup(jsx: React.ReactElement) {
+  return {
+    user: userEvent.setup(),
+    ...render(jsx),
+  };
+}
+
 beforeAll(() => {
   // @radix-ui/react-checkbox depends on @radix-ui/react-use-size
   // which uses ResizeObserver which is not available in JSDOM
@@ -55,34 +73,31 @@ const uploadImage = async () => {
   expect(await screen.findByText(file.name)).toBeInTheDocument();
 };
 
-const openFormAccordions = async () => {
-  userEvent.click(screen.getByRole("button", { name: /location/i }));
-  userEvent.click(screen.getByRole("button", { name: /general/i }));
-};
-
-it("should display required errors when all values are invalid", async () => {
-  render(<CreateSpotFormV2 onSubmit={mockCreate} />);
-  await userEvent.click(screen.getByRole("button", { name: /submit/i }));
-  expect(mockCreate).toHaveBeenCalledTimes(0);
-});
-
-it("should not display error when value is valid", async () => {
-  render(<CreateSpotFormV2 onSubmit={mockCreate} />);
-
-  await userEvent.type(
+it("should display single error message if image field is incomplete", async () => {
+  const { user } = setup(<CreateSpotFormV2 onSubmit={mockCreate} />);
+  await user.type(
     screen.getByRole("textbox", { name: /name/i }),
     "Fuglen Tokyo",
   );
+  await user.type(screen.getByRole("textbox", { name: /venue type/i }), "Cafe");
+  await user.click(screen.getByRole("button", { name: /submit/i }));
 
+  expect(mockCreate).toHaveBeenCalledTimes(0);
+  expect(await screen.findAllByRole("alert")).toHaveLength(1);
+});
+
+it("should not display error when value is valid", async () => {
+  const { user } = setup(<CreateSpotFormV2 onSubmit={mockCreate} />);
+
+  await user.type(
+    screen.getByRole("textbox", { name: /name/i }),
+    "Fuglen Tokyo",
+  );
+  await user.type(screen.getByRole("textbox", { name: /venue type/i }), "Cafe");
   await uploadImage();
 
-  await userEvent.type(
-    screen.getByRole("textbox", { name: /venue type/i }),
-    "Cafe",
-  );
-
   // submit form
-  await userEvent.click(screen.getByRole("button", { name: /submit/i }));
+  await user.click(screen.getByRole("button", { name: /submit/i }));
   expect(mockCreate).toHaveBeenCalledTimes(1);
   expect(Object.keys(mockCreate.mock.results[0]?.value).length).toBe(29);
 });

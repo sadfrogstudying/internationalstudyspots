@@ -1,5 +1,5 @@
 "use client";
-import Section from "@/components/account/section";
+import Section from "@/components/account-details/section";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import Image from "next/image";

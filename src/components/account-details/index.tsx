@@ -1,10 +1,14 @@
+"use client";
+
+import { useParams } from "next/navigation";
+
 import { Skeleton } from "../ui/skeleton";
 import Image from "next/image";
 import { AvatarIcon } from "@radix-ui/react-icons";
 import { Fragment } from "react";
-import { type VariantProps, cva } from "class-variance-authority";
-import { cn } from "@/lib/utils";
 import StudySpotGrid from "../study-spot-grid";
+import Section from "./section";
+import { api } from "@/trpc/react";
 
 export default function AccountDetails() {
   return (
@@ -32,10 +36,20 @@ function Left() {
     { label: "Interests", value: "House, Electronic and picnics." },
   ];
 
+  const params = useParams<{ username: string }>();
+
+  const { data, isLoading } = api.user.get.useQuery(params.username, {
+    refetchOnWindowFocus: false,
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+
+  if (!data) return <div>No data for this user!</div>;
+
   return (
     <>
       <div className="relative">
-        <h2 className="text-xl font-bold">Pei Pei</h2>
+        <h2 className="text-xl font-bold">{data?.name}</h2>
         <ul>
           <li className="inline">Indie / </li>
           <li className="inline">Pop / </li>
@@ -125,6 +139,16 @@ function Left() {
 }
 
 function Right() {
+  const params = useParams<{ username: string }>();
+
+  const { data, isLoading } = api.user.get.useQuery(params.username, {
+    refetchOnWindowFocus: false,
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+
+  if (!data) return <div>No data for this user!</div>;
+
   return (
     <>
       <div className="relative h-48 w-full border bg-neutral-100">
@@ -171,56 +195,5 @@ function Right() {
         </div>
       </Section>
     </>
-  );
-}
-
-const sectionVariants = cva("", {
-  variants: {
-    variant: {
-      default: "border border-blue-400",
-      alternate: "",
-      ghost: "",
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-  },
-});
-const headerVariants = cva("px-6 text-base font-bold text-primary-foreground", {
-  variants: {
-    variant: {
-      default: "bg-blue-400",
-      alternate: "bg-orange-300 text-orange-500",
-      ghost: "sr-only",
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-  },
-});
-const contentVariants = cva("", {
-  variants: {
-    variant: {
-      default: "p-2",
-      alternate: "p-2",
-      ghost: "",
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-  },
-});
-
-interface SectionProps extends VariantProps<typeof sectionVariants> {
-  title: string;
-  children: React.ReactNode;
-}
-
-function Section({ children, title, variant }: SectionProps) {
-  return (
-    <section className={cn(sectionVariants({ variant }))}>
-      <h3 className={cn(headerVariants({ variant }))}>{title}</h3>
-      <div className={cn(contentVariants({ variant }))}>{children}</div>
-    </section>
   );
 }

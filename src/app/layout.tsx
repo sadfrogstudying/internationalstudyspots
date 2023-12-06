@@ -6,7 +6,10 @@ import { TRPCReactProvider } from "@/trpc/react";
 import Header from "@/components/header";
 import { FilterController } from "@/components/study-spot-grid/filter-context";
 
-import { Abel } from "next/font/google";
+import {
+  Abel,
+  // Inter
+} from "next/font/google";
 
 export const metadata = {
   title: "International Study Spots",
@@ -19,6 +22,9 @@ const abel = Abel({
   subsets: ["latin"],
   weight: ["400"],
 });
+// const inter = Inter({
+//   subsets: ["latin"],
+// });
 
 export default function RootLayout({
   children,
@@ -26,8 +32,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`antialiased ${abel.className}`}>
+    <html lang="en" className="h-full">
+      <body className={`min-h-full antialiased ${abel.className}`}>
         <TRPCReactProvider cookies={cookies().toString()}>
           <FilterController>
             <Header />

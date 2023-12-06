@@ -1,15 +1,23 @@
-import { type CreateUserClient } from "@/schemas/user";
+import { type UpdateUserClient } from "@/schemas/user";
 import { type Input } from "../form/input-generator";
 
-type CreateUserInput = Input<CreateUserClient>;
+type UpdateUserInput = Input<UpdateUserClient>;
 
-const inputsRequired: CreateUserInput[] = [
+const inputsRequired: UpdateUserInput[] = [
   {
     name: "username",
     label: "Username",
     description: "What is the name of this spot?",
-    placeholder: "JohnDoe",
+    placeholder: "WultuhWhite",
     required: true,
+    inputType: "text",
+  },
+  {
+    name: "name",
+    label: "Name",
+    description: "What is your name?",
+    placeholder: "Walter White",
+    required: false,
     inputType: "text",
   },
   {
@@ -53,7 +61,7 @@ const inputsRequired: CreateUserInput[] = [
     inputType: "text",
   },
   {
-    name: "profilePicture",
+    name: "profileImage",
     label: "Profile Picture",
     description: "Your profile picture.",
     required: false,
@@ -62,7 +70,7 @@ const inputsRequired: CreateUserInput[] = [
 ];
 
 interface Page {
-  inputs: CreateUserInput[];
+  inputs: UpdateUserInput[];
   category: string;
   hasAccordion: boolean;
 }

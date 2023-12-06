@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 import { updateUserServerSchema } from "@/schemas/user";
 import { TRPCError } from "@trpc/server";
 
@@ -12,6 +16,19 @@ export const userRouter = createTRPCRouter({
       },
       where: {
         id: ctx.session.user.id,
+      },
+    });
+
+    return user;
+  }),
+
+  get: publicProcedure.input(z.string()).query(({ input, ctx }) => {
+    const user = ctx.db.user.findUnique({
+      include: {
+        profileImage: true,
+      },
+      where: {
+        username: input,
       },
     });
 

@@ -54,7 +54,8 @@ export const imageSchema = z.object({
   images: z
     .string()
     .array()
-    .min(1, { message: "At least one image is required." }),
+    .min(1, { message: "At least one image is required." })
+    .max(8, { message: "Maximum of 8 images." }),
 });
 
 export const spotNumberSchema = z.object({

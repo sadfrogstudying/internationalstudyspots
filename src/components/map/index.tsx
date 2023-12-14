@@ -72,7 +72,7 @@ const Map = ({
   return (
     <div
       className={cn(
-        "absolute left-0 top-0 -z-10 mb-4 h-[30rem] w-full overflow-hidden rounded-md",
+        "absolute left-0 top-0 z-10 mb-4 h-[30rem] w-full overflow-hidden rounded-md",
         className,
       )}
     >

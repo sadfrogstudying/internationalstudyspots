@@ -48,44 +48,39 @@ export default function StudySpotGrid() {
   const noResults = data?.pages.length === 1 && data?.pages[0]?.length === 0;
 
   return (
-    <React.Fragment>
-      <div className="xs:grid-cols-2 relative grid w-full animate-fade-in gap-4 duration-1000 lg:grid-cols-3 lg:gap-y-8 xl:grid-cols-4">
-        {data?.pages.map((page, i) => (
-          <React.Fragment key={`page-${i}`}>
-            {page.map((studySpot, i) => {
-              return (
-                <GridItem
-                  studySpot={studySpot}
-                  i={i}
-                  key={`study-spot-${studySpot.id}`}
-                />
-              );
-            })}
-          </React.Fragment>
-        ))}
+    <div className="relative grid w-full animate-fade-in gap-4 duration-1000 xs:grid-cols-2 lg:grid-cols-3 lg:gap-y-8 xl:grid-cols-4">
+      {data?.pages.map((page, i) => (
+        <React.Fragment key={`page-${i}`}>
+          {page.map((studySpot, i) => {
+            return (
+              <GridItem
+                studySpot={studySpot}
+                i={i}
+                key={`study-spot-${studySpot.id}`}
+              />
+            );
+          })}
+        </React.Fragment>
+      ))}
 
-        {noResults && (
-          <div className="col-span-full">
-            <h2 className="text-center text-2xl font-bold">
-              No results found for your chosen filters
-            </h2>
-          </div>
-        )}
+      {noResults && (
+        <div className="col-span-full">
+          <h2 className="text-center text-2xl font-bold">
+            No results found for your chosen filters
+          </h2>
+        </div>
+      )}
 
-        {isFetching &&
-          !noNextPage &&
-          Array.from(Array(PAGE_SIZE).keys()).map((x) => (
-            <SkeletonGridItem key={`loading-skele-${x}`} />
-          ))}
+      {isFetching && !noNextPage && <SkeletonGridItems />}
+      {!isFetching && !noNextPage && <SkeletonGridItems />}
 
-        {!isFetching &&
-          !noNextPage &&
-          Array.from(Array(Math.ceil(PAGE_SIZE)).keys()).map((x) => (
-            <SkeletonGridItem key={`skele-${x}`} />
-          ))}
-
-        <div ref={ref} />
-      </div>
-    </React.Fragment>
+      <div ref={ref} />
+    </div>
   );
+}
+
+function SkeletonGridItems() {
+  return Array.from(Array(PAGE_SIZE).keys()).map((x) => (
+    <SkeletonGridItem key={`skele-${x}`} />
+  ));
 }

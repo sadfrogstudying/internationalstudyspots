@@ -2,7 +2,7 @@
 
 import { api } from "@/trpc/react";
 import dynamic from "next/dynamic";
-import { typeToFlattenedError } from "zod";
+import { type typeToFlattenedError } from "zod";
 
 const EditUserForm = dynamic(() => import("@/components/edit-user-form"), {
   ssr: false,
@@ -18,7 +18,7 @@ export default function EditUser() {
   } = api.user.update.useMutation();
 
   return (
-    <div className="max-w-5xl space-y-4 border p-4">
+    <div className="space-y-4 border p-4">
       <EditUserForm
         onSubmit={(formValues) => {
           const imageUrl = formValues.profileImage.map(

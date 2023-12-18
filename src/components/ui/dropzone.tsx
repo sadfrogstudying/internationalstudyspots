@@ -1,18 +1,22 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { useDropzone, type FileRejection } from "react-dropzone";
 import { UploadIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 type FileWithPreview = File & { preview: string };
 
 interface DivProps {
   onChange: (files: File[]) => void;
+  maxFiles?: number;
   /** Aria label for accessibility and tests */
   name: string;
 }
 
 const Dropzone = React.forwardRef<HTMLDivElement, DivProps>(
-  ({ onChange, name }, ref) => {
+  ({ onChange, maxFiles = 1, name }, ref) => {
     const [files, setFiles] = useState<FileWithPreview[]>([]);
 
     const {
@@ -23,6 +27,7 @@ const Dropzone = React.forwardRef<HTMLDivElement, DivProps>(
       isDragReject,
       open,
     } = useDropzone({
+      maxFiles,
       accept: {
         "image/*": [],
       },
@@ -50,13 +55,15 @@ const Dropzone = React.forwardRef<HTMLDivElement, DivProps>(
 
     const thumbs = files.map((file) => (
       <div key={file.name}>
-        <img
+        <Image
           src={file.preview}
           alt="Preview of image you want to upload"
           // Revoke data uri after image is loaded
           onLoad={() => {
             URL.revokeObjectURL(file.preview);
           }}
+          width={300}
+          height={300}
         />
         <div className="hidden">{file.name}</div>
       </div>

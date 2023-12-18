@@ -12,6 +12,9 @@ const config = {
       {
         hostname: "dh0bdxvf05sxo.cloudfront.net",
       },
+      {
+        hostname: "sadfrogs-nextjs.vercel.app",
+      },
     ],
   },
 };

@@ -30,9 +30,7 @@ const updateUserClientSchema = payload.extend({
 // const getUserClientSchema = payload.required();
 // const deleteUserClientSchema = z.void();
 
-type UpdateUserClient = z.infer<typeof updateUserClientSchema> & {
-  profileImage: (File & { preview?: string })[];
-};
+type UpdateUserClient = z.infer<typeof updateUserClientSchema>;
 // type UpdateUserClient = z.infer<typeof updateUserClientSchema>;
 // type GetUserClient = z.infer<typeof getUserClientSchema>;
 // type DeleteUserClient = z.infer<typeof deleteUserClientSchema>;

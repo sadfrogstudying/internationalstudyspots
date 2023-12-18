@@ -11,7 +11,7 @@ import {
   type FieldPath,
   type FieldValues,
 } from "react-hook-form";
-import Dropzone from "@/components/ui/dropzone";
+import Dropzone, { type DropzoneProps } from "@/components/ui/dropzone";
 
 interface Input {
   label: string;
@@ -19,15 +19,23 @@ interface Input {
   required: boolean;
 }
 
+type DropzonePropsForwarded = Omit<DropzoneProps, "onChange">;
+
 export default function ImageInput<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
   input,
+  dragLabel,
+  className,
+  labelClassName,
+  overlayPreview,
+  maxFiles,
+  defaultImage,
   ...props
 }: Omit<ControllerProps<TFieldValues, TName>, "render"> & {
   input: Input;
-}) {
+} & DropzonePropsForwarded) {
   return (
     <FormField
       key={`input-${props.name}`}
@@ -49,6 +57,12 @@ export default function ImageInput<
               ref={field.ref}
               onChange={(files) => field.onChange(files)}
               name={field.name}
+              dragLabel={dragLabel}
+              className={className}
+              labelClassName={labelClassName}
+              maxFiles={maxFiles}
+              overlayPreview={overlayPreview}
+              defaultImage={defaultImage}
             />
           </FormControl>
           <FormDescription>{input.description}</FormDescription>

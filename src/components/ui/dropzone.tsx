@@ -1,22 +1,51 @@
 "use client";
 
+/**
+ * Allows flexible styling of dropzone, the overlayPreview and defaultImage props
+ * are used for typical "profile image" uploaders.
+ */
+
 import React, { useEffect, useState } from "react";
 import { useDropzone, type FileRejection } from "react-dropzone";
 import { UploadIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
+/** Preview set in callback of Dropzone's onDrop */
 type FileWithPreview = File & { preview: string };
 
-interface DivProps {
+export interface DropzoneProps {
   onChange: (files: File[]) => void;
-  maxFiles?: number;
   /** Aria label for accessibility and tests */
   name: string;
+  /** The text inside the dropzone, defaults to "Drag or click to select image." */
+  dragLabel?: string;
+  /** Style the dropzone root container */
+  className?: string;
+  /** Style the dropzone label */
+  labelClassName?: string;
+  /** Defaults to 1 file */
+  maxFiles?: number;
+  /** Overlay the preview image inside the input. Only works with 1 file, defaults to false */
+  overlayPreview?: boolean;
+  /** Set a default image with URL. Only works with 1 file */
+  defaultImage?: string;
 }
 
-const Dropzone = React.forwardRef<HTMLDivElement, DivProps>(
-  ({ onChange, maxFiles = 1, name }, ref) => {
+const Dropzone = React.forwardRef<HTMLDivElement, DropzoneProps>(
+  (
+    {
+      onChange,
+      name,
+      dragLabel = "Drag or click to select image.",
+      className,
+      labelClassName,
+      maxFiles = 1,
+      overlayPreview = false,
+      defaultImage,
+    },
+    ref,
+  ) => {
     const [files, setFiles] = useState<FileWithPreview[]>([]);
 
     const {
@@ -28,8 +57,11 @@ const Dropzone = React.forwardRef<HTMLDivElement, DivProps>(
       open,
     } = useDropzone({
       maxFiles,
+      maxSize: 30000000, // 10mb
       accept: {
-        "image/*": [],
+        "image/png": [".png"],
+        "image/jpeg": [".jpeg", ".jpg"],
+        "image/webp": [".webp"],
       },
       onDropAccepted(files) {
         onChange(files);
@@ -53,24 +85,8 @@ const Dropzone = React.forwardRef<HTMLDivElement, DivProps>(
       return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
     }, [files]);
 
-    const thumbs = files.map((file) => (
-      <div key={file.name}>
-        <Image
-          src={file.preview}
-          alt="Preview of image you want to upload"
-          // Revoke data uri after image is loaded
-          onLoad={() => {
-            URL.revokeObjectURL(file.preview);
-          }}
-          width={300}
-          height={300}
-        />
-        <div className="hidden">{file.name}</div>
-      </div>
-    ));
-
-    const rejectStyle = isDragReject ? "bg-red-300" : "";
-    const acceptStyle = isDragAccept ? "bg-green-300" : "";
+    const rejectStyle = isDragReject ? "ring-red-500" : "";
+    const acceptStyle = isDragAccept ? "ring-green-500" : "";
 
     function getDragText() {
       if (isDragAccept) {
@@ -78,9 +94,23 @@ const Dropzone = React.forwardRef<HTMLDivElement, DivProps>(
       } else if (isDragReject) {
         return "Some files will be rejected.";
       } else {
-        return "Drag or click to select files.";
+        return dragLabel;
       }
     }
+
+    if ((overlayPreview && maxFiles > 1) || (defaultImage && maxFiles > 1)) {
+      throw new Error(
+        "Please set maxFiles to 1 to use overlayPreview and defaultImage props.",
+      );
+    }
+
+    const preview = (
+      <Preview
+        files={files}
+        overlayPreview={overlayPreview}
+        defaultImage={defaultImage}
+      />
+    );
 
     return (
       <>
@@ -88,7 +118,9 @@ const Dropzone = React.forwardRef<HTMLDivElement, DivProps>(
           data-testid="dropzone"
           {...getRootProps({ "aria-label": name })}
           className={cn(
-            "flex h-9 w-full items-center overflow-hidden rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+            "relative flex h-9 w-full items-center overflow-hidden rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+            "ring ring-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+            className,
             acceptStyle,
             rejectStyle,
           )}
@@ -103,13 +135,23 @@ const Dropzone = React.forwardRef<HTMLDivElement, DivProps>(
           role="button"
         >
           <input {...getInputProps()} />
-          <div className="flex shrink-0 select-none items-center gap-2">
-            <UploadIcon /> {getDragText()}
+          <div
+            className={cn(
+              "pointer-events-none flex shrink-0 items-center gap-2",
+              labelClassName,
+            )}
+          >
+            <UploadIcon /> <div>{getDragText()}</div>
           </div>
+
+          {overlayPreview && preview}
         </div>
 
+        {!overlayPreview && (
+          <div className="grid grid-cols-4 gap-2">{preview}</div>
+        )}
+
         <FileRejectionError fileRejections={fileRejections} />
-        <div className="grid grid-cols-4 gap-2">{thumbs}</div>
       </>
     );
   },
@@ -117,6 +159,53 @@ const Dropzone = React.forwardRef<HTMLDivElement, DivProps>(
 
 Dropzone.displayName = "Dropzone";
 export default Dropzone;
+
+/** Return dropzone files, else fallback, else null. */
+const Preview = ({
+  files,
+  overlayPreview,
+  defaultImage,
+}: {
+  files: FileWithPreview[];
+  overlayPreview: boolean;
+  defaultImage?: string;
+}) => {
+  if (files.length)
+    return files.map((file) => (
+      <Image
+        src={file.preview}
+        alt="Preview of image you want to upload"
+        // Prevent memory leaks by revoking data uri after loaded
+        onLoad={() => {
+          URL.revokeObjectURL(file.preview);
+        }}
+        width={300}
+        height={300}
+        key={file.name}
+        className={cn(
+          overlayPreview &&
+            "pointer-events-none absolute left-0 top-0 h-full w-full object-cover",
+        )}
+      />
+    ));
+
+  if (defaultImage)
+    return (
+      <Image
+        src={defaultImage}
+        alt="Preview of image you want to upload"
+        width={300}
+        height={300}
+        key={defaultImage}
+        className={cn(
+          overlayPreview &&
+            "pointer-events-none absolute left-0 top-0 h-full w-full object-cover",
+        )}
+      />
+    );
+
+  return null;
+};
 
 const FileRejectionError = ({
   fileRejections,

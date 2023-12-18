@@ -21,6 +21,8 @@ export default function EditUser() {
     <div className="space-y-4 border p-4">
       <EditUserForm
         onSubmit={(formValues) => {
+          throw new Error("Not implemented");
+
           const imageUrl = formValues.profileImage.map(
             (image) => `https://picsum.photos/seed/${image.name}/200/300`,
           )[0];

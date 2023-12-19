@@ -45,6 +45,35 @@ export const userRouter = createTRPCRouter({
     return user;
   }),
 
+  validateUpdateInputs: protectedProcedure
+    .input(updateUserServerSchema)
+    .mutation(async ({ ctx, input }) => {
+      const id = ctx.session.user.id;
+      const currentUser = await ctx.db.user.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      if (!currentUser) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      if (currentUser.username !== input.username) {
+        const user = await ctx.db.user.findUnique({
+          where: {
+            username: input.username,
+          },
+        });
+
+        if (user)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Username already exists",
+          });
+      }
+
+      return "Success";
+    }),
+
   update: protectedProcedure
     .input(updateUserServerSchema)
     .mutation(async ({ input, ctx }) => {

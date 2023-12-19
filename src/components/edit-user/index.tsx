@@ -2,7 +2,8 @@
 
 import { api } from "@/trpc/react";
 import dynamic from "next/dynamic";
-import { type typeToFlattenedError } from "zod";
+
+import ServerZodError from "@/components/edit-user/server-zod-error";
 
 const EditUserForm = dynamic(() => import("@/components/edit-user-form"), {
   ssr: false,
@@ -13,15 +14,26 @@ export default function EditUser() {
   const {
     mutate,
     isLoading,
-    error,
+    error: updateError,
     data: createSuccess,
   } = api.user.update.useMutation();
+
+  const {
+    mutate: validateUpdateInputs,
+    error: validateError,
+    isLoading: validateLoading,
+  } = api.user.validateUpdateInputs.useMutation();
 
   return (
     <div className="space-y-4 border p-4">
       <EditUserForm
         onSubmit={(formValues) => {
-          throw new Error("Not implemented");
+          validateUpdateInputs({
+            ...formValues,
+            profileImage: undefined,
+          });
+
+          throw "Not implemented";
 
           const imageUrl = formValues.profileImage.map(
             (image) => `https://picsum.photos/seed/${image.name}/200/300`,
@@ -33,60 +45,33 @@ export default function EditUser() {
           });
         }}
       />
+
       {isLoading && <p>Submitting...</p>}
       {createSuccess && <p className="text-green-500">Submitted!</p>}
-      {!!error?.data?.zodError && (
-        <ServerZodError errors={parseZodClientError(error?.data?.zodError)} />
+
+      {!!updateError?.data?.zodError && (
+        <ServerZodError zodError={updateError?.data?.zodError} />
       )}
-      {error && !error?.data?.zodError && (
-        <div className="text-destructive" role="alert">
-          <div className="font-bold">
-            An error occured on the server, please try again.
-          </div>
-          <p className="text-[0.8rem]">Message: {error.message}</p>
-        </div>
+      {updateError && !updateError?.data?.zodError && (
+        <ErrorMessage message={updateError.message} />
+      )}
+      {!!validateError?.data?.zodError && (
+        <ServerZodError zodError={validateError?.data?.zodError} />
+      )}
+      {validateError && !validateError?.data?.zodError && (
+        <ErrorMessage message={validateError.message} />
       )}
     </div>
   );
 }
 
-const parseZodClientError = (
-  zodError:
-    | typeToFlattenedError<string[] | undefined, string>
-    | null
-    | undefined,
-) => {
-  const fieldErrors = zodError?.fieldErrors;
-  const fieldErrorsEntries = fieldErrors ? Object.entries(fieldErrors) : [];
-  const errorMessages = fieldErrorsEntries.map(([key, value]) => [
-    key,
-    value?.[0] ? value[0] : "",
-  ]);
-
-  return errorMessages;
-};
-
-function ServerZodError({ errors }: { errors: string[][] }) {
+function ErrorMessage({ message }: { message: string }) {
   return (
-    <>
-      <div>
-        {errors.length !== 0 && (
-          <strong className="text-[0.8rem] text-destructive">
-            Server validation failed:
-          </strong>
-        )}
-        <ul className="list-disc pl-4">
-          {errors.map((x) => (
-            <li
-              key={x[0]}
-              className="text-[0.8rem] font-medium text-destructive"
-              role="alert"
-            >
-              <strong className="capitalize">{x[0]}</strong>: {x[1]}
-            </li>
-          ))}
-        </ul>
+    <div className="text-destructive" role="alert">
+      <div className="font-bold">
+        An error occured on the server, please try again.
       </div>
-    </>
+      <p className="text-[0.8rem]">Message: {message}</p>
+    </div>
   );
 }

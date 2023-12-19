@@ -1,4 +1,4 @@
-import { typeToFlattenedError } from "zod";
+import { type typeToFlattenedError } from "zod";
 
 const parseZodClientError = (
   zodError:

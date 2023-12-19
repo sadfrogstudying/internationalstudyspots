@@ -1,19 +1,20 @@
 "use client";
 
-import { type UpdateUserClient, updateUserClientSchema } from "@/schemas/user";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Form } from "../ui/form";
-import { Button } from "../ui/button";
-import { api } from "@/trpc/react";
-import TextInput from "../input/text-input";
-import ImageInput from "../input/image-input";
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-export default function EditUserForm({
-  onSubmit,
-}: {
-  onSubmit: (formValues: UpdateUserClient) => void;
-}) {
+import { type UpdateUserClient, updateUserClientSchema } from "@/schemas/user";
+import { uploadFilesToS3UsingPresignedUrls } from "@/lib/helpers";
+import { api } from "@/trpc/react";
+
+import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import TextInput from "@/components/input/text-input";
+import ImageInput from "@/components/input/image-input";
+import ServerZodError from "../edit-user/server-zod-error";
+
+export default function EditUserForm() {
   const { data, isLoading } = api.user.currentBySession.useQuery(undefined, {
     refetchOnWindowFocus: false,
   });
@@ -63,8 +64,52 @@ export default function EditUserForm({
     disabled: isLoading,
   });
 
+  const apiUtils = api.useUtils();
+  const router = useRouter();
+
+  const {
+    mutate: update,
+    isLoading: updateLoading,
+    error: updateError,
+    data: updateData,
+  } = api.user.update.useMutation({
+    onSuccess: () => {
+      void apiUtils.user.currentBySession.invalidate();
+      router.push(`/account/${form.getValues("username")}`);
+      form.reset();
+    },
+  });
+
+  const {
+    mutate: getPresignedUrl,
+    error: validateError,
+    // isLoading: validateLoading,
+  } = api.user.getPresignedUrl.useMutation({
+    onSuccess: async (presignedUrl) => {
+      if (!presignedUrl) {
+        update({ ...form.getValues(), profileImage: undefined });
+        return;
+      }
+
+      const imageUrls = await uploadFilesToS3UsingPresignedUrls(
+        [presignedUrl],
+        form.getValues("profileImage"),
+      );
+
+      update({ ...form.getValues(), profileImage: imageUrls[0] });
+    },
+  });
+
   function handleSubmit(formValues: UpdateUserClient) {
-    onSubmit(formValues);
+    const profileImage = formValues.profileImage.map((file) => ({
+      contentLength: file.size,
+      contentType: file.type,
+    }))[0];
+
+    getPresignedUrl({
+      ...formValues,
+      profileImage,
+    });
   }
 
   return (
@@ -169,6 +214,35 @@ export default function EditUserForm({
           Submit
         </Button>
       </form>
+
+      <div className="space-y-4">
+        {updateLoading && <p>Submitting...</p>}
+        {updateData && <p className="text-green-500">Submitted!</p>}
+
+        {!!updateError?.data?.zodError && (
+          <ServerZodError zodError={updateError?.data?.zodError} />
+        )}
+        {updateError && !updateError?.data?.zodError && (
+          <ErrorMessage message={updateError.message} />
+        )}
+        {!!validateError?.data?.zodError && (
+          <ServerZodError zodError={validateError?.data?.zodError} />
+        )}
+        {validateError && !validateError?.data?.zodError && (
+          <ErrorMessage message={validateError.message} />
+        )}
+      </div>
     </Form>
+  );
+}
+
+function ErrorMessage({ message }: { message: string }) {
+  return (
+    <div className="text-destructive" role="alert">
+      <div className="font-bold">
+        An error occured on the server, please try again.
+      </div>
+      <p className="text-[0.8rem]">Message: {message}</p>
+    </div>
   );
 }

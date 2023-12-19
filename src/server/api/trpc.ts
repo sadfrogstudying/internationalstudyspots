@@ -11,7 +11,8 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "@/server/db";
-import { getServerAuthSession } from "../auth";
+import { getServerAuthSession } from "@/server/auth";
+import { s3 } from "@/server/aws/s3";
 
 /**
  * 1. CONTEXT
@@ -32,6 +33,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   return {
     session,
     db,
+    s3,
     ...opts,
   };
 };

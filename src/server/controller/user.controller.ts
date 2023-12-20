@@ -8,7 +8,11 @@ import type {
 } from "@/schemas/user";
 import { getPresignedUrls } from "@/lib/server-helpers";
 
-export async function currentBySession({ ctx }: { ctx: ContextProtected }) {
+export async function currentBySessionHandler({
+  ctx,
+}: {
+  ctx: ContextProtected;
+}) {
   const user = await ctx.db.user.findUnique({
     include: { profileImage: true },
     where: { id: ctx.session.user.id },
@@ -17,7 +21,13 @@ export async function currentBySession({ ctx }: { ctx: ContextProtected }) {
   return user;
 }
 
-export async function get({ input, ctx }: { input: GetInput; ctx: Context }) {
+export async function getHandler({
+  input,
+  ctx,
+}: {
+  input: GetInput;
+  ctx: Context;
+}) {
   const user = await ctx.db.user.findUnique({
     include: { profileImage: true },
     where: { username: input },
@@ -26,7 +36,7 @@ export async function get({ input, ctx }: { input: GetInput; ctx: Context }) {
   return user;
 }
 
-export async function deleteCurrent({ ctx }: { ctx: ContextProtected }) {
+export async function deleteCurrentHandler({ ctx }: { ctx: ContextProtected }) {
   const user = await ctx.db.user.delete({
     where: { id: ctx.session.user.id },
   });
@@ -35,7 +45,7 @@ export async function deleteCurrent({ ctx }: { ctx: ContextProtected }) {
 }
 
 /** Also acts as a input validator for the update procedure 😵‍💫. */
-export async function getPresignedUrl({
+export async function getPresignedUrlHandler({
   ctx,
   input,
 }: {

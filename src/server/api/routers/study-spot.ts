@@ -5,7 +5,7 @@ import { createSpotSchemaServer, spotBooleanSchema } from "@/schemas";
 import {
   getUnique,
   getManyHandler,
-} from "@/server/controller/study-spot-controller";
+} from "@/server/controller/study-spot.controller";
 import { TRPCError } from "@trpc/server";
 
 export const studySpotRouter = createTRPCRouter({

@@ -2,7 +2,7 @@ import StudySpotDetail from "@/components/study-spot-detail";
 import {
   getAllSlugs,
   getUnique,
-} from "@/server/controller/study-spot-controller";
+} from "@/server/controller/study-spot.controller";
 import { db } from "@/server/db";
 import {
   type Metadata,

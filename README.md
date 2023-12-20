@@ -70,6 +70,28 @@ const spots = await getManyHandler(ctx.db, {
 });
 ```
 
+**Infer type from TRPC router** - @trpc/server exports the following helper types to assist with inferring these types from the AppRouter exported by your @trpc/server router ([docs](https://trpc.io/docs/client/vanilla/infer-types)):
+
+inferRouterInputs<TRouter>
+inferRouterOutputs<TRouter>
+
+```ts
+// @filename: client.ts
+import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "./server";
+
+type RouterInput = inferRouterInputs<AppRouter>;
+type RouterOutput = inferRouterOutputs<AppRouter>;
+
+type PostCreateInput = RouterInput["post"]["create"];
+
+type PostCreateInput = {
+  title: string;
+  text: string;
+};
+type PostCreateOutput = RouterOutput["post"]["create"];
+```
+
 ## Useful Links
 
 - [Docs: Route Segment Config](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#options)

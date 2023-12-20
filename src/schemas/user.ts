@@ -1,4 +1,4 @@
-import { object, string, type z } from "zod";
+import { object, string, number, type z } from "zod";
 import { FileListImagesSchema } from "./file-list-images";
 
 const payload = object({
@@ -13,46 +13,42 @@ const payload = object({
   profileImage: string().url().optional(),
 });
 
-const updateUserServerSchema = payload.extend({});
-// const updateUserServerSchema = payload.partial();
-// const getUserServerSchema = payload.required();
-// const deleteUserServerSchema = z.void();
+const getSchema = string();
+type GetInput = z.infer<typeof getSchema>;
 
+const updateUserServerSchema = payload.extend({});
 type UpdateUserServer = z.infer<typeof updateUserServerSchema>;
-// type UpdateUserServer = z.infer<typeof updateUserServerSchema>;
-// type GetUserServer = z.infer<typeof getUserServerSchema>;
-// type DeleteUserServer = z.infer<typeof deleteUserServerSchema>;
+
+const getPresignedUrlSchema = updateUserServerSchema.extend({
+  profileImage: object({
+    contentLength: number(),
+    contentType: string(),
+  }).optional(),
+});
+type GetPresignedUrlInput = z.infer<typeof getPresignedUrlSchema>;
+
+/** NextAuth's Prisma Adapter won't pass an initial profileImage, so need to omit */
+const createSchema = updateUserServerSchema.omit({ profileImage: true });
+type CreateInput = z.infer<typeof createSchema>;
 
 const updateUserClientSchema = payload.extend({
   profileImage: FileListImagesSchema({ maxFiles: 1 }),
 });
-// const updateUserClientSchema = payload.partial();
-// const getUserClientSchema = payload.required();
-// const deleteUserClientSchema = z.void();
 
 type UpdateUserClient = z.infer<typeof updateUserClientSchema>;
-// type UpdateUserClient = z.infer<typeof updateUserClientSchema>;
-// type GetUserClient = z.infer<typeof getUserClientSchema>;
-// type DeleteUserClient = z.infer<typeof deleteUserClientSchema>;
 
 export {
   // 💾 Server
+  getSchema,
+  type GetInput,
   updateUserServerSchema,
-  // updateUserServerSchema,
-  // getUserServerSchema,
-  // deleteUserServerSchema,
   type UpdateUserServer,
-  // type UpdateUserServer,
-  // type GetUserServer,
-  // type DeleteUserServer,
+  getPresignedUrlSchema,
+  type GetPresignedUrlInput,
+  createSchema,
+  type CreateInput,
 
   // 🧑‍💻 Client
   updateUserClientSchema,
-  // updateUserClientSchema,
-  // getUserClientSchema,
-  // deleteUserClientSchema,
   type UpdateUserClient,
-  // type UpdateUserClient,
-  // type GetUserClient,
-  // type DeleteUserClient,
 };

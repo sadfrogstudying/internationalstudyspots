@@ -6,7 +6,11 @@ import type {
   GetPresignedUrlInput,
   UpdateUserServer,
 } from "@/schemas/user";
-import { getPresignedUrls } from "@/lib/server-helpers";
+import {
+  deleteImagesFromBucket,
+  getImagesMeta,
+  getPresignedUrls,
+} from "@/lib/server-helpers";
 
 export async function currentBySessionHandler({
   ctx,
@@ -74,6 +78,7 @@ export async function getPresignedUrlHandler({
   if (!input.profileImage) return;
 
   const res = await getPresignedUrls([input.profileImage], ctx.s3);
+
   return res[0];
 }
 
@@ -84,12 +89,11 @@ export async function updateHandler({
   input: UpdateUserServer;
   ctx: ContextProtected;
 }) {
-  const id = ctx?.session?.user.id;
-
-  if (!id) throw new TRPCError({ code: "UNAUTHORIZED" });
+  const id = ctx.session.user.id;
 
   const user = await ctx.db.user.findUnique({
     where: { id },
+    include: { profileImage: true },
   });
 
   if (!user) throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -98,11 +102,6 @@ export async function updateHandler({
 
   // Only update the fields that have changed
   const changes = Object.entries(input).filter(([key, value]) => {
-    if (key === "profileImage") {
-      // not implemented
-      return false;
-    }
-
     function isKeyOfUser(key: string): key is keyof typeof user {
       return userKeys.includes(key);
     }
@@ -112,11 +111,37 @@ export async function updateHandler({
     return value !== user[key];
   });
 
+  const newProfileImageEntry = changes.find(([key]) => key === "profileImage");
+
+  let newProfileImage:
+    | Awaited<ReturnType<typeof getImagesMeta>>[number]
+    | undefined;
+
+  if (newProfileImageEntry) {
+    const previousImage = user.profileImage;
+
+    if (previousImage?.name) {
+      await deleteImagesFromBucket([previousImage?.name], ctx.s3);
+
+      await ctx.db.image.delete({
+        where: { id: previousImage.id },
+      });
+    }
+
+    newProfileImage = (await getImagesMeta([newProfileImageEntry[1]]))[0];
+  }
+
   const fieldsToChange = Object.fromEntries(changes);
 
   const updatedUser = await ctx.db.user.update({
     where: { id },
-    data: { ...fieldsToChange },
+    data: {
+      ...fieldsToChange,
+      profileImage: {
+        create: newProfileImage,
+      },
+    },
+    include: { profileImage: true },
   });
 
   return updatedUser;

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-/** Returns the s3 urls of the uploaded files */
+/** Returns the s3 urls of the uploaded files so I can validate it server side in user.update (getImagesMeta). */
 export const uploadFilesToS3UsingPresignedUrls = async (
   presignedUrls: string[],
   acceptedFiles: File[],

@@ -3,7 +3,10 @@ import { FileListImagesSchema } from "./file-list-images";
 
 const payload = object({
   name: string().min(1).max(30),
-  username: string().min(1).max(30),
+  username: string().min(1).max(30).regex(new RegExp("^[a-z0-9_-]{3,15}$"), {
+    message:
+      "Invalid username.  Can only contain letters, numbers, underscores (_), and hyphens (-).  Must be between 3 - 16 characters.",
+  }),
   description: string().max(2000).optional(),
   city: string().max(100).optional(),
   country: string().max(100).optional(),

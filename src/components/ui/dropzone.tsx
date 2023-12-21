@@ -10,6 +10,7 @@ import { useDropzone, type FileRejection } from "react-dropzone";
 import { UploadIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import useImageCompression from "@/hooks/use-image-compression";
 
 /** Preview set in callback of Dropzone's onDrop */
 type FileWithPreview = File & { preview: string };
@@ -48,6 +49,9 @@ const Dropzone = React.forwardRef<HTMLDivElement, DropzoneProps>(
   ) => {
     const [files, setFiles] = useState<FileWithPreview[]>([]);
 
+    const { compressImages, compressionProgress, error, isCompressing } =
+      useImageCompression();
+
     const {
       getRootProps,
       getInputProps,
@@ -63,20 +67,30 @@ const Dropzone = React.forwardRef<HTMLDivElement, DropzoneProps>(
         "image/jpeg": [".jpeg", ".jpg"],
         "image/webp": [".webp"],
       },
-      onDropAccepted(files) {
-        onChange(files);
+      onDropAccepted: async (acceptedFiles) => {
+        const initialImagesWithPreview = acceptedFiles.map((file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          }),
+        );
+
+        setFiles(initialImagesWithPreview);
+
+        const compressedImages = await compressImages(acceptedFiles);
+
+        if (!compressedImages) return;
+
+        const imagesWithPreview = compressedImages.map((file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          }),
+        );
+
+        setFiles(imagesWithPreview);
+        onChange(acceptedFiles);
       },
       onDropRejected() {
         onChange([]);
-      },
-      onDrop: (acceptedFiles) => {
-        setFiles(
-          acceptedFiles.map((file) =>
-            Object.assign(file, {
-              preview: URL.createObjectURL(file),
-            }),
-          ),
-        );
       },
     });
 
@@ -84,9 +98,6 @@ const Dropzone = React.forwardRef<HTMLDivElement, DropzoneProps>(
       // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
       return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
     }, [files]);
-
-    const rejectStyle = isDragReject ? "ring-red-500" : "";
-    const acceptStyle = isDragAccept ? "ring-green-500" : "";
 
     function getDragText() {
       if (isDragAccept) {
@@ -104,14 +115,6 @@ const Dropzone = React.forwardRef<HTMLDivElement, DropzoneProps>(
       );
     }
 
-    const preview = (
-      <Preview
-        files={files}
-        overlayPreview={overlayPreview}
-        defaultImage={defaultImage}
-      />
-    );
-
     return (
       <>
         <div
@@ -119,10 +122,11 @@ const Dropzone = React.forwardRef<HTMLDivElement, DropzoneProps>(
           {...getRootProps({ "aria-label": name })}
           className={cn(
             "relative flex h-9 w-full items-center overflow-hidden rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
-            "ring ring-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+            "ring ring-transparent transition-shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
             className,
-            acceptStyle,
-            rejectStyle,
+            isDragAccept && "ring-green-500",
+            isDragReject && "ring-red-500",
+            isCompressing && "ring-yellow-400",
           )}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
@@ -144,11 +148,27 @@ const Dropzone = React.forwardRef<HTMLDivElement, DropzoneProps>(
             <UploadIcon /> <div>{getDragText()}</div>
           </div>
 
-          {overlayPreview && preview}
+          {overlayPreview && (
+            <Preview
+              files={files}
+              overlayPreview={overlayPreview}
+              defaultImage={defaultImage}
+              compressionProgress={compressionProgress}
+            />
+          )}
         </div>
 
         {!overlayPreview && (
-          <div className="grid grid-cols-4 gap-2">{preview}</div>
+          <div className="grid grid-cols-4 gap-2">
+            {
+              <Preview
+                files={files}
+                overlayPreview={overlayPreview}
+                defaultImage={defaultImage}
+                compressionProgress={compressionProgress}
+              />
+            }
+          </div>
         )}
 
         <FileRejectionError fileRejections={fileRejections} />
@@ -165,28 +185,48 @@ const Preview = ({
   files,
   overlayPreview,
   defaultImage,
+  compressionProgress,
 }: {
   files: FileWithPreview[];
   overlayPreview: boolean;
   defaultImage?: string;
+  compressionProgress?: number[];
 }) => {
   if (files.length)
-    return files.map((file) => (
-      <Image
-        src={file.preview}
-        alt="Preview of image you want to upload"
-        // Prevent memory leaks by revoking data uri after loaded
-        onLoad={() => {
-          URL.revokeObjectURL(file.preview);
-        }}
-        width={300}
-        height={300}
-        key={file.name}
+    return files.map((file, i) => (
+      <div
         className={cn(
-          overlayPreview &&
-            "pointer-events-none absolute left-0 top-0 h-full w-full object-cover",
+          overlayPreview
+            ? "pointer-events-none absolute left-0 top-0 h-full w-full object-cover"
+            : "relative",
         )}
-      />
+        key={file.name}
+      >
+        {compressionProgress && (
+          <div
+            className={cn(
+              "absolute left-1 top-1 z-20 rounded px-4 py-2 font-mono text-xs",
+              compressionProgress[i] === 100 ? "bg-lime-400" : "bg-yellow-400",
+            )}
+          >
+            {compressionProgress[i]}%
+          </div>
+        )}
+        <Image
+          src={file.preview}
+          alt="Preview of image you want to upload"
+          // Prevent memory leaks by revoking data uri after loaded
+          onLoad={() => {
+            URL.revokeObjectURL(file.preview);
+          }}
+          width={300}
+          height={300}
+          className={cn(
+            overlayPreview &&
+              "absolute left-0 top-0 h-full w-full object-cover",
+          )}
+        />
+      </div>
     ));
 
   if (defaultImage)

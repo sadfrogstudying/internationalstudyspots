@@ -19,7 +19,7 @@ export default function UserAvatar() {
       <PopoverTrigger>
         <Avatar className="h-9 w-9 shadow">
           <AvatarImage src={data?.profileImage?.url} className="object-cover" />
-          <AvatarFallback className="bg-red-500" />
+          <AvatarFallback />
         </Avatar>
       </PopoverTrigger>
       <PopoverContent className="m-4 text-sm">

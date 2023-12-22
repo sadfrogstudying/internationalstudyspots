@@ -66,7 +66,6 @@ export default function EditUserForm() {
     mutate: update,
     isLoading: updateLoading,
     error: updateError,
-    data: updateData,
   } = api.user.update.useMutation({
     onSuccess: () => {
       void apiUtils.user.currentBySession.invalidate();

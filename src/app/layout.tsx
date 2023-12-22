@@ -10,6 +10,7 @@ import {
   // Abel,
   Inter,
 } from "next/font/google";
+import Footer from "@/components/footer";
 
 export const metadata = {
   title: "International Study Spots",
@@ -33,11 +34,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
-      <body className={`min-h-full antialiased ${inter.className}`}>
+      <body
+        className={`flex min-h-full flex-col justify-between antialiased ${inter.className}`}
+      >
         <TRPCReactProvider cookies={cookies().toString()}>
           <FilterController>
-            <Header />
-            {children}
+            <div>
+              <Header />
+              {children}
+            </div>
+
+            <Footer />
           </FilterController>
         </TRPCReactProvider>
       </body>

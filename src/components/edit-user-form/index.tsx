@@ -12,11 +12,12 @@ import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import TextInput from "@/components/input/text-input";
 import ImageInput from "@/components/input/image-input";
-import ServerZodError from "../edit-user/server-zod-error";
+import ServerZodError from "@/components/server-zod-error";
 
 export default function EditUserForm() {
   const { data, isLoading } = api.user.currentBySession.useQuery(undefined, {
     refetchOnWindowFocus: false,
+    retry: 2,
   });
 
   const {
@@ -34,7 +35,6 @@ export default function EditUserForm() {
   const form = useForm<UpdateUserClient>({
     resolver: zodResolver(updateUserClientSchema),
     defaultValues: {
-      // strings
       name: "",
       username: "",
       description: "",
@@ -43,12 +43,9 @@ export default function EditUserForm() {
       interests: "",
       occupation: "",
       tagline: "",
-
-      // images
       profileImage: [],
     },
     values: {
-      // strings
       name: name ?? "",
       username: username ?? "",
       description: description ?? "",
@@ -57,8 +54,6 @@ export default function EditUserForm() {
       interests: interests ?? "",
       occupation: occupation ?? "",
       tagline: tagline ?? "",
-
-      // images
       profileImage: [],
     },
     disabled: isLoading,
@@ -82,8 +77,8 @@ export default function EditUserForm() {
 
   const {
     mutate: getPresignedUrl,
-    error: validateError,
-    // isLoading: validateLoading,
+    error: getPresignedUrlError,
+    isLoading: getPresignedUrlLoading,
   } = api.user.getPresignedUrl.useMutation({
     onSuccess: async (presignedUrl) => {
       if (!presignedUrl) {
@@ -111,6 +106,15 @@ export default function EditUserForm() {
       profileImage,
     });
   }
+
+  function getButtonText() {
+    if (updateLoading) return "Creating...";
+    if (getPresignedUrlLoading) return "Uploading images...";
+    return "Submit";
+  }
+
+  const submitDisabled =
+    updateLoading || getPresignedUrlLoading || !form.formState.isDirty;
 
   return (
     <Form {...form}>
@@ -210,26 +214,23 @@ export default function EditUserForm() {
             }}
           />
         </div>
-        <Button className="mt-4" type="submit">
-          Submit
+        <Button className="mt-4" type="submit" disabled={submitDisabled}>
+          {getButtonText()}
         </Button>
       </form>
 
       <div className="space-y-4">
-        {updateLoading && <p>Submitting...</p>}
-        {updateData && <p className="text-green-500">Submitted!</p>}
-
         {!!updateError?.data?.zodError && (
           <ServerZodError zodError={updateError?.data?.zodError} />
         )}
         {updateError && !updateError?.data?.zodError && (
           <ErrorMessage message={updateError.message} />
         )}
-        {!!validateError?.data?.zodError && (
-          <ServerZodError zodError={validateError?.data?.zodError} />
+        {!!getPresignedUrlError?.data?.zodError && (
+          <ServerZodError zodError={getPresignedUrlError?.data?.zodError} />
         )}
-        {validateError && !validateError?.data?.zodError && (
-          <ErrorMessage message={validateError.message} />
+        {getPresignedUrlError && !getPresignedUrlError?.data?.zodError && (
+          <ErrorMessage message={getPresignedUrlError.message} />
         )}
       </div>
     </Form>

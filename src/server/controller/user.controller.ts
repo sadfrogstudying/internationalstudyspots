@@ -86,6 +86,7 @@ export async function updateHandler({
   input,
   ctx,
 }: {
+  /** profileImage is the presigned url or undefined (meaning no change) */
   input: UpdateUserServer;
   ctx: ContextProtected;
 }) {
@@ -100,13 +101,16 @@ export async function updateHandler({
 
   const userKeys = Object.keys(user);
 
-  // Only update the fields that have changed
+  // Loop through, and filter out the fields that are the same as existing
   const changes = Object.entries(input).filter(([key, value]) => {
     function isKeyOfUser(key: string): key is keyof typeof user {
       return userKeys.includes(key);
     }
 
     if (!isKeyOfUser(key)) return false;
+
+    // exception for profileImage, if it's undefined, it means no change
+    if (key === "profileImage" && value === undefined) return false;
 
     return value !== user[key];
   });

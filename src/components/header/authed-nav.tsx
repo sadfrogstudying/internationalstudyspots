@@ -1,11 +1,9 @@
 "use client";
-import { api } from "@/trpc/react";
-import { Button } from "../ui/button";
 import { signOut } from "next-auth/react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Link } from "../ui/link";
-import { cn } from "@/lib/utils";
+
 import UserAvatar from "@/components/header/user-avatar";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/components/ui/link";
 
 export default function AuthedNav() {
   return (

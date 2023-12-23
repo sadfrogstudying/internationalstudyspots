@@ -148,7 +148,7 @@ export async function updateHandler({
     include: { profileImage: true },
   });
 
-  return updatedUser;
+  return true;
 }
 
 export async function create({

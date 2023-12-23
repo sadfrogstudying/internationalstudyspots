@@ -13,7 +13,7 @@ export function AccordionItem({
 }) {
   return (
     <AccordionItemBase value={label}>
-      <AccordionTrigger className="text-base">{label}</AccordionTrigger>
+      <AccordionTrigger className="text-lg font-bold">{label}</AccordionTrigger>
       <AccordionContent>{children}</AccordionContent>
     </AccordionItemBase>
   );

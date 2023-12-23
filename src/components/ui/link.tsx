@@ -16,7 +16,7 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
     return (
       <Comp
         className={cn(
-          "rounded-sm outline-2 outline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:outline active:outline-purple-600",
+          "rounded-sm ring-orange-400 ring-offset-4 focus-visible:outline-none focus-visible:ring-2 active:ring-2 active:ring-orange-500",
           className,
         )}
         ref={ref}

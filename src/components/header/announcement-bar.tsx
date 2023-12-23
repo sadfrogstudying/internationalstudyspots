@@ -22,7 +22,7 @@ export default function AnnouncementBarAuth() {
     >
       <Link
         href={`/account/edit`}
-        className="flex h-full w-full gap-2 px-4 py-4 text-white -outline-offset-2"
+        className="flex h-full w-full gap-2 px-4 py-4 text-white ring-offset-0"
       >
         <span>
           <AlertCircle />

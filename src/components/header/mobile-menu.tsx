@@ -1,34 +1,25 @@
+import { useState } from "react";
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 
 export default function MobileMenu({
-  title,
   children,
   trigger,
-  description,
 }: {
-  title: string;
   children: React.ReactNode;
-  trigger: React.ReactNode;
-  description?: string;
+  trigger: (open: boolean) => React.ReactNode;
 }) {
-  return (
-    <Sheet>
-      <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent className="flex flex-col gap-8 transition-none data-[state=closed]:duration-0 data-[state=open]:duration-0">
-        <SheetHeader className="sr-only text-left">
-          <SheetTitle>{title}</SheetTitle>
-          <SheetDescription>{description}</SheetDescription>
-        </SheetHeader>
+  const [open, setOpen] = useState(false);
 
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>{trigger(open)}</PopoverTrigger>
+      <PopoverContent className="mt-4 text-sm" align="end">
         {children}
-      </SheetContent>
-    </Sheet>
+      </PopoverContent>
+    </Popover>
   );
 }

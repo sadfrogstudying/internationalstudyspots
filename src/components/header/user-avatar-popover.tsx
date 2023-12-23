@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import { Link } from "@/components/ui/link";
 import { Button } from "../ui/button";
 import { signIn, signOut } from "next-auth/react";
-import { Session } from "next-auth";
+import type { Session } from "next-auth";
 
 export default function UserAvatarPopover({
   session,
@@ -38,7 +38,11 @@ export default function UserAvatarPopover({
           </Avatar>
         </PopoverTrigger>
       </Button>
-      <PopoverContent className="pointer-events-auto mt-4 text-sm" align="end">
+      <PopoverContent
+        className="pointer-events-auto mt-4 text-sm"
+        align="end"
+        aria-label="Account"
+      >
         <h3 className="mb-2 font-semibold">Account</h3>
         <Content
           loading={isLoading}
@@ -64,8 +68,8 @@ function Content({
 }) {
   const apiUtils = api.useUtils();
 
-  const { getData } = apiUtils.user.currentBySession;
-  const data = getData();
+  const cachedUserData = apiUtils.user.currentBySession;
+  const data = cachedUserData.getData();
 
   if (notLoggedIn)
     return (
@@ -146,7 +150,7 @@ function SignOutButton({ setOpen }: { setOpen: (value: boolean) => void }) {
       className="group relative w-full overflow-hidden"
       onClick={() => {
         setOpen(false);
-        signOut({
+        void signOut({
           callbackUrl: "/",
         });
       }}

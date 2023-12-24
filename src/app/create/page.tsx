@@ -38,10 +38,7 @@ function Content() {
   });
 
   const { data: user, isLoading: userLoading } =
-    api.user.currentBySession.useQuery(undefined, {
-      refetchOnWindowFocus: false,
-      retry: 1,
-    });
+    api.user.currentBySession.useQuery(undefined);
 
   if (!user?.username && !userLoading) {
     return (

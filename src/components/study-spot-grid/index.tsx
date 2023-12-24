@@ -28,7 +28,6 @@ export default function StudySpotGrid() {
       },
       {
         getNextPageParam: (lastQuery) => lastQuery[lastQuery.length - 1]?.id,
-        refetchOnWindowFocus: false,
       },
     );
 

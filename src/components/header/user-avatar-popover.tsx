@@ -15,10 +15,7 @@ export default function UserAvatarPopover({
   session: Session | null;
 }) {
   const [open, setOpen] = useState(false);
-  const { data, isLoading } = api.user.currentBySession.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-    retry: 1,
-  });
+  const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
 
   return (
     <Popover onOpenChange={setOpen} open={open}>

@@ -17,10 +17,7 @@ import ServerZodError from "@/components/server-zod-error";
 import { AccordionItem } from "@/components/form/accordion-item";
 
 export default function EditUserForm() {
-  const { data, isLoading } = api.user.currentBySession.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-    retry: 2,
-  });
+  const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
 
   const {
     username,

@@ -30,10 +30,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function Content() {
-  const { data, isLoading } = api.user.currentBySession.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-    retry: 1,
-  });
+  const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
 
   if (!data && !isLoading)
     return (

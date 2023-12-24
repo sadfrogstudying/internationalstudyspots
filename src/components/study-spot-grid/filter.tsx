@@ -20,7 +20,6 @@ export default function Filter() {
     isFetched,
     isError,
   } = api.studySpot.getCountries.useQuery(undefined, {
-    refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
 

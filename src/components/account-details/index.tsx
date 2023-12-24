@@ -38,9 +38,7 @@ function Left() {
 
   const params = useParams<{ username: string }>();
 
-  const { data, isLoading } = api.user.get.useQuery(params.username, {
-    refetchOnWindowFocus: false,
-  });
+  const { data, isLoading } = api.user.get.useQuery(params.username);
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -141,9 +139,7 @@ function Left() {
 function Right() {
   const params = useParams<{ username: string }>();
 
-  const { data, isLoading } = api.user.get.useQuery(params.username, {
-    refetchOnWindowFocus: false,
-  });
+  const { data, isLoading } = api.user.get.useQuery(params.username);
 
   if (isLoading) return <div>Loading...</div>;
 

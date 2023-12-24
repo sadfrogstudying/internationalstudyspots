@@ -6,10 +6,7 @@ import { Link } from "@/components/ui/link";
 
 export default function AnnouncementBarAuth() {
   const { data: user, isLoading: userLoading } =
-    api.user.currentBySession.useQuery(undefined, {
-      refetchOnWindowFocus: false,
-      retry: 1,
-    });
+    api.user.currentBySession.useQuery(undefined);
 
   if ((user?.username && !userLoading) ?? userLoading) {
     return null;

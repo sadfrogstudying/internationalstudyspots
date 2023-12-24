@@ -17,9 +17,7 @@ interface Props {
 }
 
 export default function StudySpotDetail({ slug }: Props) {
-  const { data } = api.studySpot.bySlug.useQuery(slug, {
-    refetchOnWindowFocus: false,
-  });
+  const { data } = api.studySpot.bySlug.useQuery(slug);
 
   const { appliedFilters } = useFilterData();
 

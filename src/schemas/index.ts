@@ -17,7 +17,7 @@ const longitudeSchema = z.coerce
 
 const stringSchema = string().max(100).optional();
 
-export const spotBooleanSchema = z.object({
+const spotBooleanSchema = z.object({
   powerOutlets: boolean(),
   wifi: boolean(),
   canStudyForLong: boolean().optional(),
@@ -26,9 +26,9 @@ export const spotBooleanSchema = z.object({
   food: boolean().optional(),
   naturalViews: boolean().optional(),
 });
-export type SpotBooleanSchema = z.infer<typeof spotBooleanSchema>;
+type SpotBooleanSchema = z.infer<typeof spotBooleanSchema>;
 
-export const spotStringSchema = z.object({
+const spotStringSchema = z.object({
   name: string().max(100).min(1, { message: "Name is required." }),
   website: stringSchema,
   description: string().max(2000).optional(),
@@ -50,7 +50,7 @@ export const spotStringSchema = z.object({
   studyBreakFacilities: stringSchema,
 });
 
-export const imageSchema = z.object({
+const imageSchema = z.object({
   images: z
     .string()
     .array()
@@ -58,20 +58,50 @@ export const imageSchema = z.object({
     .max(8, { message: "Maximum of 8 images." }),
 });
 
-export const spotNumberSchema = z.object({
+const spotNumberSchema = z.object({
   latitude: latitudeSchema,
   longitude: longitudeSchema,
 });
 
-export const spotSchema = spotStringSchema
+const spotSchema = spotStringSchema
   .merge(imageSchema)
   .merge(spotNumberSchema)
   .merge(spotBooleanSchema);
 
-export const createSpotSchemaServer = spotSchema;
+const createSpotSchemaServer = spotSchema;
 
-export const createSpotSchemaClient = createSpotSchemaServer.extend({
+const createSpotSchemaClient = createSpotSchemaServer.extend({
   images: FileListImagesSchema({ minFiles: 1 }),
 });
 
-export type CreateSpotFormValues = z.infer<typeof createSpotSchemaClient>;
+type CreateSpotFormValues = z.infer<typeof createSpotSchemaClient>;
+
+const getAllSchema = z
+  .object({
+    cursor: z.number().optional(),
+    where: spotBooleanSchema.partial().optional(),
+    take: z.number().optional(),
+  })
+  .optional();
+type GetAllInput = z.infer<typeof getAllSchema>;
+
+const bySlugSchema = z.string();
+type BySlugInput = z.infer<typeof bySlugSchema>;
+
+export {
+  spotBooleanSchema,
+  type SpotBooleanSchema,
+  spotStringSchema,
+  imageSchema,
+  spotNumberSchema,
+  spotSchema,
+  createSpotSchemaServer,
+  createSpotSchemaClient,
+  type CreateSpotFormValues,
+
+  // Server
+  getAllSchema,
+  type GetAllInput,
+  bySlugSchema,
+  type BySlugInput,
+};

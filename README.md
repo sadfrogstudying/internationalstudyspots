@@ -52,7 +52,7 @@ type A = z.infer<typeof spotBooleanSchema>;
 Prisma - filtering with `where` and `OR`
 
 ```ts
-const spots = await getManyHandler(ctx.db, {
+const spots = await findManyHandler(ctx.db, {
   ...(cursor && { skip: 1, cursor: { id: cursor } }),
   ...(where && {
     where: {

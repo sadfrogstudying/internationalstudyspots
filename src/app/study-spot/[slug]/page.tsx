@@ -1,8 +1,4 @@
 import StudySpotDetail from "@/components/study-spot-detail";
-import {
-  getAllSlugs,
-  getUnique,
-} from "@/server/controller/study-spot.controller";
 import { db } from "@/server/db";
 import {
   type Metadata,
@@ -16,11 +12,13 @@ import {
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  const slugs = await getAllSlugs(db);
+  const spots = await db.studySpot.findMany({
+    select: {
+      slug: true,
+    },
+  });
 
-  return slugs.map((slug) => ({
-    slug: slug,
-  }));
+  return spots.map((spot) => spot.slug);
 }
 
 type Props = {
@@ -36,15 +34,24 @@ export async function generateMetadata(
 
   // fetch data
   const { name, state, country, wifi, powerOutlets } =
-    (await getUnique(db, {
+    (await db.studySpot.findUnique({
       where: {
         slug,
       },
+      select: {
+        name: true,
+        state: true,
+        country: true,
+        wifi: true,
+        powerOutlets: true,
+      },
     })) ?? {};
 
-  const wifiString = wifi && "Has wifi.";
-  const powerOutletsString = powerOutlets && "Has power outlets.";
-  const descriptionString = `${name} in ${state}, ${country}. ${wifiString} ${powerOutletsString}`;
+  const wifiString = wifi ? "Has wifi." : null;
+  const powerOutletsString = powerOutlets ? "Has power outlets." : null;
+  const descriptionString = name
+    ? `${name} in ${state}, ${country}. ${wifiString} ${powerOutletsString}`
+    : null;
 
   // optionally access and extend (rather than replace) parent metadata
   // const previousImages = (await parent).openGraph?.images ?? []
@@ -52,7 +59,7 @@ export async function generateMetadata(
     title: name
       ? `${name} - International Study Spots`
       : "International Study Spots",
-    description: descriptionString,
+    description: descriptionString ?? "Find study spots around the world.",
     // openGraph: {
     //   images: ['/some-specific-page-image.jpg', ...previousImages],
     // },

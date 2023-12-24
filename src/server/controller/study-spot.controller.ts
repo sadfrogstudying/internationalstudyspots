@@ -1,57 +1,56 @@
-import type { PrismaClient, Prisma } from "@prisma/client";
+import type { Context } from "@/server/api/trpc";
+import type { BySlugInput, GetAllInput } from "@/schemas";
 
-export async function getManyHandler(
-  db: PrismaClient,
-  args?: Prisma.StudySpotFindManyArgs,
-) {
-  const spots = await db.studySpot.findMany({
-    ...args,
+export async function getAllHandler({
+  ctx,
+  input,
+}: {
+  ctx: Context;
+  input: GetAllInput;
+}) {
+  const { cursor, ...rest } = input ?? {};
+
+  const spots = await ctx.db.studySpot.findMany({
+    ...rest,
+    skip: cursor ? 1 : undefined,
+    cursor: cursor ? { id: cursor } : undefined,
     orderBy: {
       createdAt: "desc",
     },
-    select: {
-      id: true,
-      slug: true,
+    include: {
       images: true,
-      name: true,
-      country: true,
-      state: true,
-      venueType: true,
-      city: true,
-      address: true,
-      powerOutlets: true,
-      wifi: true,
-      naturalViews: true,
-      latitude: true,
-      longitude: true,
     },
   });
 
   return spots;
 }
 
-export async function getAllSlugs(db: PrismaClient) {
-  const spots = await db.studySpot.findMany({
-    select: {
-      slug: true,
+export async function bySlugHandler({
+  ctx,
+  input,
+}: {
+  ctx: Context;
+  input: BySlugInput;
+}) {
+  const spot = await ctx.db.studySpot.findUnique({
+    where: {
+      slug: input,
     },
-  });
-
-  return spots.map((spot) => spot.slug);
-}
-
-export async function getUnique(
-  db: PrismaClient,
-  args: Prisma.StudySpotFindUniqueArgs,
-) {
-  if (!args.where) throw new Error("Missing where clause");
-
-  const studySpot = await db.studySpot.findUnique({
-    ...args,
     include: {
       images: true,
     },
   });
 
-  return studySpot;
+  return spot;
+}
+
+export async function getCountriesHandler({ ctx }: { ctx: Context }) {
+  const countries = await ctx.db.studySpot.findMany({
+    select: {
+      country: true,
+    },
+    distinct: ["country"],
+  });
+
+  return countries.map((x) => x.country);
 }

@@ -256,11 +256,9 @@ export default function EditUserForm() {
 
 function ErrorMessage({ message }: { message: string }) {
   return (
-    <div className="text-destructive" role="alert">
-      <div className="font-bold">
-        An error occured on the server, please try again.
-      </div>
-      <p className="text-[0.8rem]">Message: {message}</p>
+    <div role="alert" className="text-[0.8rem] text-destructive">
+      <strong>An error occured on the server, please try again.</strong>
+      <div className="text-[0.8rem] font-medium">Message: {message}</div>
     </div>
   );
 }

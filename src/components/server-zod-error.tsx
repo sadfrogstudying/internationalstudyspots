@@ -1,10 +1,7 @@
 import { type typeToFlattenedError } from "zod";
 
 const parseZodClientError = (
-  zodError:
-    | typeToFlattenedError<string[] | undefined, string>
-    | null
-    | undefined,
+  zodError: typeToFlattenedError<string[] | undefined, string>,
 ) => {
   const fieldErrors = zodError?.fieldErrors;
   const fieldErrorsEntries = fieldErrors ? Object.entries(fieldErrors) : [];
@@ -19,10 +16,7 @@ const parseZodClientError = (
 export default function ServerZodError({
   zodError,
 }: {
-  zodError:
-    | typeToFlattenedError<string[] | undefined, string>
-    | null
-    | undefined;
+  zodError: typeToFlattenedError<string[] | undefined, string>;
 }) {
   const errors = parseZodClientError(zodError);
 

@@ -6,11 +6,14 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { useDropzone, type FileRejection } from "react-dropzone";
-import { UploadIcon } from "@radix-ui/react-icons";
-import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { useDropzone, type FileRejection } from "react-dropzone";
+import { withErrorBoundary } from "react-error-boundary";
+import { UploadIcon } from "@radix-ui/react-icons";
+
 import useImageCompression from "@/hooks/use-image-compression";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 /** Preview set in callback of Dropzone's onDrop */
 type FileWithPreview = File & { preview: string };
@@ -33,7 +36,7 @@ export interface DropzoneProps {
   defaultImage?: string;
 }
 
-const Dropzone = React.forwardRef<HTMLDivElement, DropzoneProps>(
+const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
   (
     {
       onChange,
@@ -177,7 +180,26 @@ const Dropzone = React.forwardRef<HTMLDivElement, DropzoneProps>(
   },
 );
 
-Dropzone.displayName = "Dropzone";
+DropzoneComponent.displayName = "DropzoneComponent";
+
+const Dropzone = withErrorBoundary(DropzoneComponent, {
+  fallbackRender: ({ resetErrorBoundary }) => (
+    <div className="flex flex-col gap-4 rounded border border-red-500 bg-red-100 p-4 text-sm text-red-500">
+      <h3 className="text-lg font-semibold">Error</h3>
+      Something unexpected went wrong with the image uploader.
+      <Button
+        variant="destructive"
+        onClick={(e) => {
+          e.preventDefault();
+          resetErrorBoundary();
+        }}
+      >
+        Try again
+      </Button>
+    </div>
+  ),
+});
+
 export default Dropzone;
 
 /** Return dropzone files, else fallback, else null. */

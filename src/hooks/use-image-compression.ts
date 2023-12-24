@@ -1,9 +1,11 @@
 import imageCompression from "browser-image-compression";
 import { useState } from "react";
+import { useErrorBoundary } from "react-error-boundary";
 
 const useImageCompression = () => {
   const [error, setError] = useState<string | null>(null);
   const [compressionProgress, setCompressionProgress] = useState<number[]>([]);
+  const { showBoundary } = useErrorBoundary();
 
   const isCompressing =
     compressionProgress.length > 0 && compressionProgress.some((x) => x < 100);
@@ -19,7 +21,7 @@ const useImageCompression = () => {
       const compressedFiles = await Promise.all(compressedFilePromises);
       return compressedFiles;
     } catch (error) {
-      //   showBoundary(error);
+      showBoundary(error);
 
       if (error instanceof Error) {
         setError(error.message);

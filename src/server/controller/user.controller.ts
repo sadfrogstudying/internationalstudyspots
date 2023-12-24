@@ -137,7 +137,7 @@ export async function updateHandler({
 
   const fieldsToChange = Object.fromEntries(changes);
 
-  const updatedUser = await ctx.db.user.update({
+  await ctx.db.user.update({
     where: { id },
     data: {
       ...fieldsToChange,

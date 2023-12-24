@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 /** Preview set in callback of Dropzone's onDrop */
-type FileWithPreview = File & { preview: string };
+export type FileWithPreview = File & { preview: string };
 
 export interface DropzoneProps {
   onChange: (files: File[]) => void;
@@ -70,27 +70,31 @@ const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
         "image/jpeg": [".jpeg", ".jpg"],
         "image/webp": [".webp"],
       },
-      onDropAccepted: async (acceptedFiles) => {
-        const initialImagesWithPreview = acceptedFiles.map((file) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          }),
-        );
+      onDropAccepted: (acceptedFiles) => {
+        // To silence Error: Promise-returning function provided to property where a void return was expected.  @typescript-eslint/no-misused-promises
+        void (async () => {
+          // Set initial preview images for instant UI feedback
+          const initialImagesWithPreview = acceptedFiles.map((file) =>
+            Object.assign(file, {
+              preview: URL.createObjectURL(file),
+            }),
+          );
 
-        setFiles(initialImagesWithPreview);
+          setFiles(initialImagesWithPreview);
 
-        const compressedImages = await compressImages(acceptedFiles);
+          const compressedImages = await compressImages(acceptedFiles);
 
-        if (!compressedImages) return;
+          if (!compressedImages) return;
 
-        const imagesWithPreview = compressedImages.map((file) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          }),
-        );
+          const imagesWithPreview = compressedImages.map((file) =>
+            Object.assign(file, {
+              preview: URL.createObjectURL(file),
+            }),
+          );
 
-        setFiles(imagesWithPreview);
-        onChange(acceptedFiles);
+          setFiles(imagesWithPreview);
+          onChange(compressedImages);
+        })();
       },
       onDropRejected() {
         onChange([]);

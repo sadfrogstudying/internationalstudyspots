@@ -15,14 +15,6 @@ const filtersToRender = [
 ] as const;
 
 export default function Filter() {
-  const {
-    data: countries,
-    isFetched,
-    isError,
-  } = api.studySpot.getCountries.useQuery(undefined, {
-    refetchOnMount: false,
-  });
-
   const { toggleFilter, confirmFilters, clearFilters, filters } =
     useFilterApi();
 
@@ -50,32 +42,7 @@ export default function Filter() {
 
       <div>
         <h3 className="font-bold">Countries</h3>
-        {!isError ? (
-          <>
-            <ul>
-              {countries?.map((country, i) => (
-                <ListItem
-                  key={country}
-                  className="flex items-center gap-2 text-neutral-500"
-                  i={i}
-                >
-                  <Checkbox id={country.toLowerCase()} disabled />
-                  <label
-                    aria-disabled
-                    className="cursor-not-allowed"
-                    htmlFor={country.toLowerCase()}
-                  >
-                    {country}
-                  </label>
-                </ListItem>
-              ))}
-            </ul>
-
-            {!isFetched && <SkeletonList />}
-          </>
-        ) : (
-          <div className="text-destructive">Error getting countries...</div>
-        )}
+        <CountriesFilter />
       </div>
 
       <div className="flex w-fit flex-col gap-2">
@@ -85,6 +52,49 @@ export default function Filter() {
         </Button>
       </div>
     </div>
+  );
+}
+
+function CountriesFilter() {
+  const apiUtils = api.useUtils();
+
+  const {
+    data: countries,
+    isInitialLoading,
+    isError,
+  } = api.studySpot.getCountries.useQuery(undefined, {
+    refetchOnMount: false,
+  });
+
+  if (isInitialLoading) return <SkeletonList />;
+
+  if (isError)
+    return <div className="text-destructive">Error getting countries...</div>;
+
+  if (countries?.length === 0)
+    return <div className="text-neutral-500">No countries found</div>;
+
+  return (
+    <>
+      <ul>
+        {countries?.map((country, i) => (
+          <ListItem
+            key={country}
+            className="flex items-center gap-2 text-neutral-500"
+            i={i}
+          >
+            <Checkbox id={country.toLowerCase()} disabled />
+            <label
+              aria-disabled
+              className="cursor-not-allowed"
+              htmlFor={country.toLowerCase()}
+            >
+              {country}
+            </label>
+          </ListItem>
+        ))}
+      </ul>
+    </>
   );
 }
 

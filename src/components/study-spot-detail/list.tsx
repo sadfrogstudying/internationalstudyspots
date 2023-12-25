@@ -47,9 +47,15 @@ export default function List({ studySpot }: { studySpot?: StudySpot }) {
     "placeId",
   ];
 
-  const list = Object.entries(studySpot ?? {}).filter(
-    (entry) => !ignoredKeys.includes(entry[0]),
-  );
+  const list = Object.entries(studySpot ?? {})
+    .filter((entry) => !ignoredKeys.includes(entry[0]))
+    .map((entry) => {
+      if (typeof entry[1] === "boolean") {
+        return [entry[0], entry[1] ? "Yes" : "No"];
+      }
+
+      return entry;
+    });
 
   console.log(list);
 
@@ -96,7 +102,12 @@ export default function List({ studySpot }: { studySpot?: StudySpot }) {
                   </div>
                 </div>
 
-                <div className="overflow-hidden sm:truncate">
+                <div
+                  className={cn(
+                    "overflow-hidden sm:truncate",
+                    !x[1] && "text-neutral-300",
+                  )}
+                >
                   {x[1] ? x[1].toString() : "N/A"}
                 </div>
               </div>

@@ -3,14 +3,10 @@ import { Wifi, WifiOff, Zap, ZapOff } from "lucide-react";
 import UnmountAfter from "../unmount-after";
 import { Skeleton, SkeletonText } from "../ui/skeleton";
 import { type RouterOutputs } from "@/trpc/shared";
-import { cn } from "@/lib/utils";
+import { cn, isEmptyString } from "@/lib/utils";
 type StudySpot = RouterOutputs["studySpot"]["bySlug"];
 
-export default function Summary({
-  studySpot,
-}: {
-  studySpot?: Partial<StudySpot>;
-}) {
+export default function Summary({ studySpot }: { studySpot?: StudySpot }) {
   const durationTiming = 500;
   const animationDuration = `duration-${durationTiming}`;
   const timingOffset = 200;
@@ -28,7 +24,9 @@ export default function Summary({
                 )}
               />
             </UnmountAfter>
-            {studySpot.state}, {studySpot.country}
+            {[studySpot.state, studySpot.country]
+              .filter((str) => !isEmptyString(str))
+              .join(", ") || "No Location"}
           </li>
           <li className="relative">
             <UnmountAfter delay={200}>

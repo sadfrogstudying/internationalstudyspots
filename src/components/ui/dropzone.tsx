@@ -166,7 +166,7 @@ const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
         </div>
 
         {!overlayPreview && (
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {
               <Preview
                 files={files}
@@ -231,7 +231,7 @@ const Preview = ({
         {compressionProgress && (
           <div
             className={cn(
-              "absolute left-1 top-1 z-20 rounded px-4 py-2 font-mono text-xs",
+              "absolute left-1 top-1 z-20 rounded px-2 py-1 font-mono text-xs lg:px-4 lg:py-2",
               compressionProgress[i] === 100 ? "bg-lime-400" : "bg-yellow-400",
             )}
           >
@@ -248,8 +248,9 @@ const Preview = ({
           width={300}
           height={300}
           className={cn(
-            overlayPreview &&
-              "absolute left-0 top-0 h-full w-full object-cover",
+            overlayPreview
+              ? "absolute left-0 top-0 h-full w-full object-cover"
+              : "rounded-md",
           )}
         />
       </div>

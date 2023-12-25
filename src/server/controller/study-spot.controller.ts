@@ -63,6 +63,11 @@ export async function getCountriesHandler({ ctx }: { ctx: Context }) {
       country: true,
     },
     distinct: ["country"],
+    where: {
+      country: {
+        not: "",
+      },
+    },
   });
 
   return countries.map((x) => x.country);

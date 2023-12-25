@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import dynamic from "next/dynamic";
 import { type RouterOutputs } from "@/trpc/shared";
 
@@ -11,6 +10,8 @@ import SkeletonGridItem from "./grid-item-skeleton";
 import ImageCarousel from "./image-carousel";
 import UnmountAfter from "../unmount-after";
 import { Skeleton } from "../ui/skeleton";
+import { Link } from "@/components/ui/link";
+import { isEmptyString } from "@/lib/utils";
 
 const TooltipBase = dynamic(() => import("./tooltip-base"), {
   ssr: false,
@@ -39,11 +40,15 @@ export default function GridItem({
     naturalViews,
   } = studySpot;
 
+  const location =
+    [state, country].filter((str) => !isEmptyString(str)).join(", ") ||
+    "No Location";
+
   return (
     <Link
       key={id}
       href={`/study-spot/${slug}`}
-      className="group relative rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="group relative h-fit rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       {/* Add offset to prevent disgusting "flasing" umount */}
       <UnmountAfter delay={i * 50 + 200}>
@@ -69,9 +74,7 @@ export default function GridItem({
           sizes="(max-width: 1024px) 40vw, 22vw"
         />
         <ul>
-          <li className="truncate text-ellipsis font-bold">
-            {state}, {country}
-          </li>
+          <li className="truncate text-ellipsis font-bold">{location}</li>
           <li>
             <h2 className="truncate text-ellipsis">{name}</h2>
           </li>

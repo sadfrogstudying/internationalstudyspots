@@ -1,4 +1,4 @@
-import type { Context } from "@/server/api/trpc";
+import type { Context, ContextProtected } from "@/server/api/trpc";
 import type {
   BySlugInput,
   CreateInput,
@@ -6,6 +6,7 @@ import type {
   GetPresignedUrlInput,
 } from "@/schemas";
 import { TRPCError } from "@trpc/server";
+import { getPresignedUrls } from "@/lib/server-helpers";
 
 export async function getAllHandler({
   ctx,
@@ -66,20 +67,31 @@ export async function getPresignedUrlHandler({
   ctx,
   input,
 }: {
-  ctx: Context;
+  ctx: ContextProtected;
   input: GetPresignedUrlInput;
 }) {
-  throw new TRPCError({
-    code: "NOT_IMPLEMENTED",
-    message: "Not implemented",
+  const spot = await ctx.db.studySpot.findUnique({
+    where: {
+      name: input.name,
+    },
   });
+
+  if (spot)
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Study spot name already exists",
+    });
+
+  if (!input.images) return;
+
+  return await getPresignedUrls(input.images, ctx.s3);
 }
 
 export async function createHandler({
   ctx,
   input,
 }: {
-  ctx: Context;
+  ctx: ContextProtected;
   input: CreateInput;
 }) {
   throw new TRPCError({

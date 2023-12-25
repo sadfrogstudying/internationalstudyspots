@@ -4,10 +4,13 @@ import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { type CreateSpotFormValues, createSpotSchemaClient } from "@/schemas";
-import { AccordionItem } from "../form/accordion-item";
-import inputs from "./form-config";
-import { Accordion } from "../ui/accordion";
-import { InputGenerator } from "../form/input-generator";
+
+import { AccordionItem } from "@/components/form/accordion-item";
+import { Accordion } from "@/components/ui/accordion";
+import InputsRequired from "@/components/create-spot-form/inputs-required";
+import InputsLocation from "@/components/create-spot-form/inputs-location";
+import InputsGeneral from "@/components/create-spot-form/inputs-general";
+import InputGrid from "../form/input-grid";
 
 export default function CreateSpotFormV2({
   onSubmit,
@@ -67,30 +70,21 @@ export default function CreateSpotFormV2({
         className="flex-gap-2 flex flex-col"
       >
         <Accordion type="multiple" className="w-full">
-          {inputs.map(({ inputs, category, hasAccordion }) => {
-            return hasAccordion ? (
-              <AccordionItem label={category} key={`accordion-${category}`}>
-                <div className="rounded border border-neutral-400">
-                  <div className="grid grid-cols-1 gap-4 border-l-4 border-neutral-400 p-4 sm:grid-cols-2 md:grid-cols-4">
-                    {inputs.map((input) => {
-                      return InputGenerator(input, form);
-                    })}
-                  </div>
-                </div>
-              </AccordionItem>
-            ) : (
-              <div
-                className="rounded border border-neutral-400"
-                key={`accordion-${category}`}
-              >
-                <div className="grid grid-cols-1 gap-4 border-l-4 border-neutral-400 p-4 sm:grid-cols-2 md:grid-cols-4">
-                  {inputs.map((input) => {
-                    return InputGenerator(input, form);
-                  })}
-                </div>
-              </div>
-            );
-          })}
+          <InputGrid>
+            <InputsRequired form={form} />
+          </InputGrid>
+
+          <AccordionItem label="Location 📍">
+            <InputGrid>
+              <InputsLocation form={form} />
+            </InputGrid>
+          </AccordionItem>
+
+          <AccordionItem label="General 🤖">
+            <InputGrid>
+              <InputsGeneral form={form} />
+            </InputGrid>
+          </AccordionItem>
         </Accordion>
 
         <Button className="mt-4" type="submit">

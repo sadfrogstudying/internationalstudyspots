@@ -56,8 +56,6 @@ export default function Filter() {
 }
 
 function CountriesFilter() {
-  const apiUtils = api.useUtils();
-
   const {
     data: countries,
     isInitialLoading,

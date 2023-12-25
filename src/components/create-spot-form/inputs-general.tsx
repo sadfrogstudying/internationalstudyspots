@@ -4,6 +4,7 @@ import type { CreateSpotFormValues } from "@/schemas";
 
 import TextInput from "@/components/input/text-input";
 import TextAreaInput from "@/components/input/textarea-input";
+import CheckboxInput from "@/components/input/checkbox-input";
 
 export default function InputsGeneral({
   form,
@@ -140,6 +141,56 @@ export default function InputsGeneral({
           label: "Description",
           description: "What is the description of this spot?",
           placeholder: "A nice spot to study.",
+          required: false,
+        }}
+      />
+
+      <CheckboxInput
+        name="naturalViews"
+        control={form.control}
+        input={{
+          label: "Natural Views",
+          description: "Are there natural views here?",
+          required: false,
+        }}
+      />
+
+      <CheckboxInput
+        name="canStudyForLong"
+        control={form.control}
+        input={{
+          label: "Can study for long",
+          description: "Can you study for long here?",
+          required: false,
+        }}
+      />
+
+      <CheckboxInput
+        name="sunlight"
+        control={form.control}
+        input={{
+          label: "Sunlight",
+          description: "Is there sunlight here?",
+          required: false,
+        }}
+      />
+
+      <CheckboxInput
+        name="drinks"
+        control={form.control}
+        input={{
+          label: "Drinks",
+          description: "Are there drinks here?",
+          required: false,
+        }}
+      />
+
+      <CheckboxInput
+        name="food"
+        control={form.control}
+        input={{
+          label: "Food",
+          description: "Is there food here?",
           required: false,
         }}
       />

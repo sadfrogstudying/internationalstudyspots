@@ -65,7 +65,7 @@ const LocationSearchInput = ({ onSelectedPlaceReady }: Props) => {
               variant="outline"
               role="combobox"
               aria-expanded={open}
-              className="w-full justify-between"
+              className="w-full justify-between font-normal"
             >
               {selectedPlace ? (
                 <span className="flex items-center truncate">

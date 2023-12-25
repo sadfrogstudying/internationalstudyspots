@@ -11,6 +11,7 @@ import {
   type FieldValues,
 } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 
 interface Input {
   label: string;
@@ -33,7 +34,12 @@ export default function CheckboxInput<
       control={props.control}
       name={props.name}
       render={({ field }) => (
-        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+        <FormItem
+          className={cn(
+            "flex flex-row items-start space-x-3 space-y-0",
+            field.value === undefined ? "opacity-40" : "",
+          )}
+        >
           <FormControl>
             <Checkbox checked={field.value} onCheckedChange={field.onChange} />
           </FormControl>

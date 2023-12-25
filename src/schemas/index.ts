@@ -71,19 +71,6 @@ const spotSchema = spotStringSchema
 const createSchema = spotSchema;
 type CreateInput = z.infer<typeof createSchema>;
 
-const getPresignedUrlSchema = spotSchema.extend({
-  images: z
-    .object({
-      contentLength: z.number(),
-      contentType: string(),
-    })
-    .array()
-    .min(1, { message: "At least one image is required." })
-    .max(8, { message: "Maximum of 8 images." })
-    .optional(),
-});
-type GetPresignedUrlInput = z.infer<typeof getPresignedUrlSchema>;
-
 const createSpotSchemaClient = createSchema.extend({
   images: FileListImagesSchema({ minFiles: 1 }),
 });
@@ -102,6 +89,19 @@ type GetAllInput = z.infer<typeof getAllSchema>;
 const bySlugSchema = z.string();
 type BySlugInput = z.infer<typeof bySlugSchema>;
 
+const getPresignedUrlSchema = spotSchema.extend({
+  images: z
+    .object({
+      contentLength: z.number(),
+      contentType: string(),
+    })
+    .array()
+    .min(1, { message: "At least one image is required." })
+    .max(8, { message: "Maximum of 8 images." })
+    .optional(),
+});
+type GetPresignedUrlInput = z.infer<typeof getPresignedUrlSchema>;
+
 export {
   spotBooleanSchema,
   type SpotBooleanSchema,
@@ -117,8 +117,6 @@ export {
   type GetAllInput,
   bySlugSchema,
   type BySlugInput,
-
-  //
   createSchema,
   type CreateInput,
   getPresignedUrlSchema,

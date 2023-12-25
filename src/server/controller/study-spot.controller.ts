@@ -6,7 +6,13 @@ import type {
   GetPresignedUrlInput,
 } from "@/schemas";
 import { TRPCError } from "@trpc/server";
-import { getPresignedUrls } from "@/lib/server-helpers";
+import {
+  deleteImagesFromBucket,
+  getBucketObjectNameFromUrl,
+  getImagesMeta,
+  getPresignedUrls,
+  slugify,
+} from "@/lib/server-helpers";
 
 export async function getAllHandler({
   ctx,
@@ -94,8 +100,40 @@ export async function createHandler({
   ctx: ContextProtected;
   input: CreateInput;
 }) {
-  throw new TRPCError({
-    code: "NOT_IMPLEMENTED",
-    message: "Not implemented",
-  });
+  try {
+    const slug = slugify(input.name);
+    const images = await getImagesMeta(input.images);
+
+    await ctx.db.studySpot.create({
+      data: {
+        ...input,
+        slug,
+        images: {
+          createMany: {
+            data: images.map((image) => ({
+              ...image,
+              authorId: ctx.session.user.id,
+            })),
+          },
+        },
+        author: {
+          connect: {
+            id: ctx.session.user.id,
+          },
+        },
+      },
+    });
+  } catch (error: unknown) {
+    await deleteImagesFromBucket(
+      input.images.map((url) => getBucketObjectNameFromUrl(url)),
+      ctx.s3,
+    );
+
+    if (error instanceof TRPCError) throw error;
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Something went wrong creating a study spot",
+    });
+  }
 }

@@ -1,5 +1,11 @@
 import type { Context } from "@/server/api/trpc";
-import type { BySlugInput, GetAllInput } from "@/schemas";
+import type {
+  BySlugInput,
+  CreateInput,
+  GetAllInput,
+  GetPresignedUrlInput,
+} from "@/schemas";
+import { TRPCError } from "@trpc/server";
 
 export async function getAllHandler({
   ctx,
@@ -53,4 +59,31 @@ export async function getCountriesHandler({ ctx }: { ctx: Context }) {
   });
 
   return countries.map((x) => x.country);
+}
+
+/** Also acts as a input validator. */
+export async function getPresignedUrlHandler({
+  ctx,
+  input,
+}: {
+  ctx: Context;
+  input: GetPresignedUrlInput;
+}) {
+  throw new TRPCError({
+    code: "NOT_IMPLEMENTED",
+    message: "Not implemented",
+  });
+}
+
+export async function createHandler({
+  ctx,
+  input,
+}: {
+  ctx: Context;
+  input: CreateInput;
+}) {
+  throw new TRPCError({
+    code: "NOT_IMPLEMENTED",
+    message: "Not implemented",
+  });
 }

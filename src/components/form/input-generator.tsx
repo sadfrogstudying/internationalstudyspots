@@ -97,6 +97,7 @@ export function InputGenerator<T extends FieldValues>(
           required: input.required,
         }}
         name={input.name}
+        maxFiles={8}
         {...form}
       />
     );

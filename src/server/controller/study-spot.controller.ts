@@ -3,7 +3,7 @@ import type {
   BySlugInput,
   CreateInput,
   GetAllInput,
-  GetPresignedUrlInput,
+  GetPresignedUrlsInput,
 } from "@/schemas";
 import { TRPCError } from "@trpc/server";
 import {
@@ -68,13 +68,16 @@ export async function getCountriesHandler({ ctx }: { ctx: Context }) {
   return countries.map((x) => x.country);
 }
 
-/** Also acts as a input validator. */
+/**
+ * Also acts as a input validator.
+ * I may have to make a new one for spot update.
+ */
 export async function getPresignedUrlHandler({
   ctx,
   input,
 }: {
   ctx: ContextProtected;
-  input: GetPresignedUrlInput;
+  input: GetPresignedUrlsInput;
 }) {
   const spot = await ctx.db.studySpot.findUnique({
     where: {
@@ -87,8 +90,6 @@ export async function getPresignedUrlHandler({
       code: "BAD_REQUEST",
       message: "Study spot name already exists",
     });
-
-  if (!input.images) return;
 
   return await getPresignedUrls(input.images, ctx.s3);
 }

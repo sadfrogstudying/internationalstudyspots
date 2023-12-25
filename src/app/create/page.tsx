@@ -1,9 +1,13 @@
 "use client";
 
-import { api } from "@/trpc/react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
-import { Link } from "@/components/ui/link";
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+
+import { api } from "@/trpc/react";
+import type { CreateSpotFormValues } from "@/schemas";
+import { uploadFilesToS3UsingPresignedUrls } from "@/lib/helpers";
+
 import ServerZodError from "@/components/server-zod-error";
 import ServerErrorMessage from "@/components/server-error-message";
 
@@ -13,54 +17,73 @@ const CreateSpotFormV2 = dynamic(
 );
 
 export default function CreatePage() {
-  const { mutate, data, isLoading, error } = api.studySpot.create.useMutation({
-    onSuccess: (res) => {
-      console.log(res);
+  // To capture the form data from the form component
+  const [formData, setFormData] = useState<CreateSpotFormValues>();
+
+  const apiUtils = api.useUtils();
+  const router = useRouter();
+
+  const {
+    mutate: create,
+    error: createError,
+    isLoading: createLoading,
+    isSuccess: createSuccess,
+  } = api.studySpot.create.useMutation({
+    onSuccess: () => {
+      void apiUtils.studySpot.getAll.invalidate();
+      router.push("/");
     },
   });
 
-  const { data: user, isLoading: userLoading } =
-    api.user.currentBySession.useQuery(undefined);
+  const {
+    mutate: getPresignedUrls,
+    error: presignedUrlsError,
+    isLoading: presignedUrlsLoading,
+  } = api.studySpot.getPresignedUrls.useMutation({
+    onSuccess: async (presignedUrls) => {
+      if (!formData?.images) return;
 
-  if (!user?.username && !userLoading) {
-    return (
-      <>
-        <p className="text-gray-500">
-          You need to finish creating your account before you can add spots and
-          view your profile.
-        </p>
-        <Button asChild className="mt-4" variant="success">
-          <Link href={`/account/edit`}>Finish Account</Link>
-        </Button>
-      </>
-    );
+      const imageUrls = await uploadFilesToS3UsingPresignedUrls(
+        presignedUrls,
+        formData.images,
+      );
+
+      create({
+        ...formData,
+        images: imageUrls,
+      });
+    },
+  });
+
+  function handleSubmit(formValues: CreateSpotFormValues) {
+    setFormData(formValues);
+
+    const images = formValues.images.map((image) => ({
+      contentLength: image.size,
+      contentType: image.type,
+    }));
+
+    getPresignedUrls({
+      ...formValues,
+      images,
+    });
   }
-
-  if (userLoading) return <p>Checking User 🤦‍♂️...</p>;
 
   return (
     <>
-      <CreateSpotFormV2
-        onSubmit={(formValues) => {
-          // pretend to convert images to urls
-          const imageUrls = formValues.images.map(
-            (image) => `www.s3.com/${image.name}`,
-          );
+      <CreateSpotFormV2 onSubmit={handleSubmit} />
 
-          mutate({
-            ...formValues,
-            images: imageUrls,
-          });
-        }}
-      />
-
-      {isLoading && <p className="mt-4">Submitting...</p>}
-      {data && <p className="mt-4 text-green-500">Submitted!</p>}
-      {!!error?.data?.zodError && (
-        <ServerZodError zodError={error?.data?.zodError} />
+      {!!presignedUrlsError?.data?.zodError && (
+        <ServerZodError zodError={presignedUrlsError.data.zodError} />
       )}
-      {error && !error?.data?.zodError && (
-        <ServerErrorMessage message={error.message} />
+      {presignedUrlsError && !presignedUrlsError?.data?.zodError && (
+        <ServerErrorMessage message={presignedUrlsError.message} />
+      )}
+      {!!createError?.data?.zodError && (
+        <ServerZodError zodError={createError.data.zodError} />
+      )}
+      {createError && !createError?.data?.zodError && (
+        <ServerErrorMessage message={createError.message} />
       )}
     </>
   );

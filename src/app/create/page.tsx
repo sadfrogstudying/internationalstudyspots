@@ -69,9 +69,22 @@ export default function CreatePage() {
     });
   }
 
+  function getButtonText() {
+    if (createSuccess) return "Redirecting you now...";
+    if (createLoading) return "Creating...";
+    if (presignedUrlsLoading) return "Uploading images...";
+    return "Submit";
+  }
+
+  const submitDisabled = createLoading || presignedUrlsLoading || createSuccess;
+
   return (
     <>
-      <CreateSpotFormV2 onSubmit={handleSubmit} />
+      <CreateSpotFormV2
+        onSubmit={handleSubmit}
+        buttonLabel={getButtonText()}
+        submitDisabled={submitDisabled}
+      />
 
       {!!presignedUrlsError?.data?.zodError && (
         <ServerZodError zodError={presignedUrlsError.data.zodError} />

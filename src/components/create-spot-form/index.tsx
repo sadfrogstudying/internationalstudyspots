@@ -14,8 +14,12 @@ import InputGrid from "../form/input-grid";
 
 export default function CreateSpotFormV2({
   onSubmit,
+  buttonLabel = "Submit",
+  submitDisabled = false,
 }: {
   onSubmit: (formValues: CreateSpotFormValues) => void;
+  buttonLabel?: string;
+  submitDisabled?: boolean;
 }) {
   const form = useForm<CreateSpotFormValues>({
     resolver: zodResolver(createSpotSchemaClient),
@@ -87,8 +91,12 @@ export default function CreateSpotFormV2({
           </AccordionItem>
         </Accordion>
 
-        <Button className="mt-4" type="submit">
-          Submit
+        <Button
+          className="mt-4"
+          type="submit"
+          disabled={submitDisabled || !form.formState.isDirty}
+        >
+          {form.formState.isDirty ? buttonLabel : "No changes"}
         </Button>
       </form>
     </Form>

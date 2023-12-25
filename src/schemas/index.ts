@@ -15,7 +15,8 @@ const longitudeSchema = z.coerce
   .transform((val) => (val === 0 ? undefined : val))
   .optional();
 
-const stringSchema = string().max(100).optional();
+/** 191 is max length string for Prisma (varchar(191)) */
+const stringSchema = string().max(180).optional();
 
 const spotBooleanSchema = z.object({
   powerOutlets: boolean(),

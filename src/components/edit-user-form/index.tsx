@@ -66,7 +66,7 @@ export default function EditUserForm() {
     mutate: update,
     isLoading: updateLoading,
     error: updateError,
-    data: updateData,
+    isSuccess: updateSuccess,
   } = api.user.update.useMutation({
     onSuccess: () => {
       void apiUtils.user.currentBySession.invalidate();
@@ -107,7 +107,7 @@ export default function EditUserForm() {
   }
 
   function getButtonText() {
-    if (updateData) return "Redirecting you now...";
+    if (updateSuccess) return "Redirecting you now...";
     if (!form.formState.isDirty) return "No changes";
     if (updateLoading) return "Creating...";
     if (getPresignedUrlLoading) return "Uploading images...";
@@ -118,7 +118,7 @@ export default function EditUserForm() {
     updateLoading ||
     getPresignedUrlLoading ||
     !form.formState.isDirty ||
-    updateData;
+    updateSuccess;
 
   return (
     <Form {...form}>

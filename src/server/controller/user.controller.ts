@@ -61,7 +61,7 @@ export async function getPresignedUrlHandler({
     where: { id },
   });
 
-  if (!currentUser) throw new TRPCError({ code: "UNAUTHORIZED" });
+  if (!currentUser) throw new TRPCError({ code: "NOT_FOUND" });
 
   if (currentUser.username !== input.username) {
     const user = await ctx.db.user.findUnique({
@@ -97,7 +97,7 @@ export async function updateHandler({
     include: { profileImage: true },
   });
 
-  if (!user) throw new TRPCError({ code: "UNAUTHORIZED" });
+  if (!user) throw new TRPCError({ code: "NOT_FOUND" });
 
   const userKeys = Object.keys(user);
 
@@ -147,8 +147,6 @@ export async function updateHandler({
     },
     include: { profileImage: true },
   });
-
-  return true;
 }
 
 export async function create({

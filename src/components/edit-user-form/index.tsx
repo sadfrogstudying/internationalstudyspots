@@ -1,11 +1,9 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { type UpdateUserClient, updateUserClientSchema } from "@/schemas/user";
-import { uploadFilesToS3UsingPresignedUrls } from "@/lib/helpers";
 import { api } from "@/trpc/react";
 
 import { Form } from "@/components/ui/form";
@@ -13,12 +11,18 @@ import { Button } from "@/components/ui/button";
 import { Accordion } from "@/components/ui/accordion";
 import TextInput from "@/components/input/text-input";
 import ImageInput from "@/components/input/image-input";
-import ServerZodError from "@/components/server-zod-error";
-import ServerErrorMessage from "@/components/server-error-message";
 import { AccordionItem } from "@/components/form/accordion-item";
 import InputGrid from "@/components/form/input-grid";
 
-export default function EditUserForm() {
+export default function EditUserForm({
+  onSubmit,
+  buttonLabel = "Submit",
+  submitDisabled = false,
+}: {
+  onSubmit: (formValues: UpdateUserClient) => void;
+  buttonLabel?: string;
+  submitDisabled?: boolean;
+}) {
   const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
 
   const {
@@ -60,66 +64,9 @@ export default function EditUserForm() {
     disabled: isLoading,
   });
 
-  const apiUtils = api.useUtils();
-  const router = useRouter();
-
-  const {
-    mutate: update,
-    isLoading: updateLoading,
-    error: updateError,
-    isSuccess: updateSuccess,
-  } = api.user.update.useMutation({
-    onSuccess: () => {
-      void apiUtils.user.currentBySession.invalidate();
-      router.push(`/account/${form.getValues("username")}`);
-    },
-  });
-
-  const {
-    mutate: getPresignedUrl,
-    error: getPresignedUrlError,
-    isLoading: getPresignedUrlLoading,
-  } = api.user.getPresignedUrl.useMutation({
-    onSuccess: async (presignedUrl) => {
-      if (!presignedUrl) {
-        update({ ...form.getValues(), profileImage: undefined });
-        return;
-      }
-
-      const imageUrls = await uploadFilesToS3UsingPresignedUrls(
-        [presignedUrl],
-        form.getValues("profileImage"),
-      );
-
-      update({ ...form.getValues(), profileImage: imageUrls[0] });
-    },
-  });
-
   function handleSubmit(formValues: UpdateUserClient) {
-    const profileImage = formValues.profileImage.map((file) => ({
-      contentLength: file.size,
-      contentType: file.type,
-    }))[0];
-
-    getPresignedUrl({
-      ...formValues,
-      profileImage,
-    });
+    onSubmit(formValues);
   }
-
-  function getButtonText() {
-    if (updateSuccess) return "Redirecting you now...";
-    if (!form.formState.isDirty) return "No changes";
-    if (updateLoading) return "Creating...";
-    if (getPresignedUrlLoading) return "Uploading images...";
-    return "Submit";
-  }
-
-  const submitDisabled =
-    updateLoading ||
-    getPresignedUrlLoading ||
-    !form.formState.isDirty ||
-    updateSuccess;
 
   return (
     <Form {...form}>
@@ -226,25 +173,14 @@ export default function EditUserForm() {
           </AccordionItem>
         </Accordion>
 
-        <Button className="mt-4" type="submit" disabled={submitDisabled}>
-          {getButtonText()}
+        <Button
+          className="mt-4"
+          type="submit"
+          disabled={submitDisabled || !form.formState.isDirty}
+        >
+          {form.formState.isDirty ? buttonLabel : "No changes"}
         </Button>
       </form>
-
-      <div className="space-y-4">
-        {!!updateError?.data?.zodError && (
-          <ServerZodError zodError={updateError?.data?.zodError} />
-        )}
-        {updateError && !updateError?.data?.zodError && (
-          <ServerErrorMessage message={updateError.message} />
-        )}
-        {!!getPresignedUrlError?.data?.zodError && (
-          <ServerZodError zodError={getPresignedUrlError?.data?.zodError} />
-        )}
-        {getPresignedUrlError && !getPresignedUrlError?.data?.zodError && (
-          <ServerErrorMessage message={getPresignedUrlError.message} />
-        )}
-      </div>
     </Form>
   );
 }

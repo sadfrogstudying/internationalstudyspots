@@ -31,7 +31,9 @@ export default function UserAvatarPopover({
               src={data?.profileImage?.url}
               className="object-cover"
             />
-            <AvatarFallback />
+            <AvatarFallback>
+              {data?.name?.[0]?.toUpperCase() ?? ":)"}
+            </AvatarFallback>
           </Avatar>
         </PopoverTrigger>
       </Button>

@@ -1,5 +1,6 @@
 import { getServerAuthSession } from "@/server/auth";
 import { redirect } from "next/navigation";
+import UserStatusWrapper from "./user-status-wrapper";
 
 export default async function Layout({
   children,
@@ -10,5 +11,12 @@ export default async function Layout({
 
   if (!session) redirect("/auth/signin");
 
-  return <>{children}</>;
+  return (
+    <div className="space-y-4 p-4">
+      <div className="rounded border p-4">
+        <h1 className="mb-4 text-lg font-bold underline">Edit User 👶</h1>
+        <UserStatusWrapper>{children}</UserStatusWrapper>
+      </div>
+    </div>
+  );
 }

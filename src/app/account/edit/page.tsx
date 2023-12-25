@@ -1,9 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import dynamic from "next/dynamic";
-import { signIn } from "next-auth/react";
-import { Link } from "@/components/ui/link";
 import { api } from "@/trpc/react";
+import { useRouter } from "next/navigation";
+
+import type { UpdateUserClient } from "@/schemas/user";
+import { uploadFilesToS3UsingPresignedUrls } from "@/lib/helpers";
+
+import ServerZodError from "@/components/server-zod-error";
+import ServerErrorMessage from "@/components/server-error-message";
 
 const EditUserForm = dynamic(() => import("@/components/edit-user-form"), {
   ssr: false,
@@ -11,44 +17,89 @@ const EditUserForm = dynamic(() => import("@/components/edit-user-form"), {
 });
 
 export default function EditAccountPage() {
+  // To capture the form data from the form component
+  const [formData, setFormData] = useState<UpdateUserClient>();
+
+  const apiUtils = api.useUtils();
+  const router = useRouter();
+
+  const {
+    mutate: update,
+    isLoading: updateLoading,
+    error: updateError,
+    isSuccess: updateSuccess,
+  } = api.user.update.useMutation({
+    onSuccess: () => {
+      void apiUtils.user.currentBySession.invalidate();
+      router.push(`/account/${formData?.username}`);
+    },
+  });
+
+  const {
+    mutate: getPresignedUrl,
+    error: presignedUrlError,
+    isLoading: presignedUrlLoading,
+  } = api.user.getPresignedUrl.useMutation({
+    onSuccess: async (presignedUrl) => {
+      if (!formData) return;
+
+      if (!presignedUrl) {
+        update({ ...formData, profileImage: undefined });
+        return;
+      }
+
+      const imageUrls = await uploadFilesToS3UsingPresignedUrls(
+        [presignedUrl],
+        formData.profileImage,
+      );
+
+      update({ ...formData, profileImage: imageUrls[0] });
+    },
+  });
+
+  function handleSubmit(formValues: UpdateUserClient) {
+    setFormData(formValues);
+
+    const profileImage = formValues.profileImage.map((file) => ({
+      contentLength: file.size,
+      contentType: file.type,
+    }))[0];
+
+    getPresignedUrl({
+      ...formValues,
+      profileImage,
+    });
+  }
+
+  function getButtonText() {
+    if (updateSuccess) return "Redirecting you now...";
+    if (updateLoading) return "Creating...";
+    if (presignedUrlLoading) return "Uploading images...";
+    return "Submit";
+  }
+
+  const submitDisabled = updateLoading || presignedUrlLoading || updateSuccess;
+
   return (
-    <Layout>
-      <Content />
-    </Layout>
+    <>
+      <EditUserForm
+        onSubmit={handleSubmit}
+        buttonLabel={getButtonText()}
+        submitDisabled={submitDisabled}
+      />
+
+      {!!updateError?.data?.zodError && (
+        <ServerZodError zodError={updateError?.data?.zodError} />
+      )}
+      {updateError && !updateError?.data?.zodError && (
+        <ServerErrorMessage message={updateError.message} />
+      )}
+      {!!presignedUrlError?.data?.zodError && (
+        <ServerZodError zodError={presignedUrlError?.data?.zodError} />
+      )}
+      {presignedUrlError && !presignedUrlError?.data?.zodError && (
+        <ServerErrorMessage message={presignedUrlError.message} />
+      )}
+    </>
   );
-}
-
-function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="space-y-4 p-4">
-      <div className="rounded border p-4">
-        <h1 className="mb-4 text-lg font-bold underline">Edit User 👶</h1>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function Content() {
-  const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
-
-  if (!data && !isLoading)
-    return (
-      <p>
-        Please create an account first. Click{" "}
-        <Link href={`/account/create`} className="underline" asChild>
-          <span
-            onClick={() => signIn(undefined, { callbackUrl: `/account` })}
-            aria-label="Sign In"
-            className="cursor-pointer"
-          >
-            Sign In
-          </span>
-        </Link>
-      </p>
-    );
-
-  if (isLoading) return <p>Loading User 🤦‍♂️...</p>;
-
-  return <EditUserForm />;
 }

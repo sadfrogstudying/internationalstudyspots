@@ -81,6 +81,7 @@ const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
           );
 
           setFiles(initialImagesWithPreview);
+          onChange(acceptedFiles); // need to do this twice so integration tests work.  Compression doesn't seem to work for image upload mocks.
 
           const compressedImages = await compressImages(acceptedFiles);
 
@@ -238,9 +239,9 @@ const Preview = ({
             {compressionProgress[i]}%
           </div>
         )}
-        <Image
+        <img
           src={file.preview}
-          alt="Preview of image you want to upload"
+          alt="Image preview"
           // Prevent memory leaks by revoking data uri after loaded
           onLoad={() => {
             URL.revokeObjectURL(file.preview);

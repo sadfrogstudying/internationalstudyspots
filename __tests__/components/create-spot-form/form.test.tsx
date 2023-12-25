@@ -58,7 +58,7 @@ const mockCreate = jest.fn((formValues: CreateSpotFormValues) => {
   return formValues;
 });
 
-const uploadImage = async () => {
+const uploadImageViaDropzone = async () => {
   global.URL.revokeObjectURL = jest.fn();
   const dropzone = screen.getByLabelText(/images/i);
   expect(dropzone).not.toHaveValue();
@@ -70,7 +70,9 @@ const uploadImage = async () => {
     value: [file],
   });
   fireEvent.drop(dropzone);
-  expect(await screen.findByText(file.name)).toBeInTheDocument();
+
+  // findBy methods are a combination of getBy queries and waitFor
+  await screen.findByAltText(/image preview/i);
 };
 
 it("should display single error message if image field is incomplete", async () => {
@@ -94,7 +96,8 @@ it("should not display error when value is valid", async () => {
     "Fuglen Tokyo",
   );
   await user.type(screen.getByRole("textbox", { name: /venue type/i }), "Cafe");
-  await uploadImage();
+
+  await uploadImageViaDropzone();
 
   // submit form
   await user.click(screen.getByRole("button", { name: /submit/i }));

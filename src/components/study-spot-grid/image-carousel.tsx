@@ -68,7 +68,7 @@ export default function ImageCarousel(props: Props) {
                 alt={`Image of ${name}`}
                 width={image.width}
                 height={image.height}
-                className="aspect-square object-cover sm:aspect-[3/4]"
+                className="aspect-square w-full object-cover sm:aspect-[3/4]"
                 sizes={sizes}
               />
             </div>

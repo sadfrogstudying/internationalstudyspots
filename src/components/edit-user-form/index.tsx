@@ -14,6 +14,7 @@ import { Accordion } from "@/components/ui/accordion";
 import TextInput from "@/components/input/text-input";
 import ImageInput from "@/components/input/image-input";
 import ServerZodError from "@/components/server-zod-error";
+import ServerErrorMessage from "@/components/server-error-message";
 import { AccordionItem } from "@/components/form/accordion-item";
 
 export default function EditUserForm() {
@@ -238,24 +239,15 @@ export default function EditUserForm() {
           <ServerZodError zodError={updateError?.data?.zodError} />
         )}
         {updateError && !updateError?.data?.zodError && (
-          <ErrorMessage message={updateError.message} />
+          <ServerErrorMessage message={updateError.message} />
         )}
         {!!getPresignedUrlError?.data?.zodError && (
           <ServerZodError zodError={getPresignedUrlError?.data?.zodError} />
         )}
         {getPresignedUrlError && !getPresignedUrlError?.data?.zodError && (
-          <ErrorMessage message={getPresignedUrlError.message} />
+          <ServerErrorMessage message={getPresignedUrlError.message} />
         )}
       </div>
     </Form>
-  );
-}
-
-function ErrorMessage({ message }: { message: string }) {
-  return (
-    <div role="alert" className="text-[0.8rem] text-destructive">
-      <strong>An error occured on the server, please try again.</strong>
-      <div className="text-[0.8rem] font-medium">Message: {message}</div>
-    </div>
   );
 }

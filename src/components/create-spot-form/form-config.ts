@@ -8,7 +8,7 @@ const inputsRequired: CreateSpotInput[] = [
     name: "name",
     label: "Name",
     description: "What is the name of this spot?",
-    placeholder: "John Doe",
+    placeholder: "Leible Coffee",
     required: true,
     inputType: "text",
   },

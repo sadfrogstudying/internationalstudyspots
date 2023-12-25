@@ -10,5 +10,12 @@ export default async function Layout({
 
   if (!session) redirect("/auth/signin");
 
-  return <>{children}</>;
+  return (
+    <div className="space-y-4 p-4">
+      <div className="rounded border p-4">
+        <h1 className="mb-4 text-lg font-bold underline">Create New Spot 🧭</h1>
+        {children}
+      </div>
+    </div>
+  );
 }

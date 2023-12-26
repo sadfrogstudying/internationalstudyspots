@@ -195,5 +195,41 @@ export async function updateHandler({
   ctx: ContextProtected;
   input: UpdateInput;
 }) {
-  throw "Not implemented";
+  // TODO: Implement for images
+  const spot = await ctx.db.studySpot.findUnique({
+    where: {
+      id: input.spotId,
+    },
+  });
+
+  if (!spot) throw new TRPCError({ code: "NOT_FOUND" });
+
+  const spotKeys = Object.keys(spot);
+
+  // Loop through, and filter out the fields that are the same as existing
+  const changes = Object.entries(input).filter(([key, value]) => {
+    function isKeyOfSpot(key: string): key is keyof typeof spot {
+      return spotKeys.includes(key);
+    }
+
+    if (!isKeyOfSpot(key)) return false;
+
+    if (key === "images") {
+      // Not implemented
+      return;
+    }
+    if (key === "imagesToDelete") {
+      // Not implemented
+      return;
+    }
+
+    return value !== spot[key];
+  });
+
+  const fieldsToUpdate = Object.fromEntries(changes);
+
+  return await ctx.db.studySpot.update({
+    where: { id: input.spotId },
+    data: fieldsToUpdate,
+  });
 }

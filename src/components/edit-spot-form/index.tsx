@@ -1,17 +1,18 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+
+import { type UpdateSpotFormValues, updateSpotSchemaClient } from "@/schemas";
+import type { RouterOutputs } from "@/trpc/shared";
+
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { type UpdateSpotFormValues, updateSpotSchemaClient } from "@/schemas";
-
 import { AccordionItem } from "@/components/form/accordion-item";
 import { Accordion } from "@/components/ui/accordion";
 import InputsRequired from "@/components/edit-spot-form/inputs-required";
 import InputsLocation from "@/components/edit-spot-form/inputs-location";
 import InputsGeneral from "@/components/edit-spot-form/inputs-general";
-import InputGrid from "../form/input-grid";
-import { RouterOutputs } from "@/trpc/shared";
+import InputGrid from "@/components/form/input-grid";
 
 export default function EditSpotForm({
   onSubmit,
@@ -24,8 +25,6 @@ export default function EditSpotForm({
   submitDisabled?: boolean;
   initialValues: NonNullable<RouterOutputs["studySpot"]["bySlug"]>;
 }) {
-  const undefinedIfNull = (x: boolean | null) => (x === null ? undefined : x);
-
   const form = useForm<UpdateSpotFormValues>({
     resolver: zodResolver(updateSpotSchemaClient),
     defaultValues: {
@@ -68,12 +67,11 @@ export default function EditSpotForm({
       spotId: initialValues.id,
       images: [],
       imagesToDelete: [],
-      // These can arrive as null from the DB
-      canStudyForLong: undefinedIfNull(initialValues.canStudyForLong),
-      sunlight: undefinedIfNull(initialValues.sunlight),
-      drinks: undefinedIfNull(initialValues.drinks),
-      food: undefinedIfNull(initialValues.food),
-      naturalViews: undefinedIfNull(initialValues.naturalViews),
+      canStudyForLong: initialValues.canStudyForLong ?? undefined,
+      sunlight: initialValues.sunlight ?? undefined,
+      drinks: initialValues.drinks ?? undefined,
+      food: initialValues.food ?? undefined,
+      naturalViews: initialValues.naturalViews ?? undefined,
     },
   });
 

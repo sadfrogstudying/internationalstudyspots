@@ -72,11 +72,6 @@ const spotSchema = spotStringSchema
 const createSchema = spotSchema;
 type CreateInput = z.infer<typeof createSchema>;
 
-const createSpotSchemaClient = createSchema.extend({
-  images: FileListImagesSchema({ minFiles: 1 }),
-});
-type CreateSpotFormValues = z.infer<typeof createSpotSchemaClient>;
-
 const getAllSchema = z
   .object({
     cursor: z.number().optional(),
@@ -104,7 +99,7 @@ type GetPresignedUrlsInput = z.infer<typeof getPresignedUrlsSchema>;
 const deleteSchema = z.object({ id: z.number(), token: z.string() });
 type DeleteInput = z.infer<typeof deleteSchema>;
 
-const updateSchema = spotSchema.extend({
+const updateSchemaBase = spotSchema.extend({
   spotId: z.number(),
   images: z
     .string()
@@ -113,9 +108,24 @@ const updateSchema = spotSchema.extend({
     .optional(),
   imagesToDelete: z.string().array().optional(),
 });
+const updateSchema = updateSchemaBase.transform((val) => {
+  return {
+    ...val,
+    canStudyForLong: val.canStudyForLong ?? null,
+    sunlight: val.sunlight ?? null,
+    drinks: val.drinks ?? null,
+    food: val.food ?? null,
+    naturalViews: val.naturalViews ?? null,
+  };
+});
 type UpdateInput = z.infer<typeof updateSchema>;
 
-const updateSpotSchemaClient = updateSchema.extend({
+const createSpotSchemaClient = createSchema.extend({
+  images: FileListImagesSchema({ minFiles: 1 }),
+});
+type CreateSpotFormValues = z.infer<typeof createSpotSchemaClient>;
+
+const updateSpotSchemaClient = updateSchemaBase.extend({
   images: FileListImagesSchema(),
   imagesToDelete: FileListImagesSchema(),
 });

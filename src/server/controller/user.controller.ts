@@ -137,7 +137,7 @@ export async function updateHandler({
 
   const fieldsToChange = Object.fromEntries(changes);
 
-  await ctx.db.user.update({
+  return await ctx.db.user.update({
     where: { id },
     data: {
       ...fieldsToChange,
@@ -145,7 +145,6 @@ export async function updateHandler({
         create: newProfileImage,
       },
     },
-    include: { profileImage: true },
   });
 }
 

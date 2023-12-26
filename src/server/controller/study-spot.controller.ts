@@ -5,6 +5,7 @@ import type {
   DeleteInput,
   GetAllInput,
   GetPresignedUrlsInput,
+  UpdateInput,
 } from "@/schemas";
 import { TRPCError } from "@trpc/server";
 import {
@@ -185,4 +186,14 @@ export async function deleteHandler({
   );
 
   return true;
+}
+
+export async function updateHandler({
+  ctx,
+  input,
+}: {
+  ctx: ContextProtected;
+  input: UpdateInput;
+}) {
+  throw "Not implemented";
 }

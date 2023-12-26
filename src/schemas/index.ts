@@ -105,13 +105,23 @@ type GetPresignedUrlsInput = z.infer<typeof getPresignedUrlsSchema>;
 const deleteSchema = z.object({ id: z.number(), token: z.string() });
 type DeleteInput = z.infer<typeof deleteSchema>;
 
+const updateSchema = spotSchema.extend({
+  spotId: z.number(),
+  images: z
+    .string()
+    .array()
+    .max(8, { message: "Maximum of 8 images." })
+    .optional(),
+  imagesToDelete: z.string().array().optional(),
+});
+type UpdateInput = z.infer<typeof updateSchema>;
+
 export {
+  // Misc
   spotBooleanSchema,
   type SpotBooleanSchema,
-  spotStringSchema,
-  imageSchema,
-  spotNumberSchema,
-  spotSchema,
+
+  // Client
   createSpotSchemaClient,
   type CreateSpotFormValues,
 
@@ -126,4 +136,6 @@ export {
   type GetPresignedUrlsInput,
   deleteSchema,
   type DeleteInput,
+  updateSchema,
+  type UpdateInput,
 };

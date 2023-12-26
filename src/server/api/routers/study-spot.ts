@@ -3,12 +3,14 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
+
 import {
   bySlugSchema,
   createSchema,
   deleteSchema,
   getAllSchema,
   getPresignedUrlsSchema,
+  updateSchema,
 } from "@/schemas";
 
 import {
@@ -18,6 +20,7 @@ import {
   getAllHandler,
   getCountriesHandler,
   getPresignedUrlHandler,
+  updateHandler,
 } from "@/server/controller/study-spot.controller";
 
 export const studySpotRouter = createTRPCRouter({
@@ -29,4 +32,5 @@ export const studySpotRouter = createTRPCRouter({
     .mutation(getPresignedUrlHandler),
   create: protectedProcedure.input(createSchema).mutation(createHandler),
   delete: protectedProcedure.input(deleteSchema).mutation(deleteHandler),
+  update: protectedProcedure.input(updateSchema).mutation(updateHandler),
 });

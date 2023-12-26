@@ -1,7 +1,7 @@
 "use client";
-import CreateUpdateForm from "@/components/create-spot-form";
+
+import EditSpotForm from "@/components/edit-spot-form";
 import { api } from "@/trpc/react";
-import { useRouter } from "next/navigation";
 
 export default function EditStudySpotPage({
   params,
@@ -19,12 +19,9 @@ export default function EditStudySpotPage({
   }
 
   return (
-    <div></div>
-    // <CreateUpdateForm
-    //   onSubmit={(formValues) => console.log(formValues)}
-    //   editMode={{
-    //     initialData: data,
-    //   }}
-    // />
+    <EditSpotForm
+      initialValues={data}
+      onSubmit={(formVals) => console.log(formVals)}
+    />
   );
 }

@@ -75,7 +75,6 @@ type CreateInput = z.infer<typeof createSchema>;
 const createSpotSchemaClient = createSchema.extend({
   images: FileListImagesSchema({ minFiles: 1 }),
 });
-
 type CreateSpotFormValues = z.infer<typeof createSpotSchemaClient>;
 
 const getAllSchema = z
@@ -116,6 +115,12 @@ const updateSchema = spotSchema.extend({
 });
 type UpdateInput = z.infer<typeof updateSchema>;
 
+const updateSpotSchemaClient = updateSchema.extend({
+  images: FileListImagesSchema(),
+  imagesToDelete: FileListImagesSchema(),
+});
+type UpdateSpotFormValues = z.infer<typeof updateSpotSchemaClient>;
+
 export {
   // Misc
   spotBooleanSchema,
@@ -124,6 +129,8 @@ export {
   // Client
   createSpotSchemaClient,
   type CreateSpotFormValues,
+  updateSpotSchemaClient,
+  type UpdateSpotFormValues,
 
   // Server
   getAllSchema,

@@ -2,6 +2,7 @@ import type { Context, ContextProtected } from "@/server/api/trpc";
 import type {
   BySlugInput,
   CreateInput,
+  DeleteInput,
   GetAllInput,
   GetPresignedUrlsInput,
 } from "@/schemas";
@@ -13,6 +14,7 @@ import {
   getPresignedUrls,
   slugify,
 } from "@/lib/server-helpers";
+import { env } from "@/env";
 
 export async function getAllHandler({
   ctx,
@@ -142,4 +144,45 @@ export async function createHandler({
       message: "Something went wrong creating a study spot",
     });
   }
+}
+
+export async function deleteHandler({
+  ctx,
+  input,
+}: {
+  ctx: ContextProtected;
+  input: DeleteInput;
+}) {
+  if (input.token !== env.ADMIN_TOKEN)
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+    });
+
+  const spot = await ctx.db.studySpot.findUnique({
+    where: {
+      id: input.id,
+    },
+    include: {
+      images: true,
+    },
+  });
+
+  if (!spot)
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Study spot does not exist",
+    });
+
+  await ctx.db.studySpot.delete({
+    where: {
+      id: input.id,
+    },
+  });
+
+  await deleteImagesFromBucket(
+    spot.images.map((image) => image.name),
+    ctx.s3,
+  );
+
+  return true;
 }

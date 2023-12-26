@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import sharp from "sharp";
 
 import {
-  DeleteObjectCommand,
+  DeleteObjectsCommand,
   PutObjectCommand,
   type S3,
 } from "@aws-sdk/client-s3";
@@ -168,18 +168,20 @@ export const getImagesMeta = async (imageUrls: string[]) => {
 };
 
 /**
+ * https://docs.aws.amazon.com/AmazonS3/latest/userguide/example_s3_DeleteObjects_section.html
  * @description deletes images from bucket
  */
 export const deleteImagesFromBucket = async (imageNames: string[], s3: S3) => {
+  const command = new DeleteObjectsCommand({
+    Bucket: env.BUCKET_NAME,
+    Delete: {
+      Objects: imageNames.map((name) => ({ Key: name })),
+    },
+  });
+
   try {
-    await Promise.all(
-      imageNames.map(async (name) => {
-        const bucketParams = { Bucket: env.BUCKET_NAME, Key: name };
-        const data = await s3.send(new DeleteObjectCommand(bucketParams));
-        console.log("Success. Object deleted.", data);
-        return data; // For unit tests.
-      }),
-    );
+    const res = await s3.send(command);
+    console.log(res);
   } catch (error) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",

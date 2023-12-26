@@ -6,6 +6,7 @@ import {
 import {
   bySlugSchema,
   createSchema,
+  deleteSchema,
   getAllSchema,
   getPresignedUrlsSchema,
 } from "@/schemas";
@@ -13,6 +14,7 @@ import {
 import {
   bySlugHandler,
   createHandler,
+  deleteHandler,
   getAllHandler,
   getCountriesHandler,
   getPresignedUrlHandler,
@@ -26,4 +28,5 @@ export const studySpotRouter = createTRPCRouter({
     .input(getPresignedUrlsSchema)
     .mutation(getPresignedUrlHandler),
   create: protectedProcedure.input(createSchema).mutation(createHandler),
+  delete: protectedProcedure.input(deleteSchema).mutation(deleteHandler),
 });

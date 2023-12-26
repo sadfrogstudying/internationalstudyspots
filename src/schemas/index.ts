@@ -102,6 +102,9 @@ const getPresignedUrlsSchema = spotSchema.extend({
 });
 type GetPresignedUrlsInput = z.infer<typeof getPresignedUrlsSchema>;
 
+const deleteSchema = z.object({ id: z.number(), token: z.string() });
+type DeleteInput = z.infer<typeof deleteSchema>;
+
 export {
   spotBooleanSchema,
   type SpotBooleanSchema,
@@ -121,4 +124,6 @@ export {
   type CreateInput,
   getPresignedUrlsSchema,
   type GetPresignedUrlsInput,
+  deleteSchema,
+  type DeleteInput,
 };

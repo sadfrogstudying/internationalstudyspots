@@ -8,8 +8,16 @@ import { api } from "@/trpc/react";
 import type { CreateSpotFormValues } from "@/schemas";
 import { uploadFilesToS3UsingPresignedUrls } from "@/lib/helpers";
 
-import ServerZodError from "@/components/server-zod-error";
-import ServerErrorMessage from "@/components/server-error-message";
+const ServerZodError = dynamic(() => import("@/components/server-zod-error"), {
+  ssr: false,
+});
+
+const ServerErrorMessage = dynamic(
+  () => import("@/components/server-error-message"),
+  {
+    ssr: false,
+  },
+);
 
 const CreateSpotFormV2 = dynamic(
   () => import("@/components/create-spot-form"),

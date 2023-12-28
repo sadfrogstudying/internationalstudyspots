@@ -13,6 +13,10 @@ import TextInput from "@/components/input/text-input";
 import ImageInput from "@/components/input/image-input";
 import { AccordionItem } from "@/components/form/accordion-item";
 import InputGrid from "@/components/form/input-grid";
+import {
+  DropzoneLabel,
+  DropzoneOverlayPreview,
+} from "@/components/ui/dropzone";
 
 export default function EditUserForm({
   onSubmit,
@@ -84,10 +88,13 @@ export default function EditUserForm({
               required: false,
             }}
             className="aspect-square h-auto w-40 bg-gray-100 object-cover"
-            labelClassName="w-full flex-col text-center"
-            overlayPreview
-            defaultImage={profileImage?.url}
-          />
+          >
+            <DropzoneLabel className="justify-center" />
+            <DropzoneOverlayPreview
+              files={form.watch("profileImage")}
+              defaultImage={profileImage?.url}
+            />
+          </ImageInput>
 
           <TextInput
             name="username"

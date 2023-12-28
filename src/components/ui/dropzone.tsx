@@ -1,11 +1,6 @@
 "use client";
 
-/**
- * Allows flexible styling of dropzone, the overlayPreview and defaultImage props
- * are used for typical "profile image" uploaders.
- */
-
-import React, { useEffect, useState } from "react";
+import React, { type ReactNode, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { useDropzone, type FileRejection } from "react-dropzone";
 import { withErrorBoundary } from "react-error-boundary";
@@ -15,45 +10,20 @@ import useImageCompression from "@/hooks/use-image-compression";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-/** Preview set in callback of Dropzone's onDrop */
-export type FileWithPreview = File & { preview: string };
-
 export interface DropzoneProps {
   onChange: (files: File[]) => void;
   /** Aria label for accessibility and tests */
   name: string;
-  /** The text inside the dropzone, defaults to "Drag or click to select image." */
-  dragLabel?: string;
   /** Style the dropzone root container */
   className?: string;
-  /** Style the dropzone label */
-  labelClassName?: string;
   /** Defaults to 1 file */
   maxFiles?: number;
-  /** Overlay the preview image inside the input. Only works with 1 file, defaults to false */
-  overlayPreview?: boolean;
-  /** Set a default image with URL. Only works with 1 file */
-  defaultImage?: string;
+  children?: React.ReactNode;
 }
 
 const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
-  (
-    {
-      onChange,
-      name,
-      dragLabel = "Drag or click to select image.",
-      className,
-      labelClassName,
-      maxFiles = 1,
-      overlayPreview = false,
-      defaultImage,
-    },
-    ref,
-  ) => {
-    const [files, setFiles] = useState<FileWithPreview[]>([]);
-
-    const { compressImages, compressionProgress, error, isCompressing } =
-      useImageCompression();
+  ({ onChange, name, className, maxFiles = 1, children }, ref) => {
+    const { compressImages, isCompressing } = useImageCompression();
 
     const {
       getRootProps,
@@ -73,27 +43,11 @@ const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
       onDropAccepted: (acceptedFiles) => {
         // To silence Error: Promise-returning function provided to property where a void return was expected.  @typescript-eslint/no-misused-promises
         void (async () => {
-          // Set initial preview images for instant UI feedback
-          const initialImagesWithPreview = acceptedFiles.map((file) =>
-            Object.assign(file, {
-              preview: URL.createObjectURL(file),
-            }),
-          );
-
-          setFiles(initialImagesWithPreview);
           onChange(acceptedFiles); // need to do this twice so integration tests work.  Compression doesn't seem to work for image upload mocks.
 
           const compressedImages = await compressImages(acceptedFiles);
-
           if (!compressedImages) return;
 
-          const imagesWithPreview = compressedImages.map((file) =>
-            Object.assign(file, {
-              preview: URL.createObjectURL(file),
-            }),
-          );
-
-          setFiles(imagesWithPreview);
           onChange(compressedImages);
         })();
       },
@@ -102,34 +56,13 @@ const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
       },
     });
 
-    useEffect(() => {
-      // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-      return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-    }, [files]);
-
-    function getDragText() {
-      if (isDragAccept) {
-        return "All files will be accepted.";
-      } else if (isDragReject) {
-        return "Some files will be rejected.";
-      } else {
-        return dragLabel;
-      }
-    }
-
-    if ((overlayPreview && maxFiles > 1) || (defaultImage && maxFiles > 1)) {
-      throw new Error(
-        "Please set maxFiles to 1 to use overlayPreview and defaultImage props.",
-      );
-    }
-
     return (
       <>
         <div
           data-testid="dropzone"
           {...getRootProps({ "aria-label": name })}
           className={cn(
-            "relative flex h-9 w-full items-center overflow-hidden rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+            "relative flex h-9 w-full items-center overflow-hidden rounded-md border border-input bg-transparent text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
             "ring ring-transparent transition-shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
             className,
             isDragAccept && "ring-green-500",
@@ -147,37 +80,9 @@ const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
           role="button"
         >
           <input {...getInputProps()} />
-          <div
-            className={cn(
-              "pointer-events-none flex shrink-0 items-center gap-2",
-              labelClassName,
-            )}
-          >
-            <UploadIcon /> <div>{getDragText()}</div>
-          </div>
 
-          {overlayPreview && (
-            <Preview
-              files={files}
-              overlayPreview={overlayPreview}
-              defaultImage={defaultImage}
-              compressionProgress={compressionProgress}
-            />
-          )}
+          {children}
         </div>
-
-        {!overlayPreview && (
-          <div className="grid grid-cols-2 gap-2">
-            {
-              <Preview
-                files={files}
-                overlayPreview={overlayPreview}
-                defaultImage={defaultImage}
-                compressionProgress={compressionProgress}
-              />
-            }
-          </div>
-        )}
 
         <FileRejectionError fileRejections={fileRejections} />
       </>
@@ -189,7 +94,10 @@ DropzoneComponent.displayName = "DropzoneComponent";
 
 const Dropzone = withErrorBoundary(DropzoneComponent, {
   fallbackRender: ({ resetErrorBoundary }) => (
-    <div className="flex flex-col gap-4 rounded border border-red-500 bg-red-100 p-4 text-sm text-red-500">
+    <div
+      className="flex flex-col gap-4 rounded border border-red-500 bg-red-100 p-4 text-sm text-red-500"
+      role="alert"
+    >
       <h3 className="text-lg font-semibold">Error</h3>
       Something unexpected went wrong with the image uploader.
       <Button
@@ -205,57 +113,62 @@ const Dropzone = withErrorBoundary(DropzoneComponent, {
   ),
 });
 
-export default Dropzone;
+/** Use getDragText from dropzoneContext later */
+function DropzoneLabel({
+  className,
+  children,
+}: {
+  className?: string;
+  children?: ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        "pointer-events-none absolute left-0 flex w-full shrink-0 items-center gap-2 p-3.5",
+        className,
+      )}
+    >
+      {/* <UploadIcon /> <div>{getDragText()}</div> */}
+
+      {children ? (
+        children
+      ) : (
+        <>
+          <UploadIcon className="shrink-0" />{" "}
+          <div>Drag or click to select some images.</div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function useImagePreviews(files: File[]) {
+  const images = useMemo(
+    () =>
+      files.map((file) => ({
+        ...file,
+        preview: URL.createObjectURL(file),
+      })),
+    [files],
+  );
+
+  useEffect(() => {
+    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+    return () => images.forEach((file) => URL.revokeObjectURL(file.preview));
+  }, [images]);
+
+  return images;
+}
 
 /** Return dropzone files, else fallback, else null. */
-const Preview = ({
+const DropzoneOverlayPreview = ({
   files,
-  overlayPreview,
   defaultImage,
-  compressionProgress,
 }: {
-  files: FileWithPreview[];
-  overlayPreview: boolean;
+  files: File[];
   defaultImage?: string;
-  compressionProgress?: number[];
 }) => {
-  if (files.length)
-    return files.map((file, i) => (
-      <div
-        className={cn(
-          overlayPreview
-            ? "pointer-events-none absolute left-0 top-0 h-full w-full object-cover"
-            : "relative",
-        )}
-        key={file.name}
-      >
-        {compressionProgress && (
-          <div
-            className={cn(
-              "absolute left-1 top-1 z-20 rounded px-2 py-1 font-mono text-xs lg:px-4 lg:py-2",
-              compressionProgress[i] === 100 ? "bg-lime-400" : "bg-yellow-400",
-            )}
-          >
-            {compressionProgress[i]}%
-          </div>
-        )}
-        <img
-          src={file.preview}
-          alt="Image preview"
-          // Prevent memory leaks by revoking data uri after loaded
-          onLoad={() => {
-            URL.revokeObjectURL(file.preview);
-          }}
-          width={300}
-          height={300}
-          className={cn(
-            overlayPreview
-              ? "absolute left-0 top-0 h-full w-full object-cover"
-              : "rounded-md",
-          )}
-        />
-      </div>
-    ));
+  const images = useImagePreviews(files);
 
   if (defaultImage)
     return (
@@ -265,14 +178,29 @@ const Preview = ({
         width={300}
         height={300}
         key={defaultImage}
-        className={cn(
-          overlayPreview &&
-            "pointer-events-none absolute left-0 top-0 h-full w-full object-cover",
-        )}
+        className="pointer-events-none relative left-0 top-0 z-10 h-full w-full object-cover"
       />
     );
 
-  return null;
+  return (
+    <div className="pointer-events-none relative left-0 top-0 z-10 h-full w-full">
+      {images.map((image) => (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={image.preview}
+          src={image.preview}
+          alt="Image preview"
+          // Prevent memory leaks by revoking data uri after loaded
+          onLoad={() => {
+            URL.revokeObjectURL(image.preview);
+          }}
+          width={300}
+          height={300}
+          className="h-full w-full object-cover"
+        />
+      ))}
+    </div>
+  );
 };
 
 const FileRejectionError = ({
@@ -291,3 +219,5 @@ const FileRejectionError = ({
     </p>
   );
 };
+
+export { Dropzone, DropzoneOverlayPreview, DropzoneLabel, useImagePreviews };

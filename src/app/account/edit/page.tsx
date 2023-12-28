@@ -8,8 +8,16 @@ import { useRouter } from "next/navigation";
 import type { UpdateUserClient } from "@/schemas/user";
 import { uploadFilesToS3UsingPresignedUrls } from "@/lib/helpers";
 
-import ServerZodError from "@/components/server-zod-error";
-import ServerErrorMessage from "@/components/server-error-message";
+const ServerZodError = dynamic(() => import("@/components/server-zod-error"), {
+  ssr: false,
+});
+
+const ServerErrorMessage = dynamic(
+  () => import("@/components/server-error-message"),
+  {
+    ssr: false,
+  },
+);
 
 const EditUserForm = dynamic(() => import("@/components/edit-user-form"), {
   ssr: false,

@@ -5,12 +5,13 @@ import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { type CreateSpotFormValues, createSpotSchemaClient } from "@/schemas";
 
-import { AccordionItem } from "@/components/form/accordion-item";
 import { Accordion } from "@/components/ui/accordion";
 import InputsRequired from "@/components/create-spot-form/inputs-required";
 import InputsLocation from "@/components/create-spot-form/inputs-location";
 import InputsGeneral from "@/components/create-spot-form/inputs-general";
-import InputGrid from "../form/input-grid";
+import ImageManager from "@/components/create-spot-form/image-manager";
+import { AccordionItem } from "@/components/form/accordion-item";
+import InputGrid from "@/components/form/input-grid";
 
 export default function CreateSpotFormV2({
   onSubmit,
@@ -77,6 +78,10 @@ export default function CreateSpotFormV2({
           <InputGrid>
             <InputsRequired form={form} />
           </InputGrid>
+
+          <div className="mt-4 grid grid-cols-4 gap-4">
+            <ImageManager files={form.watch("images")} />
+          </div>
 
           <AccordionItem label="Location 📍">
             <InputGrid>

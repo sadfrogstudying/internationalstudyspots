@@ -11,7 +11,7 @@ import {
   type FieldPath,
   type FieldValues,
 } from "react-hook-form";
-import Dropzone, { type DropzoneProps } from "@/components/ui/dropzone";
+import { type DropzoneProps, Dropzone } from "@/components/ui/dropzone";
 
 interface Input {
   label: string;
@@ -26,12 +26,9 @@ export default function ImageInput<
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
   input,
-  dragLabel,
   className,
-  labelClassName,
-  overlayPreview,
   maxFiles,
-  defaultImage,
+  children,
   ...props
 }: Omit<ControllerProps<TFieldValues, TName>, "render"> & {
   input: Input;
@@ -41,34 +38,34 @@ export default function ImageInput<
       key={`input-${props.name}`}
       control={props.control}
       name={props.name}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel className="flex gap-1">
-            {input.label}
+      render={({ field }) => {
+        return (
+          <FormItem>
+            <FormLabel className="flex gap-1">
+              {input.label}
 
-            {input.required && (
-              <span className="text-orange-500" aria-hidden>
-                *
-              </span>
-            )}
-          </FormLabel>
-          <FormControl>
-            <Dropzone
-              ref={field.ref}
-              onChange={(files) => field.onChange(files)}
-              name={field.name}
-              dragLabel={dragLabel}
-              className={className}
-              labelClassName={labelClassName}
-              maxFiles={maxFiles}
-              overlayPreview={overlayPreview}
-              defaultImage={defaultImage}
-            />
-          </FormControl>
-          <FormDescription>{input.description}</FormDescription>
-          <FormMessage />
-        </FormItem>
-      )}
+              {input.required && (
+                <span className="text-orange-500" aria-hidden>
+                  *
+                </span>
+              )}
+            </FormLabel>
+            <FormControl>
+              <Dropzone
+                ref={field.ref}
+                onChange={(files) => field.onChange(files)}
+                name={field.name}
+                className={className}
+                maxFiles={maxFiles}
+              >
+                {children}
+              </Dropzone>
+            </FormControl>
+            <FormDescription>{input.description}</FormDescription>
+            <FormMessage />
+          </FormItem>
+        );
+      }}
     />
   );
 }

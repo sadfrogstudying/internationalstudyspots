@@ -62,8 +62,8 @@ const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
           data-testid="dropzone"
           {...getRootProps({ "aria-label": name })}
           className={cn(
-            "relative flex h-9 w-full items-center overflow-hidden rounded-md border border-input bg-transparent text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
-            "ring ring-transparent transition-shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+            "relative flex h-9 w-full items-center overflow-hidden rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+            "ring ring-transparent ring-offset-4 focus-visible:outline-none focus-visible:ring-2 active:ring-2 active:ring-orange-500",
             className,
             isDragAccept && "ring-green-500",
             isDragReject && "ring-red-500",
@@ -84,7 +84,9 @@ const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
           {children}
         </div>
 
-        <FileRejectionError fileRejections={fileRejections} />
+        {fileRejections.length ? (
+          <FileRejectionError fileRejections={fileRejections} />
+        ) : null}
       </>
     );
   },
@@ -124,7 +126,7 @@ function DropzoneLabel({
   return (
     <div
       className={cn(
-        "pointer-events-none absolute left-0 flex w-full shrink-0 items-center gap-2 p-3.5",
+        "pointer-events-none absolute left-0 flex w-full shrink-0 items-center gap-2 p-3",
         className,
       )}
     >

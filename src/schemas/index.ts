@@ -53,7 +53,10 @@ const spotStringSchema = z.object({
 
 const imageSchema = z.object({
   images: z
-    .string()
+    .object({
+      url: string(),
+      featured: boolean(),
+    })
     .array()
     .min(1, { message: "At least one image is required." })
     .max(8, { message: "Maximum of 8 images." }),
@@ -127,7 +130,7 @@ const existingImagePayloadSchema = z.object({
 type ExistingImagePayload = z.infer<typeof existingImagePayloadSchema>;
 
 const newImagePayloadSchema = z.object({
-  file: z.instanceof(File),
+  file: z.instanceof(Blob),
   featured: z.boolean(),
 });
 type NewImagePayload = z.infer<typeof newImagePayloadSchema>;

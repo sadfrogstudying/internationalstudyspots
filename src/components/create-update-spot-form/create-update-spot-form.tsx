@@ -81,6 +81,8 @@ export default function CreateUpdateSpotForm({
     }),
   });
 
+  console.log(form.formState.errors);
+
   function handleSubmit(formValues: CreateUpdateFormValues) {
     onSubmit(formValues);
   }

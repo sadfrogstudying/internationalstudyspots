@@ -1,9 +1,14 @@
 "use client";
 
-import CreateUpdateSpotForm from "@/components/create-update-spot-form";
 import type { CreateUpdateFormValues } from "@/schemas";
 import { api } from "@/trpc/react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+
+const CreateUpdateSpotForm = dynamic(
+  () => import("@/components/create-update-spot-form"),
+  { ssr: false, loading: () => <div className="">Loading Form 📝...</div> },
+);
 
 export default function EditStudySpotPage({
   params,

@@ -49,28 +49,32 @@ export default function CreatePage() {
     isLoading: presignedUrlsLoading,
   } = api.studySpot.getPresignedUrls.useMutation({
     onSuccess: async (presignedUrls) => {
-      if (!formData?.images) return;
+      const newImages = formData?.images?.newImages;
+      if (!newImages) return;
 
       const imageUrls = await uploadFilesToS3UsingPresignedUrls(
         presignedUrls,
-        formData.images,
+        newImages.map((image) => image.file),
       );
+
+      const imagePayload = imageUrls.map((url, index) => ({
+        featured: newImages[index]?.featured ?? false,
+        url,
+      }));
 
       create({
         ...formData,
-        images: imageUrls,
+        images: imagePayload,
       });
     },
   });
 
   function handleSubmit(formValues: CreateUpdateFormValues) {
-    console.log("formValues", formValues);
-    throw new Error("Not implemented");
     setFormData(formValues);
 
-    const images = formValues.images.map((image) => ({
-      contentLength: image.size,
-      contentType: image.type,
+    const images = formValues.images.newImages.map((image) => ({
+      contentLength: image.file.size,
+      contentType: image.file.type,
     }));
 
     getPresignedUrls({

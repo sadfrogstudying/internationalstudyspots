@@ -111,7 +111,12 @@ export async function createHandler({
 }) {
   try {
     const slug = slugify(input.name);
-    const images = await getImagesMeta(input.images);
+    const images = await getImagesMeta(input.images.map((x) => x.url));
+    const imagePayload = images.map((image, i) => ({
+      ...image,
+      featured: input.images[i]?.featured,
+      authorId: ctx.session.user.id,
+    }));
 
     await ctx.db.studySpot.create({
       data: {
@@ -119,10 +124,7 @@ export async function createHandler({
         slug,
         images: {
           createMany: {
-            data: images.map((image) => ({
-              ...image,
-              authorId: ctx.session.user.id,
-            })),
+            data: imagePayload,
           },
         },
         author: {
@@ -134,7 +136,7 @@ export async function createHandler({
     });
   } catch (error: unknown) {
     await deleteImagesFromBucket(
-      input.images.map((url) => getBucketObjectNameFromUrl(url)),
+      input.images.map(({ url }) => getBucketObjectNameFromUrl(url)),
       ctx.s3,
     );
 

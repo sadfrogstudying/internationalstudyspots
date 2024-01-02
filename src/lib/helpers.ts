@@ -3,7 +3,7 @@ import axios from "axios";
 /** Returns the s3 urls of the uploaded files so I can validate it server side in user.update (getImagesMeta). */
 export const uploadFilesToS3UsingPresignedUrls = async (
   presignedUrls: string[],
-  acceptedFiles: File[],
+  acceptedFiles: (File | Blob)[],
 ) => {
   if (presignedUrls.length === 0) throw new Error("No urls provided");
 
@@ -16,7 +16,7 @@ export const uploadFilesToS3UsingPresignedUrls = async (
       });
 
       console.log(res);
-      console.log("Successfully uploaded ", acceptedFiles[i]?.name);
+      console.log("Successfully uploaded ", i);
     });
 
     await Promise.all(promises);

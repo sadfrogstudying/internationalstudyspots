@@ -1,18 +1,20 @@
 "use client";
 
-import { DropzoneLabel, useImagePreviews } from "@/components/ui/dropzone";
+import { Controller, type UseFormReturn } from "react-hook-form";
 import { MAX_FEATURED_IMAGES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { X } from "lucide-react";
 import type {
   CreateUpdateFormValues,
   ExistingImagePayload,
   NewImagePayload,
 } from "@/schemas";
-import { Controller, type UseFormReturn } from "react-hook-form";
+
+import { DropzoneLabel, useImagePreviews } from "@/components/ui/dropzone";
 import ImageInput from "@/components/input/image-input";
-import { Checkbox } from "../ui/checkbox";
-import { Button } from "../ui/button";
-import { X } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 /** Return dropzone files, else fallback, else null. */
 export default function ImageManager({
@@ -50,7 +52,7 @@ export default function ImageManager({
           if (!newImagePreviews.length) return <></>;
 
           return (
-            <div className="max-h-96 overflow-auto rounded border border-neutral-300 text-sm">
+            <ScrollArea className="h-96 w-full rounded border border-neutral-300 text-sm">
               <div className="flex flex-col gap-4 border-l-4 border-neutral-300 p-4">
                 <h3 className="text-base font-bold">New</h3>
 
@@ -66,7 +68,11 @@ export default function ImageManager({
                         key={`newimagepreview-${index}`}
                         className="relative flex flex-col gap-2"
                       >
-                        <img src={preview} alt="Existing image" />
+                        <img
+                          src={preview}
+                          alt="Existing image"
+                          className="rounded"
+                        />
 
                         <div className="flex flex-col gap-2">
                           <label
@@ -122,7 +128,7 @@ export default function ImageManager({
                   })}
                 </div>
               </div>
-            </div>
+            </ScrollArea>
           );
         }}
       />
@@ -134,7 +140,7 @@ export default function ImageManager({
           if (!field.value?.length) return <></>;
 
           return (
-            <div className="max-h-96 overflow-auto rounded border border-neutral-300 text-sm">
+            <ScrollArea className="h-96 w-full rounded border border-neutral-300 text-sm">
               <div className="flex flex-col gap-4 border-l-4 border-neutral-300 p-4">
                 <h3 className="text-base font-bold">Existing</h3>
                 <div className="grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-6">
@@ -151,7 +157,11 @@ export default function ImageManager({
 
                     return (
                       <div key={url} className="flex flex-col gap-2">
-                        <img src={url} alt="New image" />
+                        <img
+                          src={url}
+                          alt="New image"
+                          className={cn("rounded", toDelete && "opacity-50")}
+                        />
 
                         <div className="flex flex-col gap-2">
                           <label
@@ -213,7 +223,7 @@ export default function ImageManager({
                   })}
                 </div>
               </div>
-            </div>
+            </ScrollArea>
           );
         }}
       />

@@ -6,6 +6,7 @@ import { useDropzone, type FileRejection } from "react-dropzone";
 import { withErrorBoundary } from "react-error-boundary";
 import { UploadIcon } from "@radix-ui/react-icons";
 
+import useImageCompression from "@/hooks/use-image-compression";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -22,6 +23,8 @@ export interface DropzoneProps {
 
 const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
   ({ onChange, name, className, maxFiles = 1, children }, ref) => {
+    const { compressImages, isCompressing } = useImageCompression();
+
     const {
       getRootProps,
       getInputProps,
@@ -38,7 +41,15 @@ const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
         "image/webp": [".webp"],
       },
       onDropAccepted: (acceptedFiles) => {
-        onChange(acceptedFiles);
+        // To silence Error: Promise-returning function provided to property where a void return was expected.  @typescript-eslint/no-misused-promises
+        void (async () => {
+          onChange(acceptedFiles); // need to do this twice so integration tests work.  Compression doesn't seem to work for image upload mocks.
+
+          const compressedImages = await compressImages(acceptedFiles);
+          if (!compressedImages) return;
+
+          onChange(compressedImages);
+        })();
       },
       onDropRejected() {
         onChange([]);
@@ -56,6 +67,7 @@ const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
             className,
             isDragAccept && "ring-green-500",
             isDragReject && "ring-red-500",
+            isCompressing && "ring-yellow-400",
           )}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {

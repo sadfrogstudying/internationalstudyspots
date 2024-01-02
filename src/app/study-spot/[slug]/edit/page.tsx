@@ -1,6 +1,7 @@
 "use client";
 
-import EditSpotForm from "@/components/edit-spot-form";
+import CreateUpdateSpotForm from "@/components/create-update-spot-form";
+import { CreateUpdateFormValues } from "@/schemas";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
 
@@ -32,14 +33,19 @@ export default function EditStudySpotPage({
     return "Submit";
   }
 
+  function handleSubmit(formValues: CreateUpdateFormValues) {
+    console.log("formValues", formValues);
+    throw new Error("Not implemented");
+
+    mutate(formValues);
+  }
+
   const submitDisabled = updateLoading;
 
   return (
-    <EditSpotForm
+    <CreateUpdateSpotForm
       initialValues={data}
-      onSubmit={(formVals) => {
-        mutate({ ...formVals, images: [], imagesToDelete: [] });
-      }}
+      onSubmit={handleSubmit}
       buttonLabel={getButtonText()}
       submitDisabled={submitDisabled}
     />

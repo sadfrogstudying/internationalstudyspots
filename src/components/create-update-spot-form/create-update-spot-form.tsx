@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { type CreateUpdateFormValues, createUpdateFormSchema } from "@/schemas";
 
 import { Accordion } from "@/components/ui/accordion";
-import InputsRequired from "@/components/create-spot-form/inputs-required";
-import InputsLocation from "@/components/create-spot-form/inputs-location";
-import InputsGeneral from "@/components/create-spot-form/inputs-general";
-import ImageManager from "@/components/create-spot-form/image-manager";
+import InputsRequired from "@/components/create-update-spot-form/inputs-required";
+import InputsLocation from "@/components/create-update-spot-form/inputs-location";
+import InputsGeneral from "@/components/create-update-spot-form/inputs-general";
+import ImageManager from "@/components/create-update-spot-form/image-manager";
 import { AccordionItem } from "@/components/form/accordion-item";
 import InputGrid from "@/components/form/input-grid";
 import { RouterOutputs } from "@/trpc/shared";

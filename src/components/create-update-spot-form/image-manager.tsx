@@ -1,6 +1,6 @@
 "use client";
 
-import { useImagePreviews } from "@/components/ui/dropzone";
+import { DropzoneLabel, useImagePreviews } from "@/components/ui/dropzone";
 import { MAX_FEATURED_IMAGES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import {
@@ -9,6 +9,10 @@ import {
   NewImagePayload,
 } from "@/schemas";
 import { Controller, UseFormReturn } from "react-hook-form";
+import ImageInput from "@/components/input/image-input";
+import { Checkbox } from "../ui/checkbox";
+import { Button } from "../ui/button";
+import { X } from "lucide-react";
 
 /** Return dropzone files, else fallback, else null. */
 export default function ImageManager({
@@ -22,7 +26,19 @@ export default function ImageManager({
 
   return (
     <>
-      <h2 className="text-lg font-bold">New Images</h2>
+      <ImageInput
+        name="images.newImages"
+        control={form.control}
+        input={{
+          label: "Images",
+          description: "Upload some images",
+          required: false,
+        }}
+        maxFiles={8}
+      >
+        <DropzoneLabel className="truncate" />
+      </ImageInput>
+
       <Controller
         control={form.control}
         name="images.newImages"
@@ -31,145 +47,172 @@ export default function ImageManager({
             field.value.map((image) => image.file),
           );
 
+          if (!newImagePreviews.length) return <></>;
+
           return (
-            <div className="grid grid-cols-4 gap-2 border border-orange-500 p-4">
-              {newImagePreviews.map(({ preview }, index) => {
-                const fieldValueItem = field.value[index];
-                if (!fieldValueItem) return;
-                const isFeatured = fieldValueItem.featured;
-                const featuredDisabled = tooManyFeatured && !isFeatured;
+            <div className="max-h-96 overflow-auto rounded border border-neutral-300 text-sm">
+              <div className="flex flex-col gap-4 border-l-4 border-neutral-300 p-4">
+                <h3 className="text-base font-bold">New</h3>
 
-                return (
-                  <div key={`${name}-${index}`} className="flex flex-col gap-2">
-                    <img src={preview} className="aspect-square object-cover" />
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-6">
+                  {newImagePreviews.map(({ preview }, index) => {
+                    const fieldValueItem = field.value[index];
+                    if (!fieldValueItem) return;
+                    const isFeatured = fieldValueItem.featured;
+                    const featuredDisabled = tooManyFeatured && !isFeatured;
 
-                    <div className="flex flex-col gap-2">
-                      <label
-                        className={cn(
-                          "flex gap-2 border border-dashed bg-neutral-50 px-2",
-                          featuredDisabled && "cursor-not-allowed opacity-50",
-                        )}
+                    return (
+                      <div
+                        key={`newimagepreview-${index}`}
+                        className="relative flex flex-col gap-2"
                       >
-                        <input
-                          type="checkbox"
-                          disabled={featuredDisabled}
-                          checked={isFeatured}
-                          onChange={(e) => {
-                            const newImages: NewImagePayload[] = [
-                              ...field.value,
-                            ];
+                        <img src={preview} />
 
-                            const toChange = newImages.find(
-                              (_, i) => i === index,
-                            );
+                        <div className="flex flex-col gap-2">
+                          <label
+                            className={cn(
+                              "flex items-center gap-2 rounded border border-dashed bg-neutral-50 px-2 py-1",
+                              featuredDisabled &&
+                                "cursor-not-allowed opacity-50",
+                            )}
+                          >
+                            <Checkbox
+                              checked={isFeatured}
+                              disabled={featuredDisabled}
+                              onCheckedChange={(e) => {
+                                const newImages: NewImagePayload[] = [
+                                  ...field.value,
+                                ];
 
-                            if (!toChange) return;
-                            toChange.featured = e.target.checked;
+                                const toChange = newImages.find(
+                                  (_, i) => i === index,
+                                );
 
-                            field.onChange(newImages);
-                          }}
-                        />
-                        Featured
-                      </label>
+                                if (!toChange) return;
+                                if (e === "indeterminate") return;
 
-                      <button
-                        className="flex gap-2 border border-dashed bg-neutral-50 px-2"
-                        type="button"
-                        onClick={() => {
-                          const newImages = field.value.filter(
-                            (_, i) => i !== index,
-                          );
+                                toChange.featured = e;
 
-                          field.onChange(newImages);
-                        }}
-                      >
-                        Remove image
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+                                field.onChange(newImages);
+                              }}
+                            />
+                            Featured
+                          </label>
+
+                          <Button
+                            // className="flex gap-2 border border-dashed bg-neutral-50 px-2"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute right-1 top-1"
+                            type="button"
+                            onClick={() => {
+                              const newImages = field.value.filter(
+                                (_, i) => i !== index,
+                              );
+
+                              field.onChange(newImages);
+                            }}
+                          >
+                            {/* Remove */}
+                            <X className="h-5 w-5" />
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           );
         }}
       />
 
-      <h2 className="text-lg font-bold">Existing Images</h2>
       <Controller
         control={form.control}
         name="images.existingImages"
         render={({ field }) => {
+          if (!field.value?.length) return <></>;
+
           return (
-            <div className="grid grid-cols-4 gap-2 border border-orange-500 p-4">
-              {field.value?.map(({ url }, index) => {
-                const fieldValueItem = field.value.find(
-                  (image) => image.url === url,
-                );
+            <div className="max-h-96 overflow-auto rounded border border-neutral-300 text-sm">
+              <div className="flex flex-col gap-4 border-l-4 border-neutral-300 p-4">
+                <h3 className="text-base font-bold">Existing</h3>
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-6">
+                  {field.value?.map(({ url }, index) => {
+                    const fieldValueItem = field.value.find(
+                      (image) => image.url === url,
+                    );
 
-                if (!fieldValueItem) return null;
+                    if (!fieldValueItem) return null;
 
-                const isFeatured = fieldValueItem.featured;
-                const toDelete = fieldValueItem.delete;
-                const featuredDisabled = tooManyFeatured && !isFeatured;
+                    const isFeatured = fieldValueItem.featured;
+                    const toDelete = fieldValueItem.delete;
+                    const featuredDisabled = tooManyFeatured && !isFeatured;
 
-                return (
-                  <div key={url} className="flex flex-col gap-2">
-                    <img src={url} className="aspect-square object-cover" />
+                    return (
+                      <div key={url} className="flex flex-col gap-2">
+                        <img src={url} />
 
-                    <div className="flex flex-col gap-2">
-                      <label
-                        className={cn(
-                          "flex gap-2 border border-dashed bg-neutral-50 px-2",
-                          featuredDisabled && "cursor-not-allowed opacity-50",
-                        )}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isFeatured}
-                          disabled={toDelete || featuredDisabled}
-                          onChange={(e) => {
-                            const newImages: ExistingImagePayload[] = [
-                              ...field.value,
-                            ];
+                        <div className="flex flex-col gap-2">
+                          <label
+                            className={cn(
+                              "flex items-center gap-2 rounded border border-dashed bg-neutral-50 px-2 py-1",
+                              featuredDisabled &&
+                                "cursor-not-allowed opacity-50",
+                            )}
+                          >
+                            <Checkbox
+                              checked={isFeatured}
+                              disabled={toDelete || featuredDisabled}
+                              onCheckedChange={(e) => {
+                                const newImages: ExistingImagePayload[] = [
+                                  ...field.value,
+                                ];
 
-                            const toChange = newImages.find(
-                              (_, i) => i === index,
-                            );
+                                const toChange = newImages.find(
+                                  (_, i) => i === index,
+                                );
 
-                            if (!toChange) return;
-                            toChange.featured = e.target.checked;
+                                if (!toChange) return;
+                                if (e === "indeterminate") return;
 
-                            field.onChange(newImages);
-                          }}
-                        />
-                        Featured
-                      </label>
+                                toChange.featured = e;
 
-                      <label className="flex gap-2 border border-dashed bg-neutral-50 px-2">
-                        <input
-                          type="checkbox"
-                          checked={toDelete}
-                          onChange={(e) => {
-                            const newImages: ExistingImagePayload[] = [
-                              ...field.value,
-                            ];
+                                field.onChange(newImages);
+                              }}
+                            />
+                            Featured
+                          </label>
 
-                            const toChange = newImages.find(
-                              (_, i) => i === index,
-                            );
+                          <label className="flex items-center gap-2 rounded border border-dashed bg-neutral-50 px-2 py-1">
+                            <Checkbox
+                              checked={toDelete}
+                              disabled={featuredDisabled}
+                              onCheckedChange={(e) => {
+                                const newImages: ExistingImagePayload[] = [
+                                  ...field.value,
+                                ];
 
-                            if (!toChange) return;
-                            toChange.delete = e.target.checked;
+                                const toChange = newImages.find(
+                                  (_, i) => i === index,
+                                );
 
-                            field.onChange(newImages);
-                          }}
-                        />
-                        Delete
-                      </label>
-                    </div>
-                  </div>
-                );
-              })}
+                                if (!toChange) return;
+                                if (e === "indeterminate") return;
+
+                                toChange.delete = e;
+
+                                field.onChange(newImages);
+                              }}
+                            />
+                            Delete
+                          </label>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           );
         }}

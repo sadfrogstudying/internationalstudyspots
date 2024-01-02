@@ -4,8 +4,6 @@ import type { CreateUpdateFormValues } from "@/schemas";
 
 import TextInput from "@/components/input/text-input";
 import CheckboxInput from "@/components/input/checkbox-input";
-import ImageInput from "@/components/input/image-input";
-import { DropzoneLabel } from "../ui/dropzone";
 
 export default function InputsRequired({
   form,
@@ -35,19 +33,6 @@ export default function InputsRequired({
           required: true,
         }}
       />
-
-      <ImageInput
-        name="images.newImages"
-        control={form.control}
-        input={{
-          label: "Images",
-          description: "Upload some images",
-          required: false,
-        }}
-        maxFiles={8}
-      >
-        <DropzoneLabel className="truncate" />
-      </ImageInput>
 
       <CheckboxInput
         name="wifi"

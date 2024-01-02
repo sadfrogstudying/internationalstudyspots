@@ -64,6 +64,7 @@ export default function CreatePage() {
   });
 
   function handleSubmit(formValues: CreateUpdateFormValues) {
+    console.log("formValues", formValues);
     throw new Error("Not implemented");
     setFormData(formValues);
 

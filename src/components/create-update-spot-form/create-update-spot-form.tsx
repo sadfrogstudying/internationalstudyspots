@@ -95,12 +95,16 @@ export default function CreateUpdateSpotForm({
         className="flex-gap-2 flex flex-col"
       >
         <Accordion type="multiple" className="w-full">
+          <h2 className="py-4 text-lg font-bold">Required 🚨</h2>
           <InputGrid>
             <InputsRequired form={form} />
           </InputGrid>
 
-          <div className="mt-4 space-y-4">
-            <ImageManager form={form} featuredCount={featuredCount} />
+          <h2 className="py-4 text-lg font-bold">Images 🌅</h2>
+          <div className="rounded border border-neutral-400">
+            <div className="flex flex-col gap-4 border-l-4 border-neutral-400 p-4">
+              <ImageManager form={form} featuredCount={featuredCount} />
+            </div>
           </div>
 
           <AccordionItem label="Location 📍">

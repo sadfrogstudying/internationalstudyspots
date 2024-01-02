@@ -52,8 +52,8 @@ export default function ImageManager({
           if (!newImagePreviews.length) return <></>;
 
           return (
-            <ScrollArea className="h-96 w-full rounded border border-neutral-300 text-sm">
-              <div className="flex flex-col gap-4 border-l-4 border-neutral-300 p-4">
+            <ScrollArea className="h-96 w-full rounded border border-l-4 border-neutral-300 text-sm">
+              <div className="flex h-full flex-col gap-4 p-4">
                 <h3 className="text-base font-bold">New</h3>
 
                 <div className="grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-6">
@@ -140,8 +140,8 @@ export default function ImageManager({
           if (!field.value?.length) return <></>;
 
           return (
-            <ScrollArea className="h-96 w-full rounded border border-neutral-300 text-sm">
-              <div className="flex flex-col gap-4 border-l-4 border-neutral-300 p-4">
+            <ScrollArea className="h-96 w-full rounded border border-l-4 border-neutral-300 text-sm">
+              <div className="flex flex-col gap-4 p-4">
                 <h3 className="text-base font-bold">Existing</h3>
                 <div className="grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-6">
                   {field.value?.map(({ url }, index) => {

@@ -101,8 +101,8 @@ export default function CreateUpdateSpotForm({
           </InputGrid>
 
           <h2 className="py-4 text-lg font-bold">Images 🌅</h2>
-          <div className="rounded border border-neutral-400">
-            <div className="flex flex-col gap-4 border-l-4 border-neutral-400 p-4">
+          <div className="rounded border border-l-4 border-neutral-400">
+            <div className="flex flex-col gap-4 p-4">
               <ImageManager form={form} featuredCount={featuredCount} />
             </div>
           </div>

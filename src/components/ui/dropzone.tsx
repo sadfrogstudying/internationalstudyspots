@@ -130,8 +130,6 @@ function DropzoneLabel({
         className,
       )}
     >
-      {/* <UploadIcon /> <div>{getDragText()}</div> */}
-
       {children ? (
         children
       ) : (

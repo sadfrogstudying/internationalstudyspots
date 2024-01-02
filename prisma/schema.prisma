@@ -164,13 +164,14 @@ model PendingEdit {
 }
 
 model Image {
-    id             Int    @id @default(autoincrement())
-    name           String @unique
-    url            String @unique
-    dominantColour String @default("#fff")
+    id             Int     @id @default(autoincrement())
+    name           String  @unique
+    url            String  @unique
+    dominantColour String  @default("#fff")
     aspectRatio    Float
     height         Int
     width          Int
+    featured       Boolean @default(false)
 
     // Recap: 
     // when user deleted, delete profile picture

@@ -12,6 +12,7 @@ import {
   type FieldValues,
 } from "react-hook-form";
 import { type DropzoneProps, Dropzone } from "@/components/ui/dropzone";
+import { NewImagePayload } from "@/schemas";
 
 interface Input {
   label: string;
@@ -53,7 +54,16 @@ export default function ImageInput<
             <FormControl>
               <Dropzone
                 ref={field.ref}
-                onChange={(files) => field.onChange(files)}
+                onChange={(files) => {
+                  const images: NewImagePayload[] = Array.from(files).map(
+                    (file) => ({
+                      file,
+                      featured: false,
+                    }),
+                  );
+
+                  field.onChange(images);
+                }}
                 name={field.name}
                 className={className}
                 maxFiles={maxFiles}

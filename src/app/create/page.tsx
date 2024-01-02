@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 
 import { api } from "@/trpc/react";
-import type { CreateSpotFormValues } from "@/schemas";
+import type { CreateUpdateFormValues } from "@/schemas";
 import { uploadFilesToS3UsingPresignedUrls } from "@/lib/helpers";
 
 const ServerZodError = dynamic(() => import("@/components/server-zod-error"), {
@@ -19,14 +19,14 @@ const ServerErrorMessage = dynamic(
   },
 );
 
-const CreateSpotFormV2 = dynamic(
-  () => import("@/components/create-spot-form"),
+const CreateUpdateSpotForm = dynamic(
+  () => import("@/components/create-update-spot-form"),
   { ssr: false, loading: () => <div className="">Loading Form 📝...</div> },
 );
 
 export default function CreatePage() {
   // To capture the form data from the form component
-  const [formData, setFormData] = useState<CreateSpotFormValues>();
+  const [formData, setFormData] = useState<CreateUpdateFormValues>();
 
   const apiUtils = api.useUtils();
   const router = useRouter();
@@ -63,7 +63,8 @@ export default function CreatePage() {
     },
   });
 
-  function handleSubmit(formValues: CreateSpotFormValues) {
+  function handleSubmit(formValues: CreateUpdateFormValues) {
+    throw new Error("Not implemented");
     setFormData(formValues);
 
     const images = formValues.images.map((image) => ({
@@ -88,7 +89,7 @@ export default function CreatePage() {
 
   return (
     <>
-      <CreateSpotFormV2
+      <CreateUpdateSpotForm
         onSubmit={handleSubmit}
         buttonLabel={getButtonText()}
         submitDisabled={submitDisabled}

@@ -1,6 +1,6 @@
 import type { SetValueConfig, UseFormReturn } from "react-hook-form";
 
-import type { CreateSpotFormValues } from "@/schemas";
+import type { CreateUpdateFormValues } from "@/schemas";
 
 import TextInput from "@/components/input/text-input";
 import LocationSearchInput from "@/components/input/location-search";
@@ -8,7 +8,7 @@ import LocationSearchInput from "@/components/input/location-search";
 export default function InputsLocation({
   form,
 }: {
-  form: UseFormReturn<CreateSpotFormValues>;
+  form: UseFormReturn<CreateUpdateFormValues>;
 }) {
   function onSelectedPlaceReady(place: google.maps.places.PlaceResult) {
     const {

@@ -1,6 +1,6 @@
 import type { UseFormReturn } from "react-hook-form";
 
-import type { CreateSpotFormValues } from "@/schemas";
+import type { CreateUpdateFormValues } from "@/schemas";
 
 import TextInput from "@/components/input/text-input";
 import CheckboxInput from "@/components/input/checkbox-input";
@@ -10,7 +10,7 @@ import { DropzoneLabel } from "../ui/dropzone";
 export default function InputsRequired({
   form,
 }: {
-  form: UseFormReturn<CreateSpotFormValues>;
+  form: UseFormReturn<CreateUpdateFormValues>;
 }) {
   return (
     <>
@@ -37,7 +37,7 @@ export default function InputsRequired({
       />
 
       <ImageInput
-        name="images"
+        name="images.newImages"
         control={form.control}
         input={{
           label: "Images",

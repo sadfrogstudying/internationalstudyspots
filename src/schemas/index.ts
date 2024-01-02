@@ -64,12 +64,11 @@ const spotNumberSchema = z.object({
   longitude: longitudeSchema,
 });
 
-const spotSchema = spotStringSchema
-  .merge(imageSchema)
+const baseSpotSchema = spotStringSchema
   .merge(spotNumberSchema)
   .merge(spotBooleanSchema);
 
-const createSchema = spotSchema;
+const createSchema = baseSpotSchema.merge(imageSchema);
 type CreateInput = z.infer<typeof createSchema>;
 
 const getAllSchema = z
@@ -84,7 +83,7 @@ type GetAllInput = z.infer<typeof getAllSchema>;
 const bySlugSchema = z.string();
 type BySlugInput = z.infer<typeof bySlugSchema>;
 
-const getPresignedUrlsSchema = spotSchema.extend({
+const getPresignedUrlsSchema = baseSpotSchema.extend({
   images: z
     .object({
       contentLength: z.number(),
@@ -99,7 +98,7 @@ type GetPresignedUrlsInput = z.infer<typeof getPresignedUrlsSchema>;
 const deleteSchema = z.object({ id: z.number(), token: z.string() });
 type DeleteInput = z.infer<typeof deleteSchema>;
 
-const updateSchemaBase = spotSchema.extend({
+const updateSchemaBase = baseSpotSchema.extend({
   spotId: z.number(),
   images: z
     .string()
@@ -120,27 +119,80 @@ const updateSchema = updateSchemaBase.transform((val) => {
 });
 type UpdateInput = z.infer<typeof updateSchema>;
 
-const createSpotSchemaClient = createSchema.extend({
-  images: FileListImagesSchema({ minFiles: 1 }),
+const existingImagePayloadSchema = z.object({
+  url: z.string(),
+  featured: z.boolean(),
+  delete: z.boolean().default(false),
 });
-type CreateSpotFormValues = z.infer<typeof createSpotSchemaClient>;
+type ExistingImagePayload = z.infer<typeof existingImagePayloadSchema>;
 
-const updateSpotSchemaClient = updateSchemaBase.extend({
-  images: FileListImagesSchema(),
-  imagesToDelete: FileListImagesSchema(),
+const newImagePayloadSchema = z.object({
+  file: z.instanceof(File),
+  featured: z.boolean(),
 });
-type UpdateSpotFormValues = z.infer<typeof updateSpotSchemaClient>;
+type NewImagePayload = z.infer<typeof newImagePayloadSchema>;
+
+const imagePayloadSchema = z
+  .object({
+    newImages: z.array(newImagePayloadSchema).default([]),
+    existingImages: z.array(existingImagePayloadSchema).default([]),
+  })
+  .refine(
+    ({ newImages, existingImages }) => {
+      return (
+        [...newImages, ...existingImages].filter((image) => image.featured)
+          .length <= 4
+      );
+    },
+    {
+      message: "You can't have more than 4 featured images.",
+      path: ["newImages"],
+    },
+  )
+  .refine(
+    ({ newImages }) => {
+      return [...newImages].length <= 8;
+    },
+    {
+      message: "You can't add more than 8 images.",
+      path: ["newImages"],
+    },
+  )
+  .refine(
+    ({ newImages, existingImages }) => {
+      const deleteCount = [...existingImages].filter(
+        (image) => image.delete,
+      ).length;
+      const addCount = [...newImages].length;
+
+      return addCount - deleteCount > 0;
+    },
+    {
+      message: "The spot needs at least one image.",
+      path: ["newImages"],
+    },
+  );
+
+const createUpdateFormSchema = baseSpotSchema.extend({
+  images: imagePayloadSchema,
+  canStudyForLong: z.boolean().optional(),
+  sunlight: z.boolean().optional(),
+  drinks: z.boolean().optional(),
+  food: z.boolean().optional(),
+  naturalViews: z.boolean().optional(),
+});
+type CreateUpdateFormValues = z.infer<typeof createUpdateFormSchema>;
 
 export {
   // Misc
   spotBooleanSchema,
   type SpotBooleanSchema,
+  type ExistingImagePayload,
+  type NewImagePayload,
 
   // Client
-  createSpotSchemaClient,
-  type CreateSpotFormValues,
-  updateSpotSchemaClient,
-  type UpdateSpotFormValues,
+  createUpdateFormSchema,
+  type CreateUpdateFormValues,
 
   // Server
   getAllSchema,

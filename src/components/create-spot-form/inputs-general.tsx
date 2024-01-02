@@ -1,6 +1,6 @@
 import type { UseFormReturn } from "react-hook-form";
 
-import type { CreateSpotFormValues } from "@/schemas";
+import type { CreateUpdateFormValues } from "@/schemas";
 
 import TextInput from "@/components/input/text-input";
 import TextAreaInput from "@/components/input/textarea-input";
@@ -9,7 +9,7 @@ import CheckboxInput from "@/components/input/checkbox-input";
 export default function InputsGeneral({
   form,
 }: {
-  form: UseFormReturn<CreateSpotFormValues>;
+  form: UseFormReturn<CreateUpdateFormValues>;
 }) {
   return (
     <>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useImagePreviews } from "@/components/ui/dropzone";
+import { MAX_FEATURED_IMAGES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import {
   CreateUpdateFormValues,
@@ -17,7 +18,7 @@ export default function ImageManager({
   form: UseFormReturn<CreateUpdateFormValues>;
   featuredCount: number;
 }) {
-  const tooManyFeatured = featuredCount > 2;
+  const tooManyFeatured = featuredCount >= MAX_FEATURED_IMAGES;
 
   return (
     <>

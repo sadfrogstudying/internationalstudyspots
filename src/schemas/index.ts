@@ -1,5 +1,6 @@
 import { z, boolean, string } from "zod";
 import { FileListImagesSchema } from "./file-list-images";
+import { MAX_FEATURED_IMAGES } from "@/lib/constants";
 
 const latitudeSchema = z.coerce
   .number()
@@ -141,7 +142,7 @@ const imagePayloadSchema = z
     ({ newImages, existingImages }) => {
       return (
         [...newImages, ...existingImages].filter((image) => image.featured)
-          .length <= 4
+          .length <= MAX_FEATURED_IMAGES
       );
     },
     {

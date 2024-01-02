@@ -12,7 +12,7 @@ import InputsGeneral from "@/components/create-update-spot-form/inputs-general";
 import ImageManager from "@/components/create-update-spot-form/image-manager";
 import { AccordionItem } from "@/components/form/accordion-item";
 import InputGrid from "@/components/form/input-grid";
-import { RouterOutputs } from "@/trpc/shared";
+import type { RouterOutputs } from "@/trpc/shared";
 
 export default function CreateUpdateSpotForm({
   onSubmit,

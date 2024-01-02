@@ -38,10 +38,7 @@ const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
         "image/webp": [".webp"],
       },
       onDropAccepted: (acceptedFiles) => {
-        // To silence Error: Promise-returning function provided to property where a void return was expected.  @typescript-eslint/no-misused-promises
-        void (async () => {
-          onChange(acceptedFiles);
-        })();
+        onChange(acceptedFiles);
       },
       onDropRejected() {
         onChange([]);

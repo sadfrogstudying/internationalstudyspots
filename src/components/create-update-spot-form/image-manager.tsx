@@ -3,12 +3,12 @@
 import { DropzoneLabel, useImagePreviews } from "@/components/ui/dropzone";
 import { MAX_FEATURED_IMAGES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import {
+import type {
   CreateUpdateFormValues,
   ExistingImagePayload,
   NewImagePayload,
 } from "@/schemas";
-import { Controller, UseFormReturn } from "react-hook-form";
+import { Controller, type UseFormReturn } from "react-hook-form";
 import ImageInput from "@/components/input/image-input";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
@@ -66,7 +66,7 @@ export default function ImageManager({
                         key={`newimagepreview-${index}`}
                         className="relative flex flex-col gap-2"
                       >
-                        <img src={preview} />
+                        <img src={preview} alt="Existing image" />
 
                         <div className="flex flex-col gap-2">
                           <label
@@ -151,7 +151,7 @@ export default function ImageManager({
 
                     return (
                       <div key={url} className="flex flex-col gap-2">
-                        <img src={url} />
+                        <img src={url} alt="New image" />
 
                         <div className="flex flex-col gap-2">
                           <label

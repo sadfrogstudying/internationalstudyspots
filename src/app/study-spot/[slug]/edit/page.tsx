@@ -1,7 +1,7 @@
 "use client";
 
 import CreateUpdateSpotForm from "@/components/create-update-spot-form";
-import { CreateUpdateFormValues } from "@/schemas";
+import type { CreateUpdateFormValues } from "@/schemas";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
 

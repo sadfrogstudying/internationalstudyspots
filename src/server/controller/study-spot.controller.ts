@@ -11,6 +11,7 @@ import { TRPCError } from "@trpc/server";
 import {
   deleteImagesFromBucket,
   getBucketObjectNameFromUrl,
+  getChangedFields,
   getImagesMeta,
   getPresignedUrls,
   slugify,
@@ -197,41 +198,24 @@ export async function updateHandler({
   ctx: ContextProtected;
   input: UpdateInput;
 }) {
-  // TODO: Implement for images
   const spot = await ctx.db.studySpot.findUnique({
     where: {
-      id: input.spotId,
+      id: input.id,
     },
   });
 
   if (!spot) throw new TRPCError({ code: "NOT_FOUND" });
 
-  const spotKeys = Object.keys(spot);
+  const changedFields = getChangedFields(spot, input, ["images"]);
 
-  // Loop through, and filter out the fields that are the same as existing
-  const changes = Object.entries(input).filter(([key, value]) => {
-    function isKeyOfSpot(key: string): key is keyof typeof spot {
-      return spotKeys.includes(key);
-    }
+  const nameChanged = Object.hasOwn(changedFields, "name");
+  let slug = undefined;
+  if (nameChanged) slug = slugify(input.name);
 
-    if (!isKeyOfSpot(key)) return false;
-
-    if (key === "images") {
-      // Not implemented
-      return;
-    }
-    if (key === "imagesToDelete") {
-      // Not implemented
-      return;
-    }
-
-    return value !== spot[key];
-  });
-
-  const fieldsToUpdate = Object.fromEntries(changes);
+  // TODO: Implement for images
 
   return await ctx.db.studySpot.update({
-    where: { id: input.spotId },
-    data: fieldsToUpdate,
+    where: { id: input.id },
+    data: { ...changedFields, slug, images: undefined },
   });
 }

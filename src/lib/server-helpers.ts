@@ -242,3 +242,19 @@ export function slugify(text: string, separator?: string) {
 
   return text;
 }
+
+export function getChangedFields<T>(
+  oldObj: Partial<T>,
+  newObj: T,
+  ignoredKeys?: (keyof T)[],
+) {
+  const changedFields: Partial<T> = {};
+
+  for (const key in newObj) {
+    if (newObj[key] !== oldObj[key] && !ignoredKeys?.includes(key)) {
+      changedFields[key] = newObj[key];
+    }
+  }
+
+  return changedFields;
+}

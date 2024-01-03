@@ -102,13 +102,22 @@ const deleteSchema = z.object({ id: z.number(), token: z.string() });
 type DeleteInput = z.infer<typeof deleteSchema>;
 
 const updateSchemaBase = baseSpotSchema.extend({
-  spotId: z.number(),
-  images: z
-    .string()
-    .array()
-    .max(8, { message: "Maximum of 8 images." })
-    .optional(),
-  imagesToDelete: z.string().array().optional(),
+  id: z.number(),
+  images: z.object({
+    newImages: z.array(
+      z.object({
+        url: z.string(),
+        featured: z.boolean(),
+      }),
+    ),
+    existingImages: z.array(
+      z.object({
+        url: z.string(),
+        featured: z.boolean(),
+        delete: z.boolean().optional(),
+      }),
+    ),
+  }),
 });
 const updateSchema = updateSchemaBase.transform((val) => {
   return {
@@ -163,12 +172,15 @@ const imagePayloadSchema = z
   )
   .refine(
     ({ newImages, existingImages }) => {
+      const existingCount = [...existingImages].filter(
+        (image) => !image.delete,
+      ).length;
       const deleteCount = [...existingImages].filter(
         (image) => image.delete,
       ).length;
       const addCount = [...newImages].length;
 
-      return addCount - deleteCount > 0;
+      return addCount - deleteCount + existingCount > 0;
     },
     {
       message: "The spot needs at least one image.",

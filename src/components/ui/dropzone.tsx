@@ -142,7 +142,7 @@ function DropzoneLabel({
   );
 }
 
-function useImagePreviews(files: File[]) {
+function useImagePreviews(files: (Blob | File)[]) {
   const images = useMemo(
     () =>
       files.map((file) => ({

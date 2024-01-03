@@ -8,6 +8,7 @@ import type {
 } from "@/schemas/user";
 import {
   deleteImagesFromBucket,
+  getChangedFields,
   getImagesMeta,
   getPresignedUrls,
 } from "@/lib/server-helpers";
@@ -99,29 +100,17 @@ export async function updateHandler({
 
   if (!user) throw new TRPCError({ code: "NOT_FOUND" });
 
-  const userKeys = Object.keys(user);
+  // const { profileImage,username, ...rest } = input;
+  // getChangedFields(user, input, "profileImage");
 
-  // Loop through, and filter out the fields that are the same as existing
-  const changes = Object.entries(input).filter(([key, value]) => {
-    function isKeyOfUser(key: string): key is keyof typeof user {
-      return userKeys.includes(key);
-    }
-
-    if (!isKeyOfUser(key)) return false;
-
-    // exception for profileImage, if it's undefined, it means no change
-    if (key === "profileImage" && value === undefined) return false;
-
-    return value !== user[key];
-  });
-
-  const newProfileImageEntry = changes.find(([key]) => key === "profileImage");
+  const profileImageInput = input.profileImage;
+  // const newProfileImageEntry = changes.find(([key]) => key === "profileImage");
 
   let newProfileImage:
     | Awaited<ReturnType<typeof getImagesMeta>>[number]
     | undefined;
 
-  if (newProfileImageEntry) {
+  if (profileImageInput) {
     const previousImage = user.profileImage;
 
     if (previousImage?.name) {
@@ -132,15 +121,13 @@ export async function updateHandler({
       });
     }
 
-    newProfileImage = (await getImagesMeta([newProfileImageEntry[1]]))[0];
+    newProfileImage = (await getImagesMeta([profileImageInput]))[0];
   }
-
-  const fieldsToChange = Object.fromEntries(changes);
 
   return await ctx.db.user.update({
     where: { id },
     data: {
-      ...fieldsToChange,
+      ...input,
       profileImage: {
         create: newProfileImage,
       },

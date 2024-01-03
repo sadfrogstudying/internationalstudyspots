@@ -1,6 +1,6 @@
 "use client";
 
-import type { CreateUpdateFormValues } from "@/schemas";
+import type { CreateUpdateFormValues, UpdateInput } from "@/schemas";
 import { api } from "@/trpc/react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
@@ -19,8 +19,8 @@ export default function EditStudySpotPage({
   const { data, isLoading } = api.studySpot.bySlug.useQuery(params.slug);
   const { mutate, isLoading: updateLoading } = api.studySpot.update.useMutation(
     {
-      onSuccess: () => {
-        router.push(`/study-spot/${params.slug}`);
+      onSuccess: (res) => {
+        router.push(`/study-spot/${res.slug}`);
       },
     },
   );
@@ -40,9 +40,30 @@ export default function EditStudySpotPage({
 
   function handleSubmit(formValues: CreateUpdateFormValues) {
     console.log("formValues", formValues);
-    throw new Error("Not implemented");
+    if (!data) return;
 
-    mutate(formValues);
+    // const newImagesPayload = newImageUrls.map((url, i) => ({
+    //   url,
+    //   featured: values.images.newImages[i].featured,
+    // }));
+
+    const changedExistingImages = formValues.images.existingImages.filter(
+      (image, i) => {
+        if (image.delete) return true;
+        return image.featured !== data.images[i]?.featured;
+      },
+    );
+
+    const payload = {
+      ...formValues,
+      id: data.id,
+      images: {
+        existingImages: [],
+        newImages: [],
+      },
+    };
+
+    mutate(payload);
   }
 
   const submitDisabled = updateLoading;

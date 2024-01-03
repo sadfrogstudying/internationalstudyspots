@@ -40,6 +40,9 @@ export default function ImageManager({
           description: "Upload some images",
           required: false,
         }}
+        transformValue={(files) =>
+          files.map((file) => ({ file, featured: false }))
+        }
         maxFiles={8}
       >
         <DropzoneLabel className="truncate" />

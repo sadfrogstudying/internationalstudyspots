@@ -30,9 +30,12 @@ export default function ImageInput<
   className,
   maxFiles,
   children,
+  transformValue = (files) => files,
   ...props
 }: Omit<ControllerProps<TFieldValues, TName>, "render"> & {
   input: Input;
+  /** transform the shape before passing to form. */
+  transformValue?: (files: File[]) => unknown;
 } & DropzonePropsForwarded) {
   return (
     <FormField
@@ -55,14 +58,16 @@ export default function ImageInput<
               <Dropzone
                 ref={field.ref}
                 onChange={(files) => {
-                  const images: NewImagePayload[] = Array.from(files).map(
-                    (file) => ({
-                      file,
-                      featured: false,
-                    }),
-                  );
+                  // const images: NewImagePayload[] = Array.from(files).map(
+                  //   (file) => ({
+                  //     file,
+                  //     featured: false,
+                  //   }),
+                  // );
 
-                  field.onChange(images);
+                  const value = transformValue(files);
+
+                  field.onChange(value);
                 }}
                 name={field.name}
                 className={className}

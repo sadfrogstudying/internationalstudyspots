@@ -170,6 +170,27 @@ const DropzoneOverlayPreview = ({
 }) => {
   const images = useImagePreviews(files);
 
+  if (images.length)
+    return (
+      <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-full">
+        {images.map((image) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={image.preview}
+            src={image.preview}
+            alt="Image preview"
+            // Prevent memory leaks by revoking data uri after loaded
+            onLoad={() => {
+              URL.revokeObjectURL(image.preview);
+            }}
+            width={300}
+            height={300}
+            className="relative h-full w-full object-cover"
+          />
+        ))}
+      </div>
+    );
+
   if (defaultImage)
     return (
       <Image
@@ -178,29 +199,11 @@ const DropzoneOverlayPreview = ({
         width={300}
         height={300}
         key={defaultImage}
-        className="pointer-events-none relative left-0 top-0 z-10 h-full w-full object-cover"
+        className="pointer-events-none absolute left-0 top-0 z-10 h-full w-full object-cover"
       />
     );
 
-  return (
-    <div className="pointer-events-none relative left-0 top-0 z-10 h-full w-full">
-      {images.map((image) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          key={image.preview}
-          src={image.preview}
-          alt="Image preview"
-          // Prevent memory leaks by revoking data uri after loaded
-          onLoad={() => {
-            URL.revokeObjectURL(image.preview);
-          }}
-          width={300}
-          height={300}
-          className="h-full w-full object-cover"
-        />
-      ))}
-    </div>
-  );
+  return null;
 };
 
 const FileRejectionError = ({

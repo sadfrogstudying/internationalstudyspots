@@ -1,9 +1,6 @@
 import StudySpotDetail from "@/components/study-spot-detail";
 import { db } from "@/server/db";
-import {
-  type Metadata,
-  // type ResolvingMetadata
-} from "next";
+import { type Metadata } from "next";
 
 /**
  * true: Dynamic segments not included in generateStaticParams are generated on demand.
@@ -11,24 +8,11 @@ import {
  */
 export const dynamicParams = true;
 
-export async function generateStaticParams() {
-  const spots = await db.studySpot.findMany({
-    select: {
-      slug: true,
-    },
-  });
-
-  return spots.map((spot) => spot.slug);
-}
-
 type Props = {
   params: { slug: string };
 };
 
-export async function generateMetadata(
-  { params }: Props,
-  // parent: ResolvingMetadata,
-): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // read route params
   const slug = params.slug;
 
@@ -53,16 +37,11 @@ export async function generateMetadata(
     ? `${name} in ${state}, ${country}. ${wifiString} ${powerOutletsString}`
     : null;
 
-  // optionally access and extend (rather than replace) parent metadata
-  // const previousImages = (await parent).openGraph?.images ?? []
   return {
     title: name
       ? `${name} - International Study Spots`
       : "International Study Spots",
     description: descriptionString ?? "Find study spots around the world.",
-    // openGraph: {
-    //   images: ['/some-specific-page-image.jpg', ...previousImages],
-    // },
   };
 }
 

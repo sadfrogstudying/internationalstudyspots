@@ -8,6 +8,8 @@ import { useFilterData } from "../study-spot-grid/filter-context";
 import { Separator } from "../ui/separator";
 import Hero from "./hero";
 import Summary from "./summary";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 const List = dynamic(() => import("./list"));
 const AllImages = dynamic(() => import("./all-images"));
@@ -39,6 +41,9 @@ export default function StudySpotDetail({ slug }: Props) {
       <div>
         <Separator className="mb-2" />
         <Summary studySpot={data ?? cachedStudySpot} />
+        <Button className="mt-4" asChild>
+          <Link href={`/study-spot/${slug}/edit`}>Edit Spot</Link>
+        </Button>
       </div>
 
       <div className="space-y-2">

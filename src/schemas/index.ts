@@ -51,17 +51,6 @@ const spotStringSchema = z.object({
   studyBreakFacilities: stringSchema,
 });
 
-const imageSchema = z.object({
-  images: z
-    .object({
-      url: string(),
-      featured: boolean(),
-    })
-    .array()
-    .min(1, { message: "At least one image is required." })
-    .max(8, { message: "Maximum of 8 images." }),
-});
-
 const spotNumberSchema = z.object({
   latitude: latitudeSchema,
   longitude: longitudeSchema,
@@ -71,7 +60,16 @@ const baseSpotSchema = spotStringSchema
   .merge(spotNumberSchema)
   .merge(spotBooleanSchema);
 
-const createSchema = baseSpotSchema.merge(imageSchema);
+const createSchema = baseSpotSchema.extend({
+  images: z
+    .object({
+      url: string(),
+      featured: boolean(),
+    })
+    .array()
+    .min(1, { message: "At least one image is required." })
+    .max(8, { message: "Maximum of 8 images." }),
+});
 type CreateInput = z.infer<typeof createSchema>;
 
 const getAllSchema = z
@@ -93,8 +91,8 @@ const getPresignedUrlsSchema = baseSpotSchema.extend({
       contentType: string(),
     })
     .array()
-    .min(1, { message: "At least one image is required." })
     .max(8, { message: "Maximum of 8 images." }),
+  id: z.number().optional(),
 });
 type GetPresignedUrlsInput = z.infer<typeof getPresignedUrlsSchema>;
 
@@ -103,30 +101,36 @@ type DeleteInput = z.infer<typeof deleteSchema>;
 
 const updateSchemaBase = baseSpotSchema.extend({
   id: z.number(),
-  images: z.object({
-    newImages: z.array(
-      z.object({
-        url: z.string(),
-        featured: z.boolean(),
-      }),
-    ),
-    existingImages: z.array(
-      z.object({
-        url: z.string(),
-        featured: z.boolean(),
-        delete: z.boolean().optional(),
-      }),
-    ),
-  }),
+  images: z
+    .object({
+      newImages: z
+        .array(
+          z.object({
+            url: z.string(),
+            featured: z.boolean(),
+          }),
+        )
+        .optional(),
+      existingImages: z
+        .array(
+          z.object({
+            url: z.string(),
+            featured: z.boolean(),
+            delete: z.boolean().optional(),
+          }),
+        )
+        .optional(),
+    })
+    .optional(),
 });
 const updateSchema = updateSchemaBase.transform((val) => {
   return {
     ...val,
-    canStudyForLong: val.canStudyForLong ?? null,
-    sunlight: val.sunlight ?? null,
-    drinks: val.drinks ?? null,
-    food: val.food ?? null,
-    naturalViews: val.naturalViews ?? null,
+    canStudyForLong: val.canStudyForLong,
+    sunlight: val.sunlight,
+    drinks: val.drinks,
+    food: val.food,
+    naturalViews: val.naturalViews,
   };
 });
 type UpdateInput = z.infer<typeof updateSchema>;
@@ -172,13 +176,12 @@ const imagePayloadSchema = z
   )
   .refine(
     ({ newImages, existingImages }) => {
-      const existingCount = [...existingImages].filter(
-        (image) => !image.delete,
-      ).length;
+      const existingCount = [...existingImages].length;
       const deleteCount = [...existingImages].filter(
         (image) => image.delete,
       ).length;
       const addCount = [...newImages].length;
+      console.log({ existingCount, deleteCount, addCount });
 
       return addCount - deleteCount + existingCount > 0;
     },

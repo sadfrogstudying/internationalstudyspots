@@ -10,8 +10,8 @@ import type {
 import { TRPCError } from "@trpc/server";
 import {
   deleteImagesFromBucket,
+  getBucketObjectNameFromCloudfrontUrl,
   getBucketObjectNameFromUrl,
-  getChangedFields,
   getImagesMeta,
   getPresignedUrls,
   slugify,
@@ -94,11 +94,13 @@ export async function getPresignedUrlHandler({
     },
   });
 
-  if (spot)
+  if (spot && input.id !== spot.id)
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "Study spot name already exists",
     });
+
+  if (input.images.length === 0) return;
 
   return await getPresignedUrls(input.images, ctx.s3);
 }
@@ -206,16 +208,100 @@ export async function updateHandler({
 
   if (!spot) throw new TRPCError({ code: "NOT_FOUND" });
 
-  const changedFields = getChangedFields(spot, input, ["images"]);
-
-  const nameChanged = Object.hasOwn(changedFields, "name");
+  // Handle name change
+  const nameChanged = Object.hasOwn(input, "name");
   let slug = undefined;
   if (nameChanged) slug = slugify(input.name);
 
-  // TODO: Implement for images
+  const newImages = input.images?.newImages;
+  const existingImages = input.images?.existingImages;
+
+  let newImagesPayload = undefined;
+  let existingImagesPayload = undefined;
+
+  // Handle new images
+  if (newImages && newImages?.length > 0) {
+    const images = await getImagesMeta(newImages.map((x) => x.url));
+    newImagesPayload = images.map((image, i) => ({
+      ...image,
+      featured: newImages[i]?.featured,
+      authorId: ctx.session.user.id,
+    }));
+  }
+
+  if (existingImages && existingImages?.length > 0) {
+    // Handle delete existing images
+    const imagesToDelete = existingImages.filter((x) => x.delete);
+
+    if (imagesToDelete.length > 0) {
+      await deleteImagesFromBucket(
+        // 🚨 Confirm that this works!
+        imagesToDelete.map((x) => getBucketObjectNameFromCloudfrontUrl(x.url)),
+        ctx.s3,
+      );
+
+      await ctx.db.image.deleteMany({
+        where: {
+          url: {
+            in: imagesToDelete.map((x) => x.url),
+          },
+        },
+      });
+    }
+
+    // Handle update existing images
+    const imagesToUpdate = existingImages.filter((x) => !x.delete);
+
+    existingImagesPayload = imagesToUpdate.map((image) => ({
+      ...image,
+    }));
+
+    // Handle image changes
+    // Group images by change type
+    const imagesToFeature = existingImagesPayload?.filter((x) => x.featured);
+    const imagesToUnfeature = existingImagesPayload?.filter((x) => !x.featured);
+
+    // Update featured images
+    if (imagesToFeature?.length > 0) {
+      await ctx.db.image.updateMany({
+        where: {
+          url: {
+            in: imagesToFeature.map((x) => x.url),
+          },
+        },
+        data: {
+          featured: true,
+        },
+      });
+    }
+
+    // Update unfeatured images
+    if (imagesToUnfeature?.length > 0) {
+      await ctx.db.image.updateMany({
+        where: {
+          url: {
+            in: imagesToUnfeature.map((x) => x.url),
+          },
+        },
+        data: {
+          featured: false,
+        },
+      });
+    }
+  }
 
   return await ctx.db.studySpot.update({
     where: { id: input.id },
-    data: { ...changedFields, slug, images: undefined },
+    data: {
+      ...input,
+      slug,
+      images: {
+        ...(newImagesPayload && {
+          createMany: {
+            data: newImagesPayload,
+          },
+        }),
+      },
+    },
   });
 }

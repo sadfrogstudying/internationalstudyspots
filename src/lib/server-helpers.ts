@@ -28,6 +28,22 @@ export const getBucketObjectNameFromUrl = (url: string) => {
   return imageName;
 };
 
+export const getBucketObjectNameFromCloudfrontUrl = (url: string) => {
+  const bucketPath = `${env.CLOUDFRONT_URL}/`;
+
+  // Prevent malicious uploads
+  if (!url.startsWith(bucketPath))
+    throw new TRPCError({
+      code: "UNPROCESSABLE_CONTENT",
+      message: "URL is not from the bucket",
+    });
+
+  const splitUrl = url.split("?")[0] ?? "";
+  const imageName = splitUrl.substring(bucketPath.length);
+
+  return imageName;
+};
+
 /**
  * create a presigned URL that can be used to upload a file with a specific
  * key to our S3 bucket. This will be used for regular uploads, where the

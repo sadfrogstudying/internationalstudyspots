@@ -8,7 +8,6 @@ import type {
 } from "@/schemas/user";
 import {
   deleteImagesFromBucket,
-  getChangedFields,
   getImagesMeta,
   getPresignedUrls,
 } from "@/lib/server-helpers";
@@ -100,11 +99,7 @@ export async function updateHandler({
 
   if (!user) throw new TRPCError({ code: "NOT_FOUND" });
 
-  // const { profileImage,username, ...rest } = input;
-  // getChangedFields(user, input, "profileImage");
-
   const profileImageInput = input.profileImage;
-  // const newProfileImageEntry = changes.find(([key]) => key === "profileImage");
 
   let newProfileImage:
     | Awaited<ReturnType<typeof getImagesMeta>>[number]

@@ -50,7 +50,7 @@ export default function CreatePage() {
   } = api.studySpot.getPresignedUrls.useMutation({
     onSuccess: async (presignedUrls) => {
       const newImages = formData?.images?.newImages;
-      if (!newImages) return;
+      if (!newImages || !presignedUrls) return;
 
       const imageUrls = await uploadFilesToS3UsingPresignedUrls(
         presignedUrls,

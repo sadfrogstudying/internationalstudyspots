@@ -12,7 +12,6 @@ import {
   type FieldValues,
 } from "react-hook-form";
 import { type DropzoneProps, Dropzone } from "@/components/ui/dropzone";
-import type { NewImagePayload } from "@/schemas";
 
 interface Input {
   label: string;

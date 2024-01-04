@@ -57,8 +57,6 @@ export default function List({ studySpot }: { studySpot?: StudySpot }) {
       return entry;
     });
 
-  console.log(list);
-
   return (
     <ul className="w-full overflow-hidden">
       {studySpot ? (

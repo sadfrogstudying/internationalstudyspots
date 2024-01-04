@@ -26,16 +26,6 @@ export default function AccountDetails() {
 }
 
 function Left() {
-  const generalInfo = [
-    { label: "Member Since", value: "3/1/2010" },
-    { label: "Last Login", value: "3/1/2010" },
-    {
-      label: "Influences",
-      value: "Too many to list.  They include Pink, U2, Avi and more.",
-    },
-    { label: "Interests", value: "House, Electronic and picnics." },
-  ];
-
   const params = useParams<{ username: string }>();
 
   const { data, isLoading } = api.user.get.useQuery(params.username);
@@ -43,6 +33,16 @@ function Left() {
   if (isLoading) return <div>Loading...</div>;
 
   if (!data) return <div>No data for this user!</div>;
+
+  const generalInfo = [
+    { label: "Member Since", value: "3/1/2010" },
+    { label: "Last Login", value: "3/1/2010" },
+    {
+      label: "Influences",
+      value: "Polish poster art",
+    },
+    { label: "Interests", value: data?.interests },
+  ];
 
   return (
     <>
@@ -70,7 +70,7 @@ function Left() {
         </div>
       </section>
 
-      <Section title="Contacting Pei Pei">
+      <Section title={`Contacting ${data?.name}`}>
         <ul className="grid grid-cols-2">
           <li>
             <a
@@ -120,7 +120,7 @@ function Left() {
         </ul>
       </Section>
 
-      <Section title="Pei Pei: General Info">
+      <Section title={`${data?.name}: General Info`}>
         <div className="grid grid-cols-[2fr_3fr] gap-1">
           {generalInfo.map(({ label, value }) => (
             <Fragment key={label}>
@@ -166,7 +166,7 @@ function Right() {
           allowFullScreen
         ></iframe>
       </Section>
-      <Section title="About Pei Pei" variant="alternate">
+      <Section title={`About ${data?.name}`} variant="alternate">
         <p>
           Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quae
           provident ad officia consectetur neque reprehenderit illum saepe
@@ -185,7 +185,7 @@ function Right() {
           reiciendis!
         </p>
       </Section>
-      <Section title="Study Spots Found by Pei Pei">
+      <Section title={`Study Spots Found by ${data?.name}`}>
         <div className="p-2">
           <StudySpotGrid />
         </div>

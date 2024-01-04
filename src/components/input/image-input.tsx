@@ -58,13 +58,6 @@ export default function ImageInput<
               <Dropzone
                 ref={field.ref}
                 onChange={(files) => {
-                  // const images: NewImagePayload[] = Array.from(files).map(
-                  //   (file) => ({
-                  //     file,
-                  //     featured: false,
-                  //   }),
-                  // );
-
                   const value = transformValue(files);
 
                   field.onChange(value);

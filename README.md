@@ -96,3 +96,7 @@ type PostCreateOutput = RouterOutput["post"]["create"];
 
 - [Docs: Route Segment Config](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#options)
 - [Issue: Full Route Cache as a default](https://github.com/t3-oss/create-t3-app/issues/1663)
+
+### Caching
+
+`unstable_cache` works to cache functions.

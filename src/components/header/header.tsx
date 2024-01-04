@@ -1,4 +1,4 @@
-import { getServerAuthSession } from "@/server/auth";
+"use client";
 
 import { Link } from "@/components/ui/link";
 import NavigationLayout from "@/components/header/navigation-layout";
@@ -7,6 +7,7 @@ import AuthedNav from "@/components/header/authed-nav";
 
 import dynamic from "next/dynamic";
 import { Skeleton } from "../ui/skeleton";
+import { api } from "@/trpc/react";
 
 const UserAvatarPopover = dynamic(
   () => import("@/components/header/user-avatar-popover"),
@@ -16,13 +17,13 @@ const UserAvatarPopover = dynamic(
   },
 );
 
-const AnnouncementBarAuth = dynamic(
-  () => import("@/components/header/announcement-bar"),
+const NewUserAnnouncementBar = dynamic(
+  () => import("@/components/header/new-user-announcement-bar"),
   { ssr: false },
 );
 
-export default async function Header() {
-  const session = await getServerAuthSession();
+export default function Header() {
+  const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
 
   return (
     <>
@@ -43,13 +44,13 @@ export default async function Header() {
           </h1>
         </div>
 
-        <NavigationLayout userAvatar={<UserAvatarPopover session={session} />}>
-          {!session && <UnauthedNav />}
-          {session && <AuthedNav />}
+        <NavigationLayout userAvatar={<UserAvatarPopover />}>
+          {!data && <UnauthedNav />}
+          {data && !isLoading && <AuthedNav />}
         </NavigationLayout>
       </header>
 
-      {session && <AnnouncementBarAuth />}
+      {data && !data.username && !isLoading && <NewUserAnnouncementBar />}
     </>
   );
 }

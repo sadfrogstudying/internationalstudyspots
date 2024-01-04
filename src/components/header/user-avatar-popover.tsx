@@ -7,13 +7,8 @@ import React, { useState } from "react";
 import { Link } from "@/components/ui/link";
 import { Button } from "../ui/button";
 import { signIn, signOut } from "next-auth/react";
-import type { Session } from "next-auth";
 
-export default function UserAvatarPopover({
-  session,
-}: {
-  session: Session | null;
-}) {
+export default function UserAvatarPopover() {
   const [open, setOpen] = useState(false);
   const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
 
@@ -46,7 +41,7 @@ export default function UserAvatarPopover({
         <Content
           loading={isLoading}
           noUsername={!data?.username}
-          notLoggedIn={!session}
+          notLoggedIn={!data}
           setOpen={setOpen}
         />
       </PopoverContent>

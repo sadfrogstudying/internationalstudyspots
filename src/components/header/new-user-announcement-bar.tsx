@@ -1,20 +1,12 @@
 "use client";
 
-import { api } from "@/trpc/react";
 import { AlertCircle } from "lucide-react";
 import { Link } from "@/components/ui/link";
 
-export default function AnnouncementBarAuth() {
-  const { data: user, isLoading: userLoading } =
-    api.user.currentBySession.useQuery(undefined);
-
-  if ((user?.username && !userLoading) ?? userLoading) {
-    return null;
-  }
-
+export default function NewUserAnnouncementBar() {
   return (
     <div
-      className="sticky bottom-0 z-10 flex w-full animate-fade-in items-center bg-lime-500"
+      className="sticky bottom-0 z-10 flex w-full animate-fade-in items-center bg-lime-500 transition-all"
       role="alert"
     >
       <Link

@@ -35,7 +35,7 @@ export default function StudySpotDetail({ slug }: Props) {
     .find((studySpot) => studySpot.slug === slug);
 
   return (
-    <div className="max-w-7xl space-y-12 p-4">
+    <div className="mx-auto max-w-screen-2xl space-y-12 p-4">
       <Hero studySpot={data} />
 
       <div>

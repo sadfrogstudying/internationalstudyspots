@@ -8,6 +8,8 @@ import AuthedNav from "@/components/header/authed-nav";
 import dynamic from "next/dynamic";
 import { Skeleton } from "../ui/skeleton";
 import { api } from "@/trpc/react";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const UserAvatarPopover = dynamic(
   () => import("@/components/header/user-avatar-popover"),
@@ -24,10 +26,18 @@ const NewUserAnnouncementBar = dynamic(
 
 export default function Header() {
   const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
+  const pathname = usePathname();
 
   return (
     <>
-      <header className="pointer-events-none sticky top-0 z-30 flex w-full cursor-default justify-between gap-8 bg-white/20 px-4 py-4 text-2xl">
+      <header
+        className={cn(
+          "pointer-events-none sticky top-0 z-30 mx-auto flex w-full cursor-default justify-between gap-8 bg-white/20 px-4 py-4 text-2xl",
+          pathname === "/" || pathname === "/map"
+            ? "max-w-screen-4xl"
+            : "max-w-screen-2xl",
+        )}
+      >
         <div className="flex items-center">
           <h1>
             <Link

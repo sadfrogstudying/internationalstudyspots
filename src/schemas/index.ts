@@ -161,7 +161,7 @@ const imagePayloadSchema = z
       );
     },
     {
-      message: "You can't have more than 4 featured images.",
+      message: `You can't have more than ${MAX_FEATURED_IMAGES} featured images.`,
       path: ["newImages"],
     },
   )

@@ -47,7 +47,7 @@ export default function StudySpotGrid() {
   const noResults = data?.pages.length === 1 && data?.pages[0]?.length === 0;
 
   return (
-    <div className="relative grid w-full animate-fade-in gap-4 duration-1000 xs:grid-cols-2 lg:grid-cols-3 lg:gap-y-8 xl:grid-cols-4">
+    <div className="3xl:grid-cols-6 relative grid w-full animate-fade-in gap-4 duration-1000 xs:grid-cols-2 lg:grid-cols-3 lg:gap-y-8 xl:grid-cols-4 2xl:grid-cols-5">
       {data?.pages.map((page, i) => (
         <React.Fragment key={`page-${i}`}>
           {page.map((studySpot, i) => {

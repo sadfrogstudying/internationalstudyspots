@@ -13,7 +13,7 @@ import { api } from "@/trpc/react";
 export default function AccountDetails() {
   return (
     <>
-      <div className="max-w-6xl grid-cols-[3.5fr_7fr] flex-wrap gap-4 md:grid">
+      <div className="grid-cols-[3.5fr_7fr] flex-wrap gap-4 md:grid">
         <div className="flex flex-col gap-4 border bg-white p-4">
           <Left />
         </div>

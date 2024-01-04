@@ -8,7 +8,7 @@ type StudySpot = RouterOutputs["studySpot"]["bySlug"];
 export default function Hero({ studySpot }: { studySpot?: StudySpot }) {
   return (
     <>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {studySpot ? (
           studySpot?.images
             .filter((x) => x.featured)
@@ -40,7 +40,6 @@ export default function Hero({ studySpot }: { studySpot?: StudySpot }) {
             ))
         ) : (
           <>
-            <Skeleton className="aspect-[3/4] w-full min-w-0" />
             <Skeleton className="aspect-[3/4] w-full min-w-0" />
             <Skeleton className="aspect-[3/4] w-full min-w-0" />
             <Skeleton className="aspect-[3/4] w-full min-w-0" />

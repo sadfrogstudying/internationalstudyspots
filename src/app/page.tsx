@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="flex flex-col gap-12 text-sm">
+    <main className="max-w-screen-4xl mx-auto flex flex-col gap-12 text-sm">
       <section className="max-w-2xl space-y-4 px-4 py-4">
         <p>An index of beautiful study spots around the world.</p>
         <Button variant="success" asChild>

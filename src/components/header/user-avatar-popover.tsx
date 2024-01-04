@@ -120,6 +120,19 @@ function Content({
         >
           here
         </Link>
+        .
+      </p>
+      <br />
+      <p className="text-gray-500">
+        Check out your account{" "}
+        <Link
+          href={`/account/${data?.username}`}
+          className="underline"
+          onClick={() => setOpen(false)}
+        >
+          here
+        </Link>{" "}
+        (work in progress).
       </p>
 
       <div className="space-y-2">

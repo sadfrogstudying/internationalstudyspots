@@ -6,19 +6,19 @@ import {
 } from "@/components/ui/popover";
 
 export default function MobileMenu({
-  children,
-  trigger,
+  render,
+  renderTrigger,
 }: {
-  children: React.ReactNode;
-  trigger: (open: boolean) => React.ReactNode;
+  render: (close: () => void) => React.ReactNode;
+  renderTrigger: (open: boolean) => React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>{trigger(open)}</PopoverTrigger>
+      <PopoverTrigger asChild>{renderTrigger(open)}</PopoverTrigger>
       <PopoverContent className="mt-4 text-sm" align="end">
-        {children}
+        {render(() => setOpen(false))}
       </PopoverContent>
     </Popover>
   );

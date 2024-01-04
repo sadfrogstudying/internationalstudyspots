@@ -1,23 +1,13 @@
 "use client";
 
-import { Link } from "@/components/ui/link";
-import NavigationLayout from "@/components/header/navigation-layout";
-import UnauthedNav from "@/components/header/unauthed-nav";
-import AuthedNav from "@/components/header/authed-nav";
-
 import dynamic from "next/dynamic";
-import { Skeleton } from "../ui/skeleton";
-import { api } from "@/trpc/react";
 import { usePathname } from "next/navigation";
+
+import { api } from "@/trpc/react";
 import { cn } from "@/lib/utils";
 
-const UserAvatarPopover = dynamic(
-  () => import("@/components/header/user-avatar-popover"),
-  {
-    ssr: false,
-    loading: () => <Skeleton className="h-9 w-9 rounded-full" />,
-  },
-);
+import Navigation from "@/components/header/navigation";
+import { Link } from "@/components/ui/link";
 
 const NewUserAnnouncementBar = dynamic(
   () => import("@/components/header/new-user-announcement-bar"),
@@ -54,10 +44,7 @@ export default function Header() {
           </h1>
         </div>
 
-        <NavigationLayout userAvatar={<UserAvatarPopover />}>
-          {!data && <UnauthedNav />}
-          {data && !isLoading && <AuthedNav />}
-        </NavigationLayout>
+        <Navigation />
       </header>
 
       {data && !data.username && !isLoading && <NewUserAnnouncementBar />}

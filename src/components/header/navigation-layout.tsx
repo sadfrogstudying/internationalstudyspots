@@ -26,6 +26,7 @@ export default function NavigationLayout({
           );
         }}
       >
+        <div className="mb-4 font-bold">Menu</div>
         <nav className="flex flex-col gap-4">{children}</nav>
       </MobileMenu>
 

@@ -6,7 +6,10 @@ import { Link } from "../ui/link";
 export default function UnauthedNav() {
   return (
     <>
-      <Link href="/map" className="pointer-events-auto flex flex-wrap gap-x-2">
+      <Link
+        href="/map"
+        className="pointer-events-auto flex flex-wrap gap-x-2 underline"
+      >
         Map
       </Link>
       <Button

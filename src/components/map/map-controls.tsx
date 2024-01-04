@@ -52,7 +52,7 @@ const MapControls = ({
           reload.
         </p>
       )}
-      <div className={cn("flex gap-2", className)}>
+      <div className={cn("flex gap-2 overflow-hidden", className)}>
         <Button
           className="h-8"
           onClick={() => {

@@ -39,12 +39,12 @@ const MapInfoPanel = ({
   );
 
   return (
-    <div className="pointer-events-none fixed bottom-8 flex w-full cursor-default justify-center p-4 md:justify-normal">
+    <div className="pointer-events-none fixed bottom-4 flex w-full cursor-default justify-center p-4 text-sm md:justify-normal">
       <div
         className="group pointer-events-auto mx-4 flex w-full max-w-md flex-col gap-6 rounded-md bg-white p-4 shadow-lg md:mx-0"
         ref={panelRef}
       >
-        <h2 className="text-bold flex items-center gap-2 text-xl">
+        <h2 className="text-bold hidden items-center gap-2 text-xl xs:flex">
           <span>
             StudySpots<strong>Locator</strong>
           </span>
@@ -63,7 +63,7 @@ const MapInfoPanel = ({
             </div>
           ) : (
             <div className="pointer-events-auto flex items-center gap-4 md:flex-col md:items-start md:space-y-4">
-              <div className="w-48">
+              <div className="w-32 md:w-48">
                 <ImageCarousel
                   key={selectedMarker.name}
                   images={selectedMarker.images}

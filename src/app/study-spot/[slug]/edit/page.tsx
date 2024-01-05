@@ -103,11 +103,11 @@ export default function EditStudySpotPage({
   }
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading spot details 📍...</div>;
   }
 
   if (!data) {
-    return <div>Not found</div>;
+    return <div>Spot not found!</div>;
   }
 
   return (

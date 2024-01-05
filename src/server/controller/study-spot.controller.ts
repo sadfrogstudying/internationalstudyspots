@@ -88,9 +88,11 @@ export async function getPresignedUrlHandler({
   ctx: ContextProtected;
   input: GetPresignedUrlsInput;
 }) {
-  const spot = await ctx.db.studySpot.findUnique({
+  const slug = slugify(input.name);
+
+  const spot = await ctx.db.studySpot.findFirst({
     where: {
-      name: input.name,
+      OR: [{ name: input.name }, { slug: slug }],
     },
   });
 
@@ -107,11 +109,14 @@ export async function getPresignedUrlHandler({
         "Please finish creating your account, you need a username to edit spots.",
     });
 
-  if (spot && input.id !== spot.id)
+  if (spot && input.id !== spot.id) {
+    const field = spot.name === input.name ? "name" : "slug";
+
     throw new TRPCError({
       code: "BAD_REQUEST",
-      message: "Study spot name already exists",
+      message: `Study spot ${field} already exists.  Please enter something unique.`,
     });
+  }
 
   if (input.images.length === 0) return;
 

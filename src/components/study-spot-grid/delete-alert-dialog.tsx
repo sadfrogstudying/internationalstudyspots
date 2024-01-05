@@ -63,9 +63,11 @@ const DeleteAlertDialog = ({ id }: { id: number }) => {
           </AlertDialogFooter>
         </AlertDialogContent>
 
-        {deleteError?.message && (
-          <ServerErrorMessage message={deleteError.message} className="mt-4" />
-        )}
+        <ServerErrorMessage
+          message={deleteError?.message}
+          code={deleteError?.data?.code}
+          className="mt-4"
+        />
       </AlertDialog>
     </>
   );

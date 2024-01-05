@@ -103,15 +103,15 @@ export default function CreatePage() {
       {!!presignedUrlsError?.data?.zodError && (
         <ServerZodError zodError={presignedUrlsError.data.zodError} />
       )}
-      {presignedUrlsError && !presignedUrlsError?.data?.zodError && (
-        <ServerErrorMessage message={presignedUrlsError.message} />
-      )}
+
       {!!createError?.data?.zodError && (
         <ServerZodError zodError={createError.data.zodError} />
       )}
-      {createError && !createError?.data?.zodError && (
-        <ServerErrorMessage message={createError.message} />
-      )}
+
+      <ServerErrorMessage
+        message={presignedUrlsError?.message ?? createError?.message}
+        code={presignedUrlsError?.data?.code ?? createError?.data?.code}
+      />
     </>
   );
 }

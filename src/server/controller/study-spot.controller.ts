@@ -94,6 +94,19 @@ export async function getPresignedUrlHandler({
     },
   });
 
+  const user = await ctx.db.user.findUnique({
+    where: {
+      id: ctx.session.user.id,
+    },
+  });
+
+  if (!user?.username)
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message:
+        "Please finish creating your account, you need a username to edit spots.",
+    });
+
   if (spot && input.id !== spot.id)
     throw new TRPCError({
       code: "BAD_REQUEST",

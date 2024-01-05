@@ -99,15 +99,15 @@ export default function EditAccountPage() {
       {!!updateError?.data?.zodError && (
         <ServerZodError zodError={updateError?.data?.zodError} />
       )}
-      {updateError && !updateError?.data?.zodError && (
-        <ServerErrorMessage message={updateError.message} />
-      )}
+
       {!!presignedUrlError?.data?.zodError && (
         <ServerZodError zodError={presignedUrlError?.data?.zodError} />
       )}
-      {presignedUrlError && !presignedUrlError?.data?.zodError && (
-        <ServerErrorMessage message={presignedUrlError.message} />
-      )}
+
+      <ServerErrorMessage
+        message={presignedUrlError?.message ?? updateError?.message}
+        code={presignedUrlError?.data?.code ?? updateError?.data?.code}
+      />
     </>
   );
 }

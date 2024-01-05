@@ -1,7 +1,9 @@
 "use client";
 
+import ServerErrorMessage from "@/components/server-error-message";
+import ServerZodError from "@/components/server-zod-error";
 import { uploadFilesToS3UsingPresignedUrls } from "@/lib/helpers";
-import type { CreateUpdateFormValues, UpdateInput } from "@/schemas";
+import type { CreateUpdateFormValues } from "@/schemas";
 import { api } from "@/trpc/react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
@@ -25,15 +27,18 @@ export default function EditStudySpotPage({
 
   const { data, isLoading } = api.studySpot.bySlug.useQuery(params.slug);
 
-  const { mutate: update, isLoading: updateLoading } =
-    api.studySpot.update.useMutation({
-      onSuccess: (res) => {
-        void apiUtils.studySpot.bySlug.invalidate(res.slug);
-        router.push(`/study-spot/${res.slug}`);
-      },
-    });
+  const {
+    mutate: update,
+    isLoading: updateLoading,
+    error: updateError,
+  } = api.studySpot.update.useMutation({
+    onSuccess: (res) => {
+      void apiUtils.studySpot.bySlug.invalidate(res.slug);
+      router.push(`/study-spot/${res.slug}`);
+    },
+  });
 
-  const { mutate: getPresignedUrl } =
+  const { mutate: getPresignedUrl, error: presignedUrlsError } =
     api.studySpot.getPresignedUrls.useMutation({
       onSuccess: async (presignedUrls) => {
         if (!formData || !data) return;
@@ -111,11 +116,26 @@ export default function EditStudySpotPage({
   }
 
   return (
-    <CreateUpdateSpotForm
-      initialValues={data}
-      onSubmit={handleSubmit}
-      buttonLabel={getButtonText()}
-      submitDisabled={submitDisabled}
-    />
+    <>
+      <CreateUpdateSpotForm
+        initialValues={data}
+        onSubmit={handleSubmit}
+        buttonLabel={getButtonText()}
+        submitDisabled={submitDisabled}
+      />
+
+      {!!presignedUrlsError?.data?.zodError && (
+        <ServerZodError zodError={presignedUrlsError.data.zodError} />
+      )}
+
+      {!!updateError?.data?.zodError && (
+        <ServerZodError zodError={updateError.data.zodError} />
+      )}
+
+      <ServerErrorMessage
+        message={presignedUrlsError?.message ?? updateError?.message}
+        code={presignedUrlsError?.data?.code ?? updateError?.data?.code}
+      />
+    </>
   );
 }

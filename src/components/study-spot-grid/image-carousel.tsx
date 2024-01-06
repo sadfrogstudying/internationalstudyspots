@@ -13,6 +13,7 @@ type Props = {
   }[];
   name: string;
   sizes?: string;
+  priority?: boolean;
 };
 
 export default function ImageCarousel(props: Props) {
@@ -56,7 +57,7 @@ export default function ImageCarousel(props: Props) {
         ref={emblaMainRef}
       >
         <div className="flex touch-pan-y">
-          {images.map((image) => (
+          {images.map((image, i) => (
             <div
               className="relative aspect-square h-full w-full sm:aspect-[3/4]"
               style={{ flex: `0 0 100%` }}
@@ -69,6 +70,7 @@ export default function ImageCarousel(props: Props) {
                 className="w-full object-cover"
                 fill
                 sizes={sizes}
+                priority={i === 0 ? props.priority : false}
               />
             </div>
           ))}

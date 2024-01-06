@@ -1,4 +1,4 @@
-import { RouterOutputs } from "@/trpc/shared";
+import { type RouterOutputs } from "@/trpc/shared";
 
 import { cn } from "@/lib/utils";
 
@@ -26,7 +26,7 @@ export default function Author({ author }: { author?: Author }) {
         <AvatarImage src={author?.profileImage?.url} className="object-cover" />
         <AvatarFallback>{author?.name?.[0]?.toUpperCase()}</AvatarFallback>
       </Avatar>
-      {author || author === null ? (
+      {author ?? author === null ? (
         <span>
           <UnmountAfter delay={timingOffset}>
             <SkeletonText
@@ -36,7 +36,9 @@ export default function Author({ author }: { author?: Author }) {
               )}
             />
           </UnmountAfter>
-          <strong>{author?.name ?? "Unknown Person"} </strong>
+          <strong>
+            {author?.name ?? author?.username ?? "Unknown Person"}{" "}
+          </strong>
           found this spot
         </span>
       ) : (

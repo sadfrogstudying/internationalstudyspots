@@ -9,7 +9,7 @@ type StudySpot = RouterOutputs["studySpot"]["bySlug"];
 
 export default function AllImages({ studySpot }: { studySpot?: StudySpot }) {
   return (
-    <div className="grid grid-cols-3 gap-2 md:grid-cols-5">
+    <div className="grid grid-cols-3 gap-2 md:grid-cols-8">
       {studySpot ? (
         studySpot?.images.slice(0, 15).map((image, i) => {
           const animationDelay = i * 50;
@@ -33,21 +33,23 @@ export default function AllImages({ studySpot }: { studySpot?: StudySpot }) {
                 />
               </UnmountAfter>
 
-              <Image
-                src={image.url}
-                alt={`Image of ${studySpot?.name}`}
-                width={image.width}
-                height={image.height}
-                className={cn(
-                  "aspect-square animate-fade-in object-cover duration-500",
-                  animationDuration,
-                )}
-                sizes="(max-width: 768px) 30vw, 22vw"
-                style={{
-                  animationDelay: `${i * 50}ms`,
-                  animationFillMode: "backwards",
-                }}
-              />
+              <div className="relative aspect-square">
+                <Image
+                  src={image.url}
+                  alt={`Image of ${studySpot?.name}`}
+                  className={cn(
+                    "animate-fade-in object-cover duration-500",
+                    animationDuration,
+                  )}
+                  fill
+                  sizes="(max-width: 767px) 33vw, 12.5vw"
+                  style={{
+                    animationDelay: `${i * 25}ms`,
+                    animationFillMode: "backwards",
+                  }}
+                  priority={false}
+                />
+              </div>
             </div>
           );
         })

@@ -114,21 +114,11 @@ export default function List({ studySpot }: { studySpot?: StudySpot }) {
         })
       ) : (
         <>
-          <SkeletonRow />
-          <SkeletonRow />
-          <SkeletonRow />
-          <SkeletonRow />
-          <SkeletonRow />
-          <SkeletonRow />
-          <SkeletonRow />
-          <SkeletonRow />
-          <SkeletonRow />
-          <SkeletonRow />
-          <SkeletonRow />
-          <SkeletonRow />
-          <SkeletonRow />
-          <SkeletonRow />
-          <SkeletonRow />
+          {Array(24)
+            .fill(null)
+            .map((_, i) => (
+              <SkeletonRow key={`detail-row-${i}`} />
+            ))}
         </>
       )}
     </ul>

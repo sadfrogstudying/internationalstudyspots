@@ -58,7 +58,7 @@ export default function ImageCarousel(props: Props) {
         <div className="flex touch-pan-y">
           {images.map((image) => (
             <div
-              className="relative w-full"
+              className="relative aspect-square h-full w-full sm:aspect-[3/4]"
               style={{ flex: `0 0 100%` }}
               key={image.id}
             >
@@ -66,9 +66,8 @@ export default function ImageCarousel(props: Props) {
                 key={image.id}
                 src={image.url}
                 alt={`Image of ${name}`}
-                width={image.width}
-                height={image.height}
-                className="aspect-square w-full object-cover sm:aspect-[3/4]"
+                className="w-full object-cover"
+                fill
                 sizes={sizes}
               />
             </div>

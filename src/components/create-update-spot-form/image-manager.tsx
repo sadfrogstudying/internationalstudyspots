@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   Controller,
   type ControllerRenderProps,
@@ -177,11 +178,19 @@ function ExistingImages({
 
             return (
               <div key={url} className="flex flex-col gap-2">
-                <img
-                  src={url}
-                  alt="New image"
-                  className={cn("rounded", toDelete && "opacity-50")}
-                />
+                <div className="relative aspect-square">
+                  <Image
+                    src={url}
+                    alt="New image"
+                    className={cn(
+                      "rounded object-contain",
+                      toDelete && "opacity-50",
+                    )}
+                    fill
+                    sizes="(max-width: 767px) 50vw, (max-width: 1023px) 25vw, 16vw"
+                    priority={index < 5}
+                  />
+                </div>
 
                 <div className="flex flex-col gap-2">
                   <label

@@ -72,7 +72,7 @@ export default function GridItem({
           <ImageCarousel
             images={images}
             name={name}
-            sizes="(max-width: 1024px) 40vw, 22vw"
+            sizes="(max-width: 474px) 100vw, (max-width: 767px) 50vw, (max-width: 1279px) 33vw, (max-width: 1535px) 25vw, (max-width: 1919px) 20vw, 16vw"
           />
           <ul>
             <li className="truncate text-ellipsis font-bold">{location}</li>

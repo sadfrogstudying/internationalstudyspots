@@ -13,18 +13,18 @@ export default function Hero({ studySpot }: { studySpot?: StudySpot }) {
           studySpot?.images
             .filter((x) => x.featured)
             .map((image, i) => (
-              <div className="relative" key={image.id}>
+              <div className="relative aspect-[3/4]" key={image.id}>
                 <Image
                   src={image.url}
                   alt={`Image of ${studySpot?.name}`}
-                  width={image.width}
-                  height={image.height}
-                  className="duration-250 aspect-[3/4] w-full min-w-0 animate-fade-in object-cover"
+                  className="duration-250 animate-fade-in object-cover"
                   style={{
                     animationDelay: `${i * 50}ms`,
                     animationFillMode: "backwards",
                   }}
-                  sizes="(max-width: 1024px) 40vw, 22vw"
+                  sizes="(max-width: 767px) 50vw, 100vw"
+                  fill
+                  priority
                 />
 
                 <UnmountAfter delay={200}>

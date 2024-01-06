@@ -29,7 +29,7 @@ export default function Summary({ studySpot }: { studySpot?: StudySpot }) {
               .join(", ") || "No Location"}
           </li>
           <li className="relative">
-            <UnmountAfter delay={200}>
+            <UnmountAfter delay={timingOffset}>
               <SkeletonText
                 className={cn(
                   "absolute w-56 max-w-full animate-fade-out opacity-0",
@@ -40,7 +40,7 @@ export default function Summary({ studySpot }: { studySpot?: StudySpot }) {
             <h2 className="truncate">{studySpot.name}</h2>
           </li>
           <li className="relative truncate">
-            <UnmountAfter delay={200}>
+            <UnmountAfter delay={timingOffset}>
               <SkeletonText
                 className={cn(
                   "absolute w-20 max-w-full animate-fade-out opacity-0",
@@ -53,7 +53,7 @@ export default function Summary({ studySpot }: { studySpot?: StudySpot }) {
           <li>
             <ul className="flex gap-2">
               <li className="relative">
-                <UnmountAfter delay={200}>
+                <UnmountAfter delay={timingOffset}>
                   <Skeleton
                     className={cn(
                       "absolute h-full w-full animate-fade-out opacity-0",
@@ -65,7 +65,7 @@ export default function Summary({ studySpot }: { studySpot?: StudySpot }) {
                 {studySpot.wifi ? <Wifi /> : <WifiOff />}
               </li>
               <li className="relative">
-                <UnmountAfter delay={200}>
+                <UnmountAfter delay={timingOffset}>
                   <Skeleton
                     className={cn(
                       "absolute h-full w-full animate-fade-out opacity-0",

@@ -10,6 +10,8 @@ import Hero from "./hero";
 import Summary from "./summary";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import Author from "./author";
+import { cn } from "@/lib/utils";
 
 const List = dynamic(() => import("./list"));
 const AllImages = dynamic(() => import("./all-images"));
@@ -20,6 +22,9 @@ interface Props {
 
 export default function StudySpotDetail({ slug }: Props) {
   const { data } = api.studySpot.bySlug.useQuery(slug);
+  const { data: author } = api.studySpot.authorBySlug.useQuery(slug, {
+    enabled: !!data,
+  });
 
   const { appliedFilters } = useFilterData();
 
@@ -41,12 +46,23 @@ export default function StudySpotDetail({ slug }: Props) {
       <div>
         <Separator className="mb-2" />
         <Summary studySpot={data ?? cachedStudySpot} />
-        <Button className="mt-4" asChild>
+        <Button
+          className={cn(
+            "mt-4",
+            !data && "pointer-events-none bg-primary/10 text-transparent",
+          )}
+          asChild
+        >
           <Link href={`/study-spot/${slug}/edit`}>Edit Spot</Link>
         </Button>
       </div>
 
-      <div className="space-y-2">
+      <div>
+        <Separator className="mb-2" />
+        <Author author={author} />
+      </div>
+
+      <div>
         <Separator className="mb-2" />
         <List studySpot={data} />
       </div>

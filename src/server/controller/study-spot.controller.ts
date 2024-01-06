@@ -61,6 +61,31 @@ export async function bySlugHandler({
   return spot;
 }
 
+export async function authorBySlugHandler({
+  ctx,
+  input,
+}: {
+  ctx: Context;
+  input: BySlugInput;
+}) {
+  const spot = await ctx.db.studySpot.findUnique({
+    where: {
+      slug: input,
+    },
+    select: {
+      author: {
+        select: {
+          username: true,
+          name: true,
+          profileImage: true,
+        },
+      },
+    },
+  });
+
+  return spot?.author;
+}
+
 export async function getCountriesHandler({ ctx }: { ctx: Context }) {
   const countries = await ctx.db.studySpot.findMany({
     select: {

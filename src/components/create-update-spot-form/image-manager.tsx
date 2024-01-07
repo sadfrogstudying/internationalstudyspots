@@ -223,7 +223,6 @@ function ExistingImages({
                   <label className="flex items-center gap-2 rounded border border-dashed bg-neutral-50 px-2 py-1">
                     <Checkbox
                       checked={toDelete}
-                      disabled={featuredDisabled}
                       onCheckedChange={(e) => {
                         const newImages: ExistingImagePayload[] = [
                           ...field.value,

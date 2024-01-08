@@ -31,6 +31,7 @@ export default function EditStudySpotPage({
     mutate: update,
     isLoading: updateLoading,
     error: updateError,
+    isSuccess: updateSuccess,
   } = api.studySpot.update.useMutation({
     onSuccess: (res) => {
       void apiUtils.studySpot.bySlug.invalidate(res.slug);
@@ -38,52 +39,55 @@ export default function EditStudySpotPage({
     },
   });
 
-  const { mutate: getPresignedUrl, error: presignedUrlsError } =
-    api.studySpot.getPresignedUrls.useMutation({
-      onSuccess: async (presignedUrls) => {
-        if (!formData || !data) return;
+  const {
+    mutate: getPresignedUrl,
+    isLoading: presignedUrlsLoading,
+    error: presignedUrlsError,
+  } = api.studySpot.getPresignedUrls.useMutation({
+    onSuccess: async (presignedUrls) => {
+      if (!formData || !data) return;
 
-        // Handle existing images
-        const existingImages = formData.images.existingImages.filter(
-          (image, i) =>
-            image.delete || image.featured !== data.images[i]?.featured,
-        );
-        const existingImagesPayload =
-          existingImages.length > 0 ? existingImages : undefined;
+      // Handle existing images
+      const existingImages = formData.images.existingImages.filter(
+        (image, i) =>
+          image.delete || image.featured !== data.images[i]?.featured,
+      );
+      const existingImagesPayload =
+        existingImages.length > 0 ? existingImages : undefined;
 
-        // Early update if no new images
-        if (!presignedUrls) {
-          update({
-            ...formData,
-            id: data.id,
-            images: {
-              existingImages: existingImagesPayload,
-            },
-          });
-          return;
-        }
-
-        // Handle new images
-        const imageUrls = await uploadFilesToS3UsingPresignedUrls(
-          presignedUrls,
-          formData.images.newImages.map((image) => image.file),
-        );
-        const newImages = imageUrls.map((url, index) => ({
-          url,
-          featured: formData.images.newImages[index]?.featured ?? false,
-        }));
-        const newImagePayload = newImages.length > 0 ? newImages : undefined;
-
+      // Early update if no new images
+      if (!presignedUrls) {
         update({
           ...formData,
           id: data.id,
           images: {
-            newImages: newImagePayload,
             existingImages: existingImagesPayload,
           },
         });
-      },
-    });
+        return;
+      }
+
+      // Handle new images
+      const imageUrls = await uploadFilesToS3UsingPresignedUrls(
+        presignedUrls,
+        formData.images.newImages.map((image) => image.file),
+      );
+      const newImages = imageUrls.map((url, index) => ({
+        url,
+        featured: formData.images.newImages[index]?.featured ?? false,
+      }));
+      const newImagePayload = newImages.length > 0 ? newImages : undefined;
+
+      update({
+        ...formData,
+        id: data.id,
+        images: {
+          newImages: newImagePayload,
+          existingImages: existingImagesPayload,
+        },
+      });
+    },
+  });
 
   function handleSubmit(formValues: CreateUpdateFormValues) {
     setFormData(formValues);
@@ -100,12 +104,18 @@ export default function EditStudySpotPage({
     });
   }
 
-  const submitDisabled = updateLoading;
-
   function getButtonText() {
+    const hasNewImages = !!formData?.images?.newImages?.length;
+
+    if (presignedUrlsLoading && hasNewImages) return "Uploading images...";
+    if (presignedUrlsLoading) return "Updating...";
     if (updateLoading) return "Updating...";
+    if (updateSuccess) return "Redirecting you now...";
+
     return "Submit";
   }
+
+  const submitDisabled = updateLoading || presignedUrlsLoading || updateSuccess;
 
   if (isLoading) {
     return <div>Loading spot details 📍...</div>;

@@ -80,9 +80,13 @@ export default function EditAccountPage() {
   }
 
   function getButtonText() {
-    if (updateSuccess) return "Redirecting you now...";
+    const hasNewImages = !!formData?.profileImage.length;
+
+    if (presignedUrlLoading && hasNewImages) return "Uploading images...";
+    if (presignedUrlLoading) return "Creating...";
     if (updateLoading) return "Creating...";
-    if (presignedUrlLoading) return "Uploading images...";
+    if (updateSuccess) return "Redirecting you now...";
+
     return "Submit";
   }
 

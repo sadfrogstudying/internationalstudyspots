@@ -84,9 +84,13 @@ export default function CreatePage() {
   }
 
   function getButtonText() {
-    if (createSuccess) return "Redirecting you now...";
+    const hasNewImages = !!formData?.images?.newImages?.length;
+
+    if (presignedUrlsLoading && hasNewImages) return "Uploading images...";
+    if (presignedUrlsLoading) return "Creating...";
     if (createLoading) return "Creating...";
-    if (presignedUrlsLoading) return "Uploading images...";
+    if (createSuccess) return "Redirecting you now...";
+
     return "Submit";
   }
 

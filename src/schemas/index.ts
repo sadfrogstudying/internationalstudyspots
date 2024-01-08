@@ -181,7 +181,6 @@ const imagePayloadSchema = z
         (image) => image.delete,
       ).length;
       const addCount = [...newImages].length;
-      console.log({ existingCount, deleteCount, addCount });
 
       return addCount - deleteCount + existingCount > 0;
     },

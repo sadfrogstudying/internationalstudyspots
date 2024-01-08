@@ -3,7 +3,13 @@ import { signIn } from "next-auth/react";
 import { Button } from "../ui/button";
 import { Link } from "../ui/link";
 
-export default function UnauthedNav({ onClick }: { onClick?: () => void }) {
+export default function UnauthedNav({
+  onClick,
+  loading,
+}: {
+  onClick?: () => void;
+  loading?: boolean;
+}) {
   return (
     <>
       <Link
@@ -19,8 +25,9 @@ export default function UnauthedNav({ onClick }: { onClick?: () => void }) {
           onClick?.();
         }}
         variant="success"
+        disabled={loading}
       >
-        Sign In
+        {loading ? "Loading..." : "Sign In"}
       </Button>
     </>
   );

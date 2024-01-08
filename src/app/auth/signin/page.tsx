@@ -49,7 +49,7 @@ export default function SigninPage() {
             height={200}
             width={200}
             alt="A cat and a baguette"
-            className="h-full w-full animate-fade-in duration-1000"
+            className="h-full w-full animate-fade-in bg-primary/10 duration-1000"
           />
         </div>
       </Section>

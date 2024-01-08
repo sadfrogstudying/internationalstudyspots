@@ -92,11 +92,25 @@ type PostCreateInput = {
 type PostCreateOutput = RouterOutput["post"]["create"];
 ```
 
+### Caching
+
+`unstable_cache` works to cache functions.
+
+## Testing dev API route changes on Mobile
+
+`ngrok` allows us to put `localhost` on the internet so we can test the mobile app against the **development** backend. Install instructions [here](https://ngrok.com/download)
+
+Run:
+
+```shell
+ngrok http 3000
+```
+
+In the terminal, the URL should be under `Forwarding`.
+
+You can now fire requests to: `https://8e3b-49-255-185-210.ngrok-free.app/` and `https://8e3b-49-255-185-210.ngrok-free.app/api/studyspots.getall`.
+
 ## Useful Links
 
 - [Docs: Route Segment Config](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#options)
 - [Issue: Full Route Cache as a default](https://github.com/t3-oss/create-t3-app/issues/1663)
-
-### Caching
-
-`unstable_cache` works to cache functions.

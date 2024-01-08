@@ -63,11 +63,11 @@ const DropzoneComponent = React.forwardRef<HTMLDivElement, DropzoneProps>(
           {...getRootProps({ "aria-label": name })}
           className={cn(
             "relative flex h-9 w-full items-center overflow-hidden rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
-            "ring-orange-400 ring-offset-4 transition-shadow duration-75 focus-visible:outline-none focus-visible:ring-2 active:ring-2 active:ring-orange-500",
+            "ring-orange-500 ring-offset-4 transition-shadow duration-75 focus-visible:outline-none focus-visible:ring-2 active:ring-2",
             className,
-            isDragAccept && "ring-green-500",
-            isDragReject && "ring-red-500",
-            isCompressing && "ring-yellow-400",
+            isDragAccept && "ring-2 ring-green-500",
+            isDragReject && "ring-2 ring-red-500",
+            isCompressing && "ring-2 ring-yellow-400",
           )}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {

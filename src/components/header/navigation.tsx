@@ -55,11 +55,13 @@ export default function Navigation({}) {
 }
 
 function NavItems({ onClick }: { onClick?: () => void }) {
-  const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
+  const { data, isLoading } = api.user.currentBySession.useQuery(undefined, {
+    retry: 1,
+  });
 
   return (
     <>
-      {!data && <UnauthedNav onClick={onClick} />}
+      {!data && <UnauthedNav onClick={onClick} loading={isLoading} />}
       {data && !isLoading && <AuthedNav onClick={onClick} />}
     </>
   );

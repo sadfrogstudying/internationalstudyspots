@@ -9,7 +9,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type Author = RouterOutputs["studySpot"]["authorBySlug"];
 
-export default function Author({ author }: { author?: Author }) {
+export default function Author({
+  author,
+  loading,
+}: {
+  author?: Author;
+  loading: boolean;
+}) {
   const durationTiming = 500;
   const animationDuration = `duration-${durationTiming}`;
   const timingOffset = 200;
@@ -24,14 +30,16 @@ export default function Author({ author }: { author?: Author }) {
     >
       <Avatar className="h-6 w-6 shadow">
         <AvatarImage src={author?.profileImage?.url} className="object-cover" />
-        <AvatarFallback>{author?.name?.[0]?.toUpperCase()}</AvatarFallback>
+        {!loading && !author?.profileImage?.url && (
+          <AvatarFallback>{author?.name?.[0]?.toUpperCase()}</AvatarFallback>
+        )}
       </Avatar>
       {author ?? author === null ? (
         <span>
           <UnmountAfter delay={timingOffset}>
             <SkeletonText
               className={cn(
-                "absolute w-36 animate-fade-out opacity-0",
+                "absolute w-56 animate-fade-out opacity-0",
                 animationDuration,
               )}
             />

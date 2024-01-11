@@ -21,14 +21,16 @@ export default function UserAvatarPopover() {
         variant="ghost"
       >
         <PopoverTrigger className="pointer-events-auto">
-          <Avatar className="h-9 w-9 shadow">
+          <Avatar className="h-9 w-9">
             <AvatarImage
               src={data?.profileImage?.url}
               className="object-cover"
             />
-            <AvatarFallback>
-              {data?.name?.[0]?.toUpperCase() ?? ":)"}
-            </AvatarFallback>
+            {!isLoading && !data?.profileImage?.url && (
+              <AvatarFallback>
+                {data?.name?.[0]?.toUpperCase() ?? ":)"}
+              </AvatarFallback>
+            )}
           </Avatar>
         </PopoverTrigger>
       </Button>

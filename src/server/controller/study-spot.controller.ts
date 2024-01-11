@@ -16,7 +16,6 @@ import {
   getPresignedUrls,
   slugify,
 } from "@/lib/server-helpers";
-import { env } from "@/env";
 
 export async function getAllHandler({
   ctx,
@@ -202,25 +201,29 @@ export async function deleteHandler({
   ctx: ContextProtected;
   input: DeleteInput;
 }) {
-  if (input.token !== env.ADMIN_TOKEN)
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-    });
-
   const spot = await ctx.db.studySpot.findUnique({
     where: {
       id: input.id,
     },
     include: {
       images: true,
+      author: true,
     },
   });
 
-  if (!spot)
+  if (!spot) {
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "Study spot does not exist",
     });
+  }
+
+  if (spot?.author?.id !== ctx.session.user.id) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You are not the author of this study spot",
+    });
+  }
 
   await ctx.db.studySpot.delete({
     where: {

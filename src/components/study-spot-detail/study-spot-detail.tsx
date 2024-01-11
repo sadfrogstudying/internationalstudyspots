@@ -1,17 +1,21 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { api } from "@/trpc/react";
-
-import { useFilterData } from "../study-spot-grid/filter-context";
-
-import { Separator } from "../ui/separator";
-import Hero from "./hero";
-import Summary from "./summary";
-import { Button } from "../ui/button";
 import Link from "next/link";
-import Author from "./author";
+
+import { api } from "@/trpc/react";
 import { cn } from "@/lib/utils";
+
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { useFilterData } from "@/components/study-spot-grid/filter-context";
+import Hero from "@/components/study-spot-detail/hero";
+import Author from "@/components/study-spot-detail/author";
+import Summary from "@/components/study-spot-detail/summary";
+
+const DeleteAlertDialog = dynamic(
+  () => import("../study-spot-grid/delete-alert-dialog"),
+);
 
 const List = dynamic(() => import("./list"));
 const AllImages = dynamic(() => import("./all-images"));
@@ -22,9 +26,14 @@ interface Props {
 
 export default function StudySpotDetail({ slug }: Props) {
   const { data } = api.studySpot.bySlug.useQuery(slug);
-  const { data: author } = api.studySpot.authorBySlug.useQuery(slug, {
-    enabled: !!data,
-  });
+  const { data: author, isLoading: authorLoading } =
+    api.studySpot.authorBySlug.useQuery(slug, {
+      enabled: !!data,
+    });
+  const { data: user, isLoading: userLoading } =
+    api.user.currentBySession.useQuery();
+
+  const isAuthor = user?.username === author?.username;
 
   const { appliedFilters } = useFilterData();
 
@@ -46,20 +55,27 @@ export default function StudySpotDetail({ slug }: Props) {
       <div>
         <Separator className="mb-2" />
         <Summary studySpot={data ?? cachedStudySpot} />
-        <Button
-          className={cn(
-            "mt-4",
-            !data && "pointer-events-none bg-primary/10 text-transparent",
+        <div className="mt-4 flex gap-2">
+          <Button
+            className={cn(
+              !data && "pointer-events-none bg-primary/10 text-transparent",
+            )}
+            asChild
+          >
+            <Link href={`/study-spot/${slug}/edit`}>Edit Spot</Link>
+          </Button>
+          {!!isAuthor && !userLoading && data?.id && (
+            <DeleteAlertDialog
+              className="animate-fade-in duration-500"
+              id={data?.id}
+            />
           )}
-          asChild
-        >
-          <Link href={`/study-spot/${slug}/edit`}>Edit Spot</Link>
-        </Button>
+        </div>
       </div>
 
       <div>
         <Separator className="mb-2" />
-        <Author author={author} />
+        <Author author={author} loading={authorLoading} />
       </div>
 
       <div>

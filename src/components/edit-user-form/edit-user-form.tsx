@@ -104,6 +104,8 @@ export default function EditUserForm({
               description: "What is your username?",
               placeholder: "WultuhWhite",
               required: true,
+              autoComplete: "username",
+              autoCapitalize: "none",
             }}
           />
         </InputGrid>
@@ -119,6 +121,7 @@ export default function EditUserForm({
                   description: "What is your name?",
                   placeholder: "Walter White",
                   required: false,
+                  autoComplete: "name",
                 }}
               />
 
@@ -130,6 +133,7 @@ export default function EditUserForm({
                   description: "Which city are you from?",
                   placeholder: "Sydney",
                   required: false,
+                  autoComplete: "address-level2",
                 }}
               />
 
@@ -141,6 +145,7 @@ export default function EditUserForm({
                   description: "Which country are you from?",
                   placeholder: "Australia",
                   required: false,
+                  autoComplete: "country",
                 }}
               />
 

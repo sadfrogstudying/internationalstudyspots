@@ -12,12 +12,15 @@ import {
   type FieldValues,
 } from "react-hook-form";
 import { Input } from "@/components/ui/input";
+import { InputHTMLAttributes } from "react";
 
 interface Input {
   label: string;
   description: string;
   placeholder: string;
   required: boolean;
+  autoCapitalize?: InputHTMLAttributes<HTMLInputElement>["autoCapitalize"];
+  autoComplete?: InputHTMLAttributes<HTMLInputElement>["autoComplete"];
 }
 
 export default function TextInput<
@@ -51,6 +54,8 @@ export default function TextInput<
               placeholder={input.placeholder}
               {...field}
               required={input.required}
+              autoCapitalize={input.autoCapitalize}
+              autoComplete={input.autoComplete}
             />
           </FormControl>
           <FormDescription>{input.description}</FormDescription>

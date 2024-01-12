@@ -94,7 +94,7 @@ export default function List({ studySpot }: { studySpot?: StudySpot }) {
                 }}
               >
                 <div className="flex items-start font-bold">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 truncate">
                     {readableKeys[x[0]]?.icon ?? <div className="h-4 w-4" />}
                     {readableKeys[x[0]]?.humanReadable}
                   </div>

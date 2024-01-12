@@ -39,7 +39,7 @@ export default function ImageManager({
         input={{
           label: "Images",
           description: "Upload some images",
-          required: false,
+          required: true,
         }}
         transformValue={(files) =>
           files.map((file) => ({ file, featured: false }))

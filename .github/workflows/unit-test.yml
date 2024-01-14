@@ -24,7 +24,16 @@ env:
   NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
 
 jobs:
-  build-and-test:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -33,4 +42,3 @@ jobs:
         uses: actions/setup-node@v3
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - run: pnpm test

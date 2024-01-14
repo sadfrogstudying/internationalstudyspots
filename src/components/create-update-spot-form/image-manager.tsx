@@ -98,7 +98,7 @@ function NewImages({
                 key={`newimagepreview-${index}`}
                 className="relative flex flex-col gap-2"
               >
-                <img src={preview} alt="Existing image" className="rounded" />
+                <img src={preview} alt="New image" className="rounded" />
 
                 <div className="flex flex-col gap-2">
                   <label
@@ -181,7 +181,7 @@ function ExistingImages({
                 <div className="relative aspect-square">
                   <Image
                     src={url}
-                    alt="New image"
+                    alt="Existing image"
                     className={cn(
                       "rounded object-contain",
                       toDelete && "opacity-50",

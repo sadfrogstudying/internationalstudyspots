@@ -14,7 +14,7 @@
 
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
-import CreateSpotFormV2 from "@/components/create-spot-form";
+import CreateSpotFormV2 from "@/components/create-update-spot-form";
 /**
  * fireEvent dispatches DOM events, whereas user-event simulates full interactions,
  * which may fire multiple events and do additional checks along the way.
@@ -24,7 +24,7 @@ import CreateSpotFormV2 from "@/components/create-spot-form";
  * and value on the element are manipulated as they type.
  */
 import userEvent from "@testing-library/user-event";
-import { type CreateSpotFormValues } from "@/schemas";
+import { type CreateUpdateFormValues } from "@/schemas";
 
 /**
  * When users interact in the browser by e.g. pressing keyboard
@@ -54,7 +54,7 @@ beforeAll(() => {
   }));
 });
 
-const mockCreate = jest.fn((formValues: CreateSpotFormValues) => {
+const mockCreate = jest.fn((formValues: CreateUpdateFormValues) => {
   return formValues;
 });
 
@@ -72,7 +72,7 @@ const uploadImageViaDropzone = async () => {
   fireEvent.drop(dropzone);
 
   // findBy methods are a combination of getBy queries and waitFor
-  await screen.findByAltText(/image preview/i);
+  await screen.findAllByAltText(/new image/i);
 };
 
 it("should display single error message if image field is incomplete", async () => {

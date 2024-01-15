@@ -50,7 +50,7 @@ jobs:
       - name: Install modules
         run: pnpm install --frozen-lockfile
       - run: pnpm build
-  format:
+  check-format:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository 🫠
@@ -63,4 +63,4 @@ jobs:
       - name: Install modules
         run: pnpm install --frozen-lockfile
       - name: Check formatting with Prettier
-        run: npm run format:check
+        run: pnpm format:check

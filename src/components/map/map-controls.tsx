@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import type { LatLng } from "leaflet";
 import { useState } from "react";
-import { InfoIcon } from "lucide-react";
+import { InfoIcon, Minus, Navigation, Plus } from "lucide-react";
 
 type State = {
   status: "initial" | "loading" | "success" | "error";
@@ -41,7 +41,7 @@ const MapControls = ({
   return (
     <>
       {coords.status === "error" && (
-        <p className="text-red-500">
+        <div className="fixed left-0 top-16 p-4 pr-20 text-red-500">
           Grr.. you must allow location access to get your current location. If
           you&apos;re using Chrome, click the{" "}
           <InfoIcon
@@ -50,37 +50,47 @@ const MapControls = ({
           />{" "}
           next to the address bar and click &quot;reset permission&quot;, then
           reload.
-        </p>
+        </div>
       )}
-      <div className={cn("flex gap-2 overflow-hidden", className)}>
-        <Button
-          className="h-8"
-          onClick={() => {
-            map.locate();
-
-            !userCoords &&
-              coords.status === "initial" &&
-              setUserCoordsStatus({ status: "loading" });
-          }}
-          disabled={coords.status === "loading"}
+      <div className="pointer-events-auto fixed right-4 top-16 h-fit sm:static">
+        <div
+          className={cn(
+            "flex flex-col divide-y rounded bg-lime-100 shadow-lg",
+            className,
+          )}
         >
-          {coords.status === "loading" ? "Loading" : "Current Location"}
-        </Button>
-        <Button className="h-8" onClick={() => map.zoomIn()}>
-          +
-        </Button>
-        <Button className="h-8" onClick={() => map.zoomOut()}>
-          -
-        </Button>
-        {selectedMarker && (
           <Button
-            className="h-8"
-            variant="destructive"
-            onClick={clearSelectedMarker}
+            variant="ghost"
+            className="h-10 w-10 rounded-none rounded-b-md rounded-t-md bg-white focus-visible:z-10 active:z-10 sm:rounded-b-none"
+            size="icon"
+            onClick={() => {
+              map.locate();
+
+              !userCoords &&
+                coords.status === "initial" &&
+                setUserCoordsStatus({ status: "loading" });
+            }}
+            disabled={coords.status === "loading"}
           >
-            Clear
+            <Navigation className="h-5" fill="black" />
           </Button>
-        )}
+          <Button
+            variant="ghost"
+            className="hidden h-10 w-10 rounded-none bg-white focus-visible:z-10 active:z-10 sm:flex"
+            size="icon"
+            onClick={() => map.zoomIn()}
+          >
+            <Plus className="h-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            className="hidden h-10 w-10 rounded-none rounded-b-md bg-white focus-visible:z-10 active:z-10 sm:flex"
+            size="icon"
+            onClick={() => map.zoomOut()}
+          >
+            <Minus className="h-5" />
+          </Button>
+        </div>
       </div>
     </>
   );

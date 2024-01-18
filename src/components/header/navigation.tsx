@@ -25,7 +25,7 @@ export default function Navigation({}) {
         renderTrigger={(open) => {
           return (
             <Button
-              className="pointer-events-auto flex items-center rounded-full md:hidden"
+              className="pointer-events-auto flex items-center rounded-full bg-white shadow-md md:hidden"
               size="icon"
               variant="ghost"
             >

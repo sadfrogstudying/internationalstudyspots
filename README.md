@@ -114,3 +114,7 @@ You can now fire requests to: `https://8e3b-49-255-185-210.ngrok-free.app/` and 
 
 - [Docs: Route Segment Config](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#options)
 - [Issue: Full Route Cache as a default](https://github.com/t3-oss/create-t3-app/issues/1663)
+
+## When making new Github Action jobs
+
+Update branch protection rule and add the new job (https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule#creating-a-branch-protection-rule).

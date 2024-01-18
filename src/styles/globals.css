@@ -85,8 +85,25 @@
   z-index: 0 !important;
 }
 .leaflet-container {
+  color: inherit !important;
   font-family: inherit !important;
   font-size: inherit !important;
   font-size: inherit !important;
   line-height: inherit !important;
+}
+.leaflet-container a {
+  color: inherit !important;
+}
+.leaflet-popup-content {
+  margin: 0 !important;
+  width: fit-content !important;
+}
+.leaflet-popup-content-wrapper {
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.leaflet-popup-tip {
+  background-color: transparent !important;
+  box-shadow: none !important;
 }

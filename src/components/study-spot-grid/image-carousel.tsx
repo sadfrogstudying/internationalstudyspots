@@ -14,6 +14,7 @@ type Props = {
   name: string;
   sizes?: string;
   priority?: boolean;
+  controlsAlwaysVisible?: boolean;
 };
 
 export default function ImageCarousel(props: Props) {
@@ -45,12 +46,13 @@ export default function ImageCarousel(props: Props) {
   }, [emblaApi, onSelect]);
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full w-full">
       <Controls
         scrollPrev={scrollPrev}
         scrollNext={scrollNext}
         prevDisabled={prevBtnDisabled}
         nextDisabled={nextBtnDisabled}
+        alwaysVisible={props.controlsAlwaysVisible}
       />
       <div
         className="relative h-fit w-full overflow-hidden bg-primary/10"
@@ -85,23 +87,30 @@ function Controls({
   scrollNext,
   prevDisabled,
   nextDisabled,
+  alwaysVisible,
 }: {
   scrollPrev: () => void;
   scrollNext: () => void;
   prevDisabled: boolean;
   nextDisabled: boolean;
+  alwaysVisible?: boolean;
 }) {
   const disabledClass =
     "opacity-0 group-focus-within:opacity-0 group-hover:opacity-0";
   return (
     <div className="user pointer-events-none absolute z-10 grid h-full w-full grid-rows-3">
       <div />
-      <div className="invisible flex items-center justify-between p-2 md:visible">
+      <div
+        className={cn(
+          "invisible flex items-center justify-between p-2 md:visible",
+          alwaysVisible && "visible",
+        )}
+      >
         <button
           className={cn(
-            `pointer-events-auto h-fit w-fit rounded bg-white p-2 opacity-0 shadow-md transition-opacity focus:opacity-100 active:bg-lime-200 group-focus-within:opacity-100 group-hover:opacity-100 ${
-              prevDisabled && disabledClass
-            }`,
+            "pointer-events-auto flex h-fit w-fit items-center justify-center rounded bg-white p-2 opacity-0 shadow-md transition-opacity focus:opacity-70 active:bg-lime-200 disabled:opacity-0 group-focus-within:opacity-70 group-hover:opacity-70 md:h-9 md:w-9",
+            alwaysVisible && "opacity-70",
+            prevDisabled && disabledClass,
           )}
           aria-label="Previous image"
           onClick={(e) => {
@@ -114,9 +123,9 @@ function Controls({
         </button>
         <button
           className={cn(
-            `pointer-events-auto h-fit w-fit rounded bg-white p-2 opacity-0 shadow-md transition-opacity focus:opacity-100 active:bg-lime-200 group-focus-within:opacity-100 group-hover:opacity-100 ${
-              nextDisabled && disabledClass
-            }`,
+            "pointer-events-auto flex h-fit w-fit items-center justify-center rounded bg-white p-2 opacity-0 shadow-md transition-opacity focus:opacity-70 active:bg-lime-200 disabled:opacity-0 group-focus-within:opacity-70 group-hover:opacity-70 md:h-9 md:w-9",
+            alwaysVisible && "opacity-70",
+            nextDisabled && disabledClass,
           )}
           aria-label="Next image"
           onClick={(e) => {

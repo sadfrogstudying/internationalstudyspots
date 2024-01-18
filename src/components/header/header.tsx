@@ -22,7 +22,7 @@ export default function Header() {
     <>
       <header
         className={cn(
-          "pointer-events-none sticky top-0 z-30 mx-auto flex w-full cursor-default justify-between gap-8 bg-white/20 px-4 py-4 text-2xl",
+          "pointer-events-none sticky top-0 z-30 mx-auto flex w-full cursor-default justify-between gap-8 px-4 py-4 text-2xl",
           pathname === "/" || pathname === "/map"
             ? "max-w-screen-4xl"
             : "max-w-screen-2xl",

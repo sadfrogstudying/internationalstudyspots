@@ -12,7 +12,7 @@ import {
   type FieldValues,
 } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { InputHTMLAttributes } from "react";
+import type { InputHTMLAttributes } from "react";
 
 interface Input {
   label: string;

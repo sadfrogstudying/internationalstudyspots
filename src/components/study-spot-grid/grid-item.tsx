@@ -74,6 +74,7 @@ export default function GridItem({
             name={name}
             sizes="(max-width: 474px) 100vw, (max-width: 767px) 50vw, (max-width: 1279px) 33vw, (max-width: 1535px) 25vw, (max-width: 1919px) 20vw, 16vw"
             priority={i < 9}
+            controlsAlwaysVisible
           />
           <ul>
             <li className="truncate text-ellipsis font-bold">{location}</li>

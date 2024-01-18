@@ -3,9 +3,18 @@ import MapControls from "./map-controls";
 import type { MarkerData } from "./index";
 import { useEffect, useRef } from "react";
 import L, { type LatLng } from "leaflet";
-import { CopyIcon, X } from "lucide-react";
+import {
+  CopyIcon,
+  TreePine,
+  Wifi,
+  WifiOff,
+  X,
+  Zap,
+  ZapOff,
+} from "lucide-react";
 import ImageCarousel from "../study-spot-grid/image-carousel";
 import { Button } from "../ui/button";
+import TooltipBase from "../study-spot-grid/tooltip-base";
 
 const MapInfoPanel = ({
   selectedMarker,
@@ -43,13 +52,13 @@ const MapInfoPanel = ({
     <>
       <div className="pointer-events-none fixed bottom-4 flex w-full cursor-default justify-center gap-2 p-4 text-sm md:justify-normal">
         <div
-          className="group pointer-events-auto relative mx-4 flex w-full max-w-md flex-col gap-6 rounded-md bg-white p-4 shadow-lg md:mx-0"
+          className="group pointer-events-auto relative mx-4 flex h-32 w-full max-w-sm flex-col gap-6 overflow-hidden rounded-md bg-white shadow-lg md:mx-0 md:h-auto md:max-w-xs md:p-4"
           ref={panelRef}
         >
           {selectedMarker && (
             <Button
               variant="ghost"
-              className="absolute right-2 top-2 h-10 w-10 bg-white"
+              className="absolute right-2 top-2 h-8 w-8 md:h-10 md:w-10"
               size="icon"
               onClick={clearSelectedMarker}
             >
@@ -57,15 +66,15 @@ const MapInfoPanel = ({
             </Button>
           )}
 
-          <h2 className="text-bold hidden items-center gap-2 text-xl xs:flex">
+          <h2 className="text-bold hidden items-center gap-2 text-xl md:flex">
             <span>
               StudySpots<strong>Locator</strong>
             </span>
           </h2>
 
-          <div className="md:space-y-4">
+          <div className="h-full md:space-y-4">
             {!selectedMarker ? (
-              <div>
+              <div className="p-4 md:p-0">
                 <p>
                   Map data will be refreshed with latest data once every minute.
                 </p>
@@ -75,51 +84,81 @@ const MapInfoPanel = ({
                 </p>
               </div>
             ) : (
-              <div className="pointer-events-auto flex items-center gap-4 md:flex-col md:items-start md:space-y-4">
-                <div className="w-32 md:w-48">
+              <div className="pointer-events-auto flex h-full items-center md:h-auto md:flex-col md:items-start md:space-y-4">
+                <div className="aspect-square h-full animate-fade-in md:aspect-[3/4] md:w-full">
                   <ImageCarousel
                     key={selectedMarker.name}
                     images={selectedMarker.images}
                     name={selectedMarker.name}
-                    sizes="20vw"
+                    sizes="(max-width: 767px) 30vw, 20vw"
+                    controlsAlwaysVisible
                   />
                 </div>
-                <div className="w-1/2 space-y-1 text-sm md:w-full md:text-xs">
-                  <Link
-                    href={`/study-spot/${selectedMarker.slug}`}
-                    className="block w-full rounded-md text-base font-bold hover:bg-gray-100 active:bg-gray-200 md:text-xs"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {selectedMarker.name}
-                  </Link>
-                  <p
+                <ul className="flex flex-grow flex-col gap-1 truncate p-4 pr-12 text-sm md:w-full md:p-0 md:text-xs">
+                  <li>
+                    <Link
+                      href={`/study-spot/${selectedMarker.slug}`}
+                      className="block w-full truncate rounded-md font-bold hover:bg-gray-100 active:bg-gray-200 md:text-xs"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {selectedMarker.name}
+                    </Link>
+                  </li>
+                  <li
                     onClick={() => void copyToClipboard(selectedMarker.address)}
                     className="cursor-pointer truncate rounded-md hover:bg-gray-100 active:bg-gray-200"
                   >
-                    <CopyIcon
-                      className="inline h-2 w-2"
-                      style={{ transform: `translateY(-2px)` }}
-                    />{" "}
-                    {selectedMarker.address}
-                  </p>
-                  <br />
-                  <p className="hidden md:block">
-                    Some description could be shown here, and will be hidden on
-                    mobile to keep compact
-                  </p>
-                </div>
+                    <div className="flex items-center gap-2 truncate">
+                      <CopyIcon className="h-3 w-3 flex-shrink-0" />
+                      <span className="truncate">{selectedMarker.address}</span>
+                    </div>
+                  </li>
+                  <li className="truncate">{selectedMarker.venueType}</li>
+                  <li className="mt-2">
+                    <ul className="flex w-full flex-row gap-2">
+                      <li>
+                        {selectedMarker.wifi ? (
+                          <TooltipBase content={"Has Wifi"}>
+                            <Wifi />
+                          </TooltipBase>
+                        ) : (
+                          <TooltipBase content={"Doesn't Have Wifi"}>
+                            <WifiOff className="text-neutral-200" />
+                          </TooltipBase>
+                        )}
+                      </li>
+                      <li>
+                        {selectedMarker.powerOutlets ? (
+                          <TooltipBase content={"Has Power Outlets"}>
+                            <Zap />
+                          </TooltipBase>
+                        ) : (
+                          <TooltipBase content={"Doesn't Have Power Outlets"}>
+                            <ZapOff className="text-neutral-200" />
+                          </TooltipBase>
+                        )}
+                      </li>
+                      <li>
+                        {selectedMarker.naturalViews ? (
+                          <TooltipBase content={"Has Natural Views"}>
+                            <TreePine />
+                          </TooltipBase>
+                        ) : (
+                          <TooltipBase content={"Doesn't Have Natural Views"}>
+                            <TreePine className="text-neutral-200" />
+                          </TooltipBase>
+                        )}
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
               </div>
             )}
           </div>
         </div>
 
-        <MapControls
-          clearSelectedMarker={clearSelectedMarker}
-          selectedMarker={!!selectedMarker}
-          setUserCoords={setUserCoords}
-          userCoords={userCoords}
-        />
+        <MapControls setUserCoords={setUserCoords} userCoords={userCoords} />
       </div>
     </>
   );

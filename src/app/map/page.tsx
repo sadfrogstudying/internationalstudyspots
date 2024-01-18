@@ -32,6 +32,10 @@ export default async function MapPage() {
     latlng: [spot.latitude, spot.longitude],
     images: spot.images,
     slug: spot.slug,
+    naturalViews: spot.naturalViews,
+    powerOutlets: spot.powerOutlets,
+    venueType: spot.venueType,
+    wifi: spot.wifi,
   }));
 
   const timeRefreshed = Date.now();

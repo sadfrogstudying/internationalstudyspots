@@ -12,14 +12,10 @@ type State = {
 
 const MapControls = ({
   className,
-  clearSelectedMarker,
-  selectedMarker,
   setUserCoords,
   userCoords,
 }: {
   className?: string;
-  clearSelectedMarker: () => void;
-  selectedMarker: boolean;
   setUserCoords: (latlng: LatLng) => void;
   userCoords: LatLng | null;
 }) => {
@@ -61,7 +57,7 @@ const MapControls = ({
         >
           <Button
             variant="ghost"
-            className="h-10 w-10 rounded-none rounded-b-md rounded-t-md bg-white focus-visible:z-10 active:z-10 sm:rounded-b-none"
+            className="rounded-none rounded-b-md rounded-t-md bg-white focus-visible:z-10 active:z-10 sm:rounded-b-none"
             size="icon"
             onClick={() => {
               map.locate();
@@ -76,7 +72,7 @@ const MapControls = ({
           </Button>
           <Button
             variant="ghost"
-            className="hidden h-10 w-10 rounded-none bg-white focus-visible:z-10 active:z-10 sm:flex"
+            className="hidden rounded-none bg-white focus-visible:z-10 active:z-10 sm:flex"
             size="icon"
             onClick={() => map.zoomIn()}
           >
@@ -84,7 +80,7 @@ const MapControls = ({
           </Button>
           <Button
             variant="ghost"
-            className="hidden h-10 w-10 rounded-none rounded-b-md bg-white focus-visible:z-10 active:z-10 sm:flex"
+            className="hidden rounded-none rounded-b-md bg-white focus-visible:z-10 active:z-10 sm:flex"
             size="icon"
             onClick={() => map.zoomOut()}
           >

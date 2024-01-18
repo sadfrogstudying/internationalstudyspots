@@ -18,6 +18,10 @@ export type MarkerData = {
   latlng: [number, number];
   images: { id: number | string; url: string; width: number; height: number }[];
   slug: string;
+  venueType: string;
+  wifi: boolean;
+  powerOutlets: boolean;
+  naturalViews: boolean | null;
 };
 
 interface BaseProps extends MapOptions {
@@ -39,6 +43,8 @@ const Map = ({
   infoPanel = false,
   allMarkerData,
   timeRefreshed,
+  zoom = 13,
+  center = [-33.8721876, 151.2058977],
   ...props
 }: Props | PropsWithInfoPanel) => {
   const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
@@ -77,15 +83,21 @@ const Map = ({
       )}
     >
       <MapContainer
-        center={[-33.8721876, 151.2058977]}
-        zoom={24}
+        center={center}
+        zoom={zoom}
         className="h-full w-full"
         zoomControl={false}
+        doubleClickZoom={false}
+        preferCanvas
         {...props}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          // url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          // url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+          // url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
+          // url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
 
         {infoPanel && (
@@ -111,6 +123,7 @@ const Map = ({
                 setSelectedMarker(null);
               },
             }}
+            title="Your location"
           />
         )}
 
@@ -132,6 +145,7 @@ const Map = ({
                   setSelectedMarker(marker);
                 },
               }}
+              title={`Location of ${marker.name}`}
             />
           ))}
         </MarkerClusterGroup>

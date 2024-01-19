@@ -2,7 +2,9 @@ import { api } from "@/trpc/server";
 import type { MarkerData } from "@/types/map-types";
 import { type Metadata } from "next";
 import { default as nextDynamic } from "next/dynamic";
-const Map = nextDynamic(() => import("@/components/map"), { ssr: false });
+const Map = nextDynamic(() => import("@/components/map"), {
+  ssr: false,
+});
 
 /**
  * https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic
@@ -31,11 +33,12 @@ export default async function MapPage() {
   const timeRefreshed = Date.now();
 
   return (
-    <Map
-      allMarkerData={markerData}
-      className="h-screen"
-      infoPanel
-      timeRefreshed={timeRefreshed}
-    />
+    <div className="absolute left-0 top-0 z-10 h-full w-full overflow-hidden rounded-md bg-primary/10">
+      <Map
+        markerData={markerData}
+        infoPanel={{ timeRefreshed }}
+        center={[-33.8721876, 151.2058977]}
+      />
+    </div>
   );
 }

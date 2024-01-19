@@ -1,6 +1,6 @@
 import Link from "next/link";
 import MapControls from "./map-controls";
-import type { MarkerData } from "./index";
+import type { MarkerData } from "@/types/map-types";
 import { useEffect, useRef } from "react";
 import L, { type LatLng } from "leaflet";
 import {

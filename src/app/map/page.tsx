@@ -1,7 +1,8 @@
-import { type MarkerData } from "@/components/map";
 import { api } from "@/trpc/server";
+import type { MarkerData } from "@/types/map-types";
 import { type Metadata } from "next";
-import LazyMap from "@/components/map/lazy-map";
+import { default as nextDynamic } from "next/dynamic";
+const Map = nextDynamic(() => import("@/components/map"), { ssr: false });
 
 /**
  * https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic
@@ -25,23 +26,12 @@ export function generateMetadata(): Metadata {
 export default async function MapPage() {
   const spots = await api.studySpot.getAll.query();
 
-  const markerData: MarkerData[] = spots.map((spot, i) => ({
-    index: i,
-    name: spot.name,
-    address: spot.address,
-    latlng: [spot.latitude, spot.longitude],
-    images: spot.images,
-    slug: spot.slug,
-    naturalViews: spot.naturalViews,
-    powerOutlets: spot.powerOutlets,
-    venueType: spot.venueType,
-    wifi: spot.wifi,
-  }));
+  const markerData: MarkerData[] = spots.map((spot) => spot);
 
   const timeRefreshed = Date.now();
 
   return (
-    <LazyMap
+    <Map
       allMarkerData={markerData}
       className="h-screen"
       infoPanel

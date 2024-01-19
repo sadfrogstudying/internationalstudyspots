@@ -13,6 +13,10 @@ import Hero from "@/components/study-spot-detail/hero";
 import Author from "@/components/study-spot-detail/author";
 import Summary from "@/components/study-spot-detail/summary";
 
+const MapSimple = dynamic(() => import("@/components/map-simple"), {
+  ssr: false,
+});
+
 const DeleteAlertDialog = dynamic(
   () => import("../study-spot-grid/delete-alert-dialog"),
 );
@@ -76,6 +80,16 @@ export default function StudySpotDetail({ slug }: Props) {
       <div>
         <Separator className="mb-2" />
         <Author author={author} loading={authorLoading} />
+      </div>
+
+      <div>
+        <Separator className="mb-2" />
+        <div className="relative h-96 w-full overflow-hidden bg-gray-200">
+          <MapSimple
+            markerData={data ? [data] : []}
+            center={data ? [data.latitude, data.longitude] : undefined}
+          />
+        </div>
       </div>
 
       <div>

@@ -2,6 +2,7 @@
 import { signIn } from "next-auth/react";
 import { Button } from "../ui/button";
 import { Link } from "../ui/link";
+import { cn } from "@/lib/utils";
 
 export default function UnauthedNav({
   onClick,
@@ -26,8 +27,9 @@ export default function UnauthedNav({
         }}
         variant="success"
         disabled={loading}
+        className={cn(loading && "opacity-50")}
       >
-        {loading ? "Loading..." : "Sign In"}
+        Sign In
       </Button>
     </>
   );

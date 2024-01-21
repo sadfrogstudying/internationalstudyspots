@@ -79,10 +79,10 @@ export default function GridItem({
             controlsAlwaysVisible
           />
           <ul>
-            <li className="truncate text-ellipsis font-bold">{location}</li>
             <li>
-              <h2 className="truncate text-ellipsis">{name}</h2>
+              <h2 className="truncate text-ellipsis font-bold">{name}</h2>
             </li>
+            <li className="truncate text-ellipsis">{location}</li>
             <li className="truncate text-ellipsis">{venueType}</li>
             <li className="mt-2">
               <ul className="flex gap-2">

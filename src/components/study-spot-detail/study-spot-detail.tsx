@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { notFound } from "next/navigation";
 
 import { api } from "@/trpc/react";
 import { cn } from "@/lib/utils";
@@ -29,7 +30,7 @@ interface Props {
 }
 
 export default function StudySpotDetail({ slug }: Props) {
-  const { data } = api.studySpot.bySlug.useQuery(slug);
+  const { data, isLoading: spotLoading } = api.studySpot.bySlug.useQuery(slug);
   const { data: author, isLoading: authorLoading } =
     api.studySpot.authorBySlug.useQuery(slug, {
       enabled: !!data,
@@ -37,7 +38,8 @@ export default function StudySpotDetail({ slug }: Props) {
   const { data: user, isLoading: userLoading } =
     api.user.currentBySession.useQuery();
 
-  const isAuthor = user?.username === author?.username;
+  const isAuthor =
+    author?.username == null ? false : user?.username === author?.username;
 
   const { appliedFilters } = useFilterData();
 
@@ -52,8 +54,10 @@ export default function StudySpotDetail({ slug }: Props) {
     ?.pages?.flatMap((page) => page)
     .find((studySpot) => studySpot.slug === slug);
 
+  if (!data && !spotLoading) notFound();
+
   return (
-    <div className="mx-auto max-w-screen-2xl space-y-12 p-4">
+    <div className="space-y-12">
       <Hero studySpot={data} />
 
       <div>

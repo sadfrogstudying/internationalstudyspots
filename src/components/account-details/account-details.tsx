@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
 
 import { Skeleton } from "../ui/skeleton";
 import Image from "next/image";
@@ -32,7 +32,7 @@ function Left() {
 
   if (isLoading) return <div>Loading...</div>;
 
-  if (!data) return <div>No data for this user!</div>;
+  if (!data && !isLoading) notFound();
 
   const generalInfo = [
     { label: "Member Since", value: "3/1/2010" },

@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Link from "next/link";
 
 import { api } from "@/trpc/react";
 import { cn } from "@/lib/utils";
@@ -12,6 +11,7 @@ import { useFilterData } from "@/components/study-spot-grid/filter-context";
 import Hero from "@/components/study-spot-detail/hero";
 import Author from "@/components/study-spot-detail/author";
 import Summary from "@/components/study-spot-detail/summary";
+import { Link } from "@/components/ui/link";
 
 const Map = dynamic(() => import("@/components/map"), {
   ssr: false,
@@ -84,12 +84,25 @@ export default function StudySpotDetail({ slug }: Props) {
 
       <div>
         <Separator className="mb-2" />
-        <div className="relative h-96 w-full overflow-hidden bg-primary/10">
+        <div className="relative h-96 w-full bg-primary/10">
           {data && (
-            <Map
-              markerData={data ? [data] : []}
-              center={[data.latitude, data.longitude]}
-            />
+            <Link
+              href={`/map?lat=${data.latitude}&lng=${data.longitude}&id=${data.id}`}
+              className="block h-full w-full cursor-pointer"
+            >
+              <div className="h-96 w-full overflow-hidden">
+                <Map
+                  markerData={data ? [data] : []}
+                  center={[data.latitude, data.longitude]}
+                  dragging={false}
+                  boxZoom={false}
+                  doubleClickZoom={false}
+                  scrollWheelZoom={false}
+                  touchZoom={false}
+                  keyboard={false}
+                />
+              </div>
+            </Link>
           )}
         </div>
       </div>

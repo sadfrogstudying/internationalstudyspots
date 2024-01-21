@@ -44,6 +44,8 @@ export default function GridItem({
     [state, country].filter((str) => !isEmptyString(str)).join(", ") ||
     "No Location";
 
+  const featuredImages = images.filter((image) => image.featured);
+
   return (
     <div className="relative">
       <Link
@@ -70,7 +72,7 @@ export default function GridItem({
           }}
         >
           <ImageCarousel
-            images={images}
+            images={featuredImages}
             name={name}
             sizes="(max-width: 474px) 100vw, (max-width: 767px) 50vw, (max-width: 1279px) 33vw, (max-width: 1535px) 25vw, (max-width: 1919px) 20vw, 16vw"
             priority={i < 9}

@@ -48,6 +48,9 @@ const MapInfoPanel = ({
     },
   );
 
+  const featuredImages =
+    selectedMarker?.images.filter((image) => image.featured) ?? [];
+
   return (
     <>
       <div className="pointer-events-none fixed bottom-4 flex w-full cursor-default justify-center gap-2 p-4 text-sm md:justify-normal">
@@ -88,17 +91,18 @@ const MapInfoPanel = ({
                 <div className="aspect-square h-full animate-fade-in md:aspect-[3/4] md:w-full">
                   <ImageCarousel
                     key={selectedMarker.name}
-                    images={selectedMarker.images}
+                    images={featuredImages}
                     name={selectedMarker.name}
                     sizes="(max-width: 767px) 30vw, 20vw"
                     controlsAlwaysVisible
+                    priority
                   />
                 </div>
                 <ul className="flex flex-grow flex-col gap-1 truncate p-4 pr-12 text-sm md:w-full md:p-0 md:text-xs">
                   <li>
                     <Link
                       href={`/study-spot/${selectedMarker.slug}`}
-                      className="block w-full truncate rounded-md font-bold hover:bg-gray-100 active:bg-gray-200 md:text-xs"
+                      className="block w-full truncate rounded-md font-bold underline hover:bg-gray-100 active:bg-gray-200 md:text-xs"
                       target="_blank"
                       rel="noopener noreferrer"
                     >

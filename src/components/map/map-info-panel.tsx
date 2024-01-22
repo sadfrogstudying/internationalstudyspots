@@ -103,8 +103,6 @@ const MapInfoPanel = ({
                     <Link
                       href={`/study-spot/${selectedMarker.slug}`}
                       className="block w-full truncate rounded-md font-bold underline hover:bg-gray-100 active:bg-gray-200 md:text-xs"
-                      target="_blank"
-                      rel="noopener noreferrer"
                     >
                       {selectedMarker.name}
                     </Link>

@@ -1,195 +1,209 @@
 "use client";
 
-import { useParams, notFound } from "next/navigation";
+import { useParams } from "next/navigation";
 
-import { Skeleton } from "../ui/skeleton";
+import { Skeleton, SkeletonText } from "../ui/skeleton";
 import Image from "next/image";
-import { AvatarIcon } from "@radix-ui/react-icons";
-import { Fragment } from "react";
-import StudySpotGrid from "../study-spot-grid";
-import Section from "./section";
+import React from "react";
 import { api } from "@/trpc/react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import UnmountAfter from "@/components/unmount-after";
 
 export default function AccountDetails() {
-  return (
-    <>
-      <div className="grid-cols-[3.5fr_7fr] flex-wrap gap-4 md:grid">
-        <div className="flex flex-col gap-4 border bg-white p-4">
-          <Left />
-        </div>
-        <div className="flex flex-col gap-4 border bg-white p-4">
-          <Right />
-        </div>
-      </div>
-    </>
-  );
-}
-
-function Left() {
   const params = useParams<{ username: string }>();
+  const { data } = api.user.get.useQuery(params.username);
+  const {
+    city,
+    country,
+    email,
+    name,
+    profileImage,
+    username,
+    description,
+    interests,
+    occupation,
+    tagline,
+    // firstName,
+    // lastName,
+    // website,
+  } = data ?? {};
 
-  const { data, isLoading } = api.user.get.useQuery(params.username);
-
-  if (isLoading) return <div>Loading...</div>;
-
-  if (!data && !isLoading) notFound();
-
-  const generalInfo = [
-    { label: "Member Since", value: "3/1/2010" },
-    { label: "Last Login", value: "3/1/2010" },
-    {
-      label: "Influences",
-      value: "Polish poster art",
-    },
-    { label: "Interests", value: data?.interests },
-  ];
+  const temporaryLoadingState = profileImage?.url;
 
   return (
     <>
-      <div className="relative">
-        <h2 className="text-xl font-bold">{data?.name}</h2>
-        <ul>
-          <li className="inline">Indie / </li>
-          <li className="inline">Pop / </li>
-          <li className="inline">Rock </li>
-        </ul>
-      </div>
-      <section className="relative flex flex-wrap items-center gap-4 rounded">
-        <div>
-          <Skeleton className="aspect-square w-36" />
-        </div>
+      <section className="relative h-screen max-h-96 w-full object-cover">
+        <ImageThatFadesIn
+          src={temporaryLoadingState && "/bean.jpg"}
+          alt="Posters"
+          fill
+          imageReady={!!data}
+          className="h-full w-full object-cover"
+          skeletonClassName="h-full w-full opacity-40"
+        />
+      </section>
+      <section className="mx-auto flex flex-col gap-12 px-4 xs:px-14">
+        <div className="relative">
+          <div className="flex w-full overflow-hidden">
+            <div className="w-32 flex-shrink-0 sm:w-56" />
 
-        <div className="flex flex-col">
-          <div>Seattle</div>
-          <div>United States</div>
-          <br />
-          <div>Profile Views: 208</div>
-          <div className="flex items-center gap-1 text-success">
-            <AvatarIcon className="h-4 w-4" fill="#000" /> Online Now!
+            <ImageThatFadesIn
+              src={profileImage?.url}
+              alt={name ?? "User profile picture"}
+              width={200}
+              height={200}
+              imageReady={!!data}
+              className="absolute bottom-0 left-0 aspect-square w-32 object-cover sm:w-56"
+              skeletonClassName="h-full w-full"
+            />
+
+            <div className="flex flex-shrink-0 flex-col gap-0.5 self-end pl-4 pt-4">
+              <h2 className="text-xl font-medium">
+                <NewSkeletonText textReady={!!data} skeletonClassName="w-36">
+                  {name}
+                </NewSkeletonText>
+              </h2>
+
+              <div className="text-base text-neutral-500">
+                <NewSkeletonText textReady={!!data} skeletonClassName="w-48">
+                  {city && country && `${city}, ${country}`}
+                </NewSkeletonText>
+              </div>
+
+              <div className="text-base text-neutral-500">
+                <NewSkeletonText textReady={!!data} skeletonClassName="w-72">
+                  <Link
+                    href="/account/charles/edit"
+                    className="max-w-xs truncate rounded-md bg-neutral-200 px-2"
+                  >
+                    charliezhao.com
+                  </Link>
+                </NewSkeletonText>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <Section title={`Contacting ${data?.name}`}>
-        <ul className="grid grid-cols-2">
-          <li>
-            <a
-              href="https://www.instagram.com/dogs.lovers/"
-              className="text-bold text-blue-600 hover:underline"
-              target="_blank"
-            >
-              Instagram
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://www.instagram.com/dogs.lovers/"
-              className="text-bold text-blue-600 hover:underline"
-              target="_blank"
-            >
-              Facebook
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://www.instagram.com/dogs.lovers/"
-              className="text-bold text-blue-600 hover:underline"
-              target="_blank"
-            >
-              Twitter
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://www.instagram.com/dogs.lovers/"
-              className="text-bold text-blue-600 hover:underline"
-              target="_blank"
-            >
-              LinkedIn
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://www.instagram.com/dogs.lovers/"
-              className="text-bold text-blue-600 hover:underline"
-              target="_blank"
-            >
-              Twitter
-            </a>
-          </li>
-        </ul>
-      </Section>
-
-      <Section title={`${data?.name}: General Info`}>
-        <div className="grid grid-cols-[2fr_3fr] gap-1">
-          {generalInfo.map(({ label, value }) => (
-            <Fragment key={label}>
-              <div className="bg-blue-200 p-1 font-bold text-blue-400">
-                {label}
-              </div>
-              <div className="bg-blue-100 p-1">{value}</div>
-            </Fragment>
-          ))}
+      <section className="mx-auto mt-12 flex flex-col gap-12 px-4 xs:px-14">
+        <div className="max-w-prose">
+          <h3 className="font-bold">About</h3>
+          <p className="text-neutral-500">
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia
+            quas deleniti perferendis repudiandae quasi eaque sapiente. Magnam
+            maxime quam voluptate delectus dolores harum unde id autem.
+            Doloremque sed assumenda soluta.
+          </p>
         </div>
-      </Section>
+
+        <div className="max-w-prose">
+          <h3 className="font-bold">General Info</h3>
+          <ul>
+            <li>
+              <span className="font-medium">Member since: </span>
+              <span className="text-neutral-500">3/1/2024</span>
+            </li>
+            <li>
+              <span className="font-medium">Interests: </span>
+              <span className="text-neutral-500">
+                Tea, coffee, design, music
+              </span>
+            </li>
+            <li>
+              <span className="font-medium">Instagram: </span>
+              <span className="text-neutral-500">@yourhandlehere</span>
+            </li>
+            <li>
+              <span className="font-medium">Twitter: </span>
+              <span className="text-neutral-500">@yourhandlehere</span>
+            </li>
+          </ul>
+        </div>
+      </section>
     </>
   );
 }
 
-function Right() {
-  const params = useParams<{ username: string }>();
+type NextImageProps = React.ComponentProps<typeof Image>;
+interface ImageThatFadesInProps extends Omit<NextImageProps, "src"> {
+  src: NextImageProps["src"] | undefined;
+  imageReady: boolean;
+  skeletonClassName?: string;
+}
 
-  const { data, isLoading } = api.user.get.useQuery(params.username);
-
-  if (isLoading) return <div>Loading...</div>;
-
-  if (!data) return <div>No data for this user!</div>;
+function ImageThatFadesIn({
+  src,
+  imageReady,
+  className,
+  skeletonClassName,
+  ...props
+}: ImageThatFadesInProps) {
+  const [loaded, setLoaded] = React.useState(false);
 
   return (
     <>
-      <div className="relative h-48 w-full border bg-neutral-100">
+      {src && (
         <Image
-          src="/trees.jpg"
-          alt="Trees"
-          sizes="50rem"
-          fill
-          className="object-cover"
-          priority
+          {...props}
+          src={src}
+          onLoad={() => setLoaded(true)}
+          className={cn(
+            className,
+            "transition-opacity duration-500",
+            loaded ? "opacity-100" : "opacity-0",
+          )}
         />
-      </div>
-      <Section title="Featured Video" variant="ghost">
-        <iframe
-          className="aspect-[16/9] h-full w-full"
-          src="https://www.youtube.com/embed/3czSVBKpcJc?si=Ve4QaQr1nQYcXreA"
-          title="YouTube video player"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-        ></iframe>
-      </Section>
-      <Section title={`About ${data?.name}`} variant="alternate">
-        <p>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quae
-          provident ad officia consectetur neque reprehenderit illum saepe
-          accusantium, ut enim laboriosam odit maxime ea, doloribus mollitia
-          iure voluptatum, rerum libero! Necessitatibus cum qui, dolorum ipsa ab
-          eveniet accusantium non modi doloremque quisquam officia quidem, omnis
-          ipsum.
-        </p>
-        <br />
-        <p>
-          Excepturi commodi veniam ratione rem reiciendis odio. Culpa cumque
-          fuga architecto autem recusandae alias! Voluptates eligendi molestias
-          vitae praesentium soluta quam ullam qui. Suscipit ipsam odit molestias
-          magni, molestiae sunt nesciunt consequuntur laudantium corrupti
-          laborum, ea quidem eveniet voluptatem tenetur! Dicta minus cumque
-          reiciendis!
-        </p>
-      </Section>
-      <Section title={`Study Spots Found by ${data?.name}`}>
-        <div className="p-2">
-          <StudySpotGrid />
+      )}
+      <UnmountAfter delay={1250} ready={imageReady}>
+        <div
+          className={cn(
+            className,
+            "rounded-md bg-white transition-opacity duration-500",
+            loaded ? "opacity-0" : "opacity-100",
+          )}
+        >
+          <Skeleton className={skeletonClassName} />
         </div>
-      </Section>
+      </UnmountAfter>
     </>
+  );
+}
+
+/**
+ * Nest this in a container
+ *  - The skeleton will fit the container
+ *  - It will smoothly fade out the skeleton
+ */
+function NewSkeletonText({
+  children,
+  textReady,
+  skeletonClassName,
+}: {
+  children: React.ReactNode;
+  textReady: boolean;
+  skeletonClassName?: string;
+}) {
+  return (
+    <div className="relative">
+      <div
+        className={cn(
+          "h-fit transition-opacity duration-500",
+          textReady ? "opacity-100" : "absolute opacity-0",
+        )}
+      >
+        {children}
+      </div>
+
+      <UnmountAfter delay={1250} ready={textReady}>
+        <SkeletonText
+          className={cn(
+            "transition-opacity duration-500",
+            skeletonClassName,
+            textReady ? "absolute top-0 -z-10 opacity-0" : "opacity-100",
+          )}
+        />
+      </UnmountAfter>
+    </div>
   );
 }

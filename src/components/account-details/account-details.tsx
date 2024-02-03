@@ -2,8 +2,8 @@
 
 import { useParams } from "next/navigation";
 
-import { Skeleton, SkeletonText } from "../ui/skeleton";
-import Image from "next/image";
+import { SkeletonText } from "@/components/ui/skeleton";
+import { ImageThatFadesIn } from "@/components/image-that-fades-in";
 import React from "react";
 import { api } from "@/trpc/react";
 import Link from "next/link";
@@ -54,7 +54,7 @@ export default function AccountDetails() {
               width={200}
               height={200}
               imageReady={!!data}
-              className="absolute bottom-0 left-0 aspect-square w-32 object-cover sm:w-56"
+              className="absolute bottom-0 left-0 aspect-square h-auto w-32 object-cover sm:w-56"
               skeletonClassName="h-full w-full"
             />
 
@@ -121,51 +121,6 @@ export default function AccountDetails() {
           </ul>
         </div>
       </section>
-    </>
-  );
-}
-
-type NextImageProps = React.ComponentProps<typeof Image>;
-interface ImageThatFadesInProps extends Omit<NextImageProps, "src"> {
-  src: NextImageProps["src"] | undefined;
-  imageReady: boolean;
-  skeletonClassName?: string;
-}
-
-function ImageThatFadesIn({
-  src,
-  imageReady,
-  className,
-  skeletonClassName,
-  ...props
-}: ImageThatFadesInProps) {
-  const [loaded, setLoaded] = React.useState(false);
-
-  return (
-    <>
-      {src && (
-        <Image
-          {...props}
-          src={src}
-          onLoad={() => setLoaded(true)}
-          className={cn(
-            className,
-            "transition-opacity duration-500",
-            loaded ? "opacity-100" : "opacity-0",
-          )}
-        />
-      )}
-      <UnmountAfter delay={1250} ready={imageReady}>
-        <div
-          className={cn(
-            className,
-            "rounded-md bg-white transition-opacity duration-500",
-            loaded ? "opacity-0" : "opacity-100",
-          )}
-        >
-          <Skeleton className={skeletonClassName} />
-        </div>
-      </UnmountAfter>
     </>
   );
 }

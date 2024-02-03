@@ -1,8 +1,8 @@
-import Image from "next/image";
-import UnmountAfter from "../unmount-after";
 import { Skeleton } from "../ui/skeleton";
 
 import { type RouterOutputs } from "@/trpc/shared";
+import { ImageThatFadesIn } from "@/components/image-that-fades-in";
+
 type StudySpot = RouterOutputs["studySpot"]["bySlug"];
 
 export default function Hero({ studySpot }: { studySpot?: StudySpot }) {
@@ -12,30 +12,17 @@ export default function Hero({ studySpot }: { studySpot?: StudySpot }) {
         {studySpot ? (
           studySpot?.images
             .filter((x) => x.featured)
-            .map((image, i) => (
+            .map((image) => (
               <div className="relative aspect-[3/4]" key={image.id}>
-                <Image
+                <ImageThatFadesIn
+                  className="object-cover"
+                  imageReady
                   src={image.url}
                   alt={`Image of ${studySpot?.name}`}
-                  className="duration-250 animate-fade-in object-cover"
-                  style={{
-                    animationDelay: `${i * 50}ms`,
-                    animationFillMode: "backwards",
-                  }}
                   sizes="(max-width: 767px) 50vw, 100vw"
                   fill
                   priority
                 />
-
-                <UnmountAfter delay={200}>
-                  <Skeleton
-                    className="absolute top-0 z-30 h-full w-full animate-fade-out duration-500"
-                    style={{
-                      animationDelay: `${i * 50}ms`,
-                      animationFillMode: "backwards",
-                    }}
-                  />
-                </UnmountAfter>
               </div>
             ))
         ) : (

@@ -1,4 +1,4 @@
-import type { Context, ContextProtected } from "@/server/api/trpc";
+import type { Context, ContextProtected } from "@/server/api/context";
 import type {
   BySlugInput,
   CreateInput,

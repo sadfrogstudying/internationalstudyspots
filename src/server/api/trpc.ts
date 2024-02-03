@@ -10,22 +10,7 @@ import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { db } from "@/server/db";
-import { getServerAuthSession } from "@/server/auth";
-import { s3 } from "@/server/aws/s3";
-
-import { type Session } from "next-auth";
-import { type PrismaClient } from "@prisma/client";
-import { type S3 } from "@aws-sdk/client-s3";
-
-export interface Context {
-  session: Session | null;
-  db: PrismaClient;
-  s3: S3;
-}
-export interface ContextProtected extends Context {
-  session: Session;
-}
+import { Context, createContext } from "./context";
 
 /**
  * 1. CONTEXT
@@ -43,12 +28,10 @@ export interface ContextProtected extends Context {
 export const createTRPCContext = async (opts: {
   headers: Headers;
 }): Promise<Context> => {
-  const session = await getServerAuthSession();
+  const context = await createContext();
 
   return {
-    session,
-    db,
-    s3,
+    ...context,
     ...opts,
   };
 };

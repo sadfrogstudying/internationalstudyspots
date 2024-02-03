@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import type { Context, ContextProtected } from "@/server/api/trpc";
+import type { Context, ContextProtected } from "@/server/api/context";
 import type {
   CreateInput,
   GetInput,

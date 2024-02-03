@@ -10,7 +10,7 @@ import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { Context, createContext } from "./context";
+import { type Context, createContext } from "./context";
 
 /**
  * 1. CONTEXT

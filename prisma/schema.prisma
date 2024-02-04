@@ -57,6 +57,7 @@ model User {
     emailVerified       DateTime?
     description         String        @default("")
     profileImage        Image?        @relation("ProfilePicture")
+    profileCover        ProfileCover?
     city                String        @default("")
     country             String        @default("")
     interests           String        @default("")
@@ -187,10 +188,20 @@ model Image {
     pendingEdit               PendingEdit?           @relation(fields: [pendingEditId], references: [id], onDelete: SetNull)
     pendingEditId             Int?
     pendingEditImagesToDelete PendingImageToDelete[]
+    profileCover              ProfileCover?          @relation(fields: [profileCoverId], references: [id], onDelete: Cascade)
+    profileCoverId            Int?                   @unique
 
     @@index([studySpotId])
     @@index([authorId])
     @@index([pendingEditId])
+}
+
+model ProfileCover {
+    id     Int    @id @default(autoincrement())
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @unique
+    // Optional as might add video in the future
+    image  Image?
 }
 
 model PendingImageToDelete {

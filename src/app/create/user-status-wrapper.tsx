@@ -9,6 +9,8 @@ export default function UserStatusWrapper({
 }: {
   children: React.ReactNode;
 }) {
+  // Since we're dehydrating currentBySession in the page, userLoading will never be true
+  // Leaving here as it could be used when not dehydrating & ssring
   const { data: user, isLoading: userLoading } =
     api.user.currentBySession.useQuery(undefined);
 

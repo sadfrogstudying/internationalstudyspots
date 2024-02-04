@@ -63,6 +63,10 @@ model User {
     interests           String        @default("")
     occupation          String        @default("")
     tagline             String        @default("")
+    website             String        @default("")
+    twitter             String        @default("")
+    instagram           String        @default("")
+    linkedin            String        @default("")
     sessions            Session[]
     createdSpots        StudySpot[]
     createdPendingEdits PendingEdit[]

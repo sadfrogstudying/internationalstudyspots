@@ -10,9 +10,11 @@ export default function UserStatusWrapper({
   children: React.ReactNode;
 }) {
   const { data: user, isLoading: userLoading } =
-    api.user.currentBySession.useQuery(undefined);
+    api.user.currentBySession.useQuery();
 
   const [isPreview, setIsPreview] = useState(false);
+
+  if (userLoading) return <p>Checking User 🤦‍♂️...</p>;
 
   if (!user?.username && !userLoading && !isPreview) {
     return (
@@ -35,8 +37,6 @@ export default function UserStatusWrapper({
       </>
     );
   }
-
-  if (userLoading) return <p>Checking User 🤦‍♂️...</p>;
 
   return <>{children}</>;
 }

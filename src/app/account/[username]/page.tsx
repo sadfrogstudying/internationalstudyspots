@@ -1,4 +1,7 @@
 import AccountDetails from "@/components/account-details";
+import ReactQueryHydrate from "@/components/react-query-hydrate";
+import { createSSRHelper } from "@/server/api/ssr";
+import { dehydrate } from "@tanstack/react-query";
 import {
   type Metadata,
   // type ResolvingMetadata
@@ -28,6 +31,21 @@ export function generateMetadata(
   };
 }
 
-export default function AccountPage() {
-  return <AccountDetails />;
+export default async function AccountPage({
+  params,
+}: {
+  params: { username: string };
+}) {
+  // 1. create the server-side helper
+  const helpers = await createSSRHelper();
+  // 2. pre-fetch the tRPC procedure server-side
+  await helpers.user.get.prefetch(params.username);
+  // 3. get the dehydrated query client and pass it down to react-query's context provider
+  const dehydratedState = dehydrate(helpers.queryClient);
+
+  return (
+    <ReactQueryHydrate state={dehydratedState}>
+      <AccountDetails />
+    </ReactQueryHydrate>
+  );
 }

@@ -19,26 +19,26 @@ export default function AccountDetails() {
     email,
     name,
     profileImage,
+    instagram,
+    linkedin,
+    twitter,
+    website,
     username,
     description,
     interests,
     occupation,
     tagline,
-    // firstName,
-    // lastName,
-    // website,
+    profileCover,
   } = data ?? {};
-
-  const temporaryLoadingState = profileImage?.url;
 
   return (
     <>
       <section className="relative h-screen max-h-96 w-full object-cover">
         <ImageThatFadesIn
-          src={temporaryLoadingState && "/bean.jpg"}
-          alt="Posters"
+          src={profileCover?.image?.url}
+          alt="Profile cover"
           fill
-          imageReady={!!data}
+          imageReady={!!profileCover?.image}
           className="h-full w-full object-cover"
           skeletonClassName="h-full w-full opacity-40"
         />
@@ -58,27 +58,41 @@ export default function AccountDetails() {
               skeletonClassName="h-full w-full"
             />
 
-            <div className="flex flex-shrink-0 flex-col gap-0.5 self-end pl-4 pt-4">
+            <div className="flex h-24 flex-shrink-0 flex-col justify-end gap-0.5 self-end pl-4 pt-4">
               <h2 className="text-xl font-medium">
-                <NewSkeletonText textReady={!!data} skeletonClassName="w-36">
-                  {name}
+                <NewSkeletonText skeletonClassName="w-48">
+                  {name ?? "No name set"}
                 </NewSkeletonText>
               </h2>
 
               <div className="text-base text-neutral-500">
-                <NewSkeletonText textReady={!!data} skeletonClassName="w-48">
-                  {city && country && `${city}, ${country}`}
+                <NewSkeletonText skeletonClassName="w-48">
+                  {city ?? country ? (
+                    <>
+                      {city && country
+                        ? `${city}, ${country}`
+                        : city ?? country}
+                    </>
+                  ) : (
+                    "No location set"
+                  )}
                 </NewSkeletonText>
               </div>
 
               <div className="text-base text-neutral-500">
-                <NewSkeletonText textReady={!!data} skeletonClassName="w-72">
-                  <Link
-                    href="/account/charles/edit"
-                    className="max-w-xs truncate rounded-md bg-neutral-200 px-2"
-                  >
-                    charliezhao.com
-                  </Link>
+                <NewSkeletonText skeletonClassName="w-48">
+                  {website ? (
+                    <Link
+                      href="/account/charles/edit"
+                      className="max-w-xs truncate rounded-md bg-neutral-200 px-2"
+                    >
+                      {website}
+                    </Link>
+                  ) : (
+                    <span className="max-w-xs truncate rounded-md bg-neutral-200 px-2">
+                      No website
+                    </span>
+                  )}
                 </NewSkeletonText>
               </div>
             </div>
@@ -129,33 +143,26 @@ export default function AccountDetails() {
  * Nest this in a container
  *  - The skeleton will fit the container
  *  - It will smoothly fade out the skeleton
+ *  - Since I'm going to SSR account details
  */
 function NewSkeletonText({
   children,
-  textReady,
   skeletonClassName,
 }: {
   children: React.ReactNode;
-  textReady: boolean;
   skeletonClassName?: string;
 }) {
   return (
     <div className="relative">
-      <div
-        className={cn(
-          "h-fit transition-opacity duration-500",
-          textReady ? "opacity-100" : "absolute opacity-0",
-        )}
-      >
+      <div className={cn("h-fit animate-fade-in fill-mode-backwards")}>
         {children}
       </div>
 
-      <UnmountAfter delay={1250} ready={textReady}>
+      <UnmountAfter delay={1250}>
         <SkeletonText
           className={cn(
-            "transition-opacity duration-500",
+            "absolute bottom-0 animate-fade-out fill-mode-forwards",
             skeletonClassName,
-            textReady ? "absolute top-0 -z-10 opacity-0" : "opacity-100",
           )}
         />
       </UnmountAfter>

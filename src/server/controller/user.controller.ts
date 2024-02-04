@@ -33,7 +33,12 @@ export async function getHandler({
   ctx: Context;
 }) {
   const user = await ctx.db.user.findUnique({
-    include: { profileImage: true },
+    include: {
+      profileImage: true,
+      profileCover: {
+        include: { image: true },
+      },
+    },
     where: { username: input },
   });
 

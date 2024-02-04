@@ -67,6 +67,13 @@ function Content({
   const cachedUserData = apiUtils.user.currentBySession;
   const data = cachedUserData.getData();
 
+  if (loading)
+    return (
+      <>
+        <p className="text-gray-500">Loading...</p>
+      </>
+    );
+
   if (notLoggedIn)
     return (
       <>
@@ -80,13 +87,6 @@ function Content({
         >
           Sign In
         </Button>
-      </>
-    );
-
-  if (loading)
-    return (
-      <>
-        <p className="text-gray-500">Loading...</p>
       </>
     );
 
@@ -137,13 +137,13 @@ function Content({
         (work in progress).
       </p>
 
-      <div className="space-y-2">
+      <div className="space-y-4">
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="mt-4 h-auto w-full rounded"
+          className="mt-4 aspect-[16/9] h-auto w-full rounded bg-gray-200 object-cover"
           src="/orangutang.mp4"
         />
 

@@ -1,117 +1,32 @@
-"use client";
-
-import { useState } from "react";
 import dynamic from "next/dynamic";
-import { api } from "@/trpc/react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
+import { dehydrate } from "@tanstack/react-query";
 
-import type { UpdateUserClient } from "@/schemas/user";
-import { uploadFilesToS3UsingPresignedUrls } from "@/lib/helpers";
+import ReactQueryHydrate from "@/components/react-query-hydrate";
+import { createSSRHelper } from "@/server/api/ssr";
+import { getServerAuthSession } from "@/server/auth";
 
-const ServerZodError = dynamic(() => import("@/components/server-zod-error"), {
-  ssr: false,
-});
+import { Skeleton } from "@/components/ui/skeleton";
 
-const ServerErrorMessage = dynamic(
-  () => import("@/components/server-error-message"),
+const EditUserFormController = dynamic(
+  () => import("@/components/edit-user-form/edit-user-form-controller"),
   {
     ssr: false,
+    loading: () => <Skeleton className="h-96 w-full" />,
   },
 );
 
-const EditUserForm = dynamic(() => import("@/components/edit-user-form"), {
-  ssr: false,
-  loading: () => <span>Loading Form 📝...</span>,
-});
+export default async function EditAccountPage() {
+  const session = await getServerAuthSession();
+  if (!session) redirect("/auth/signin");
 
-export default function EditAccountPage() {
-  // To capture the form data from the form component
-  const [formData, setFormData] = useState<UpdateUserClient>();
-
-  const apiUtils = api.useUtils();
-  const router = useRouter();
-
-  const {
-    mutate: update,
-    isLoading: updateLoading,
-    error: updateError,
-    isSuccess: updateSuccess,
-  } = api.user.update.useMutation({
-    onSuccess: () => {
-      void apiUtils.user.currentBySession.invalidate();
-      router.push(`/account/${formData?.username}`);
-    },
-  });
-
-  const {
-    mutate: getPresignedUrl,
-    error: presignedUrlError,
-    isLoading: presignedUrlLoading,
-  } = api.user.getPresignedUrl.useMutation({
-    onSuccess: async (presignedUrl) => {
-      if (!formData) return;
-
-      if (!presignedUrl) {
-        update({ ...formData, profileImage: undefined });
-        return;
-      }
-
-      const imageUrls = await uploadFilesToS3UsingPresignedUrls(
-        [presignedUrl],
-        formData.profileImage,
-      );
-
-      update({ ...formData, profileImage: imageUrls[0] });
-    },
-  });
-
-  function handleSubmit(formValues: UpdateUserClient) {
-    setFormData(formValues);
-
-    const profileImage = formValues.profileImage.map((file) => ({
-      contentLength: file.size,
-      contentType: file.type,
-    }))[0];
-
-    getPresignedUrl({
-      ...formValues,
-      profileImage,
-    });
-  }
-
-  function getButtonText() {
-    const hasNewImages = !!formData?.profileImage.length;
-
-    if (presignedUrlLoading && hasNewImages) return "Uploading images...";
-    if (presignedUrlLoading) return "Creating...";
-    if (updateLoading) return "Creating...";
-    if (updateSuccess) return "Redirecting you now...";
-
-    return "Submit";
-  }
-
-  const submitDisabled = updateLoading || presignedUrlLoading || updateSuccess;
+  const helpers = await createSSRHelper();
+  await helpers.user.currentBySession.prefetch();
+  const dehydratedState = dehydrate(helpers.queryClient);
 
   return (
-    <>
-      <EditUserForm
-        onSubmit={handleSubmit}
-        buttonLabel={getButtonText()}
-        submitDisabled={submitDisabled}
-      />
-
-      {!!updateError?.data?.zodError && (
-        <ServerZodError zodError={updateError?.data?.zodError} />
-      )}
-
-      {!!presignedUrlError?.data?.zodError && (
-        <ServerZodError zodError={presignedUrlError?.data?.zodError} />
-      )}
-
-      <ServerErrorMessage
-        message={presignedUrlError?.message ?? updateError?.message}
-        code={presignedUrlError?.data?.code ?? updateError?.data?.code}
-      />
-    </>
+    <ReactQueryHydrate state={dehydratedState}>
+      <EditUserFormController />
+    </ReactQueryHydrate>
   );
 }

@@ -1,5 +1,3 @@
-"use client";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -27,7 +25,7 @@ export default function EditUserForm({
   buttonLabel?: string;
   submitDisabled?: boolean;
 }) {
-  const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
+  const { data, isLoading } = api.user.currentBySession.useQuery();
 
   const {
     username,

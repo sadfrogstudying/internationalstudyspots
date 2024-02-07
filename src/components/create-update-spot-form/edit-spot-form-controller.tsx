@@ -18,7 +18,9 @@ export default function EditSpotFormController({ slug }: { slug: string }) {
   const apiUtils = api.useUtils();
   const router = useRouter();
 
-  const { data, isLoading } = api.studySpot.bySlug.useQuery(slug);
+  const { data, isLoading } = api.studySpot.bySlug.useQuery(slug, {
+    staleTime: 1 * 1000, // 1 second
+  });
 
   const {
     mutate: update,

@@ -36,7 +36,9 @@ export default function StudySpotDetail({ slug }: Props) {
       enabled: !!data,
     });
   const { data: user, isLoading: userLoading } =
-    api.user.currentBySession.useQuery();
+    api.user.currentBySession.useQuery(undefined, {
+      staleTime: 1 * 1000, // 1 second
+    });
 
   const isAuthor =
     author?.username == null ? false : user?.username === author?.username;

@@ -28,7 +28,7 @@ export default function UserAvatarPopover() {
             />
             {!isLoading && !data?.profileImage?.url && (
               <AvatarFallback>
-                {data?.name?.[0]?.toUpperCase() ?? ":)"}
+                {data?.name?.[0]?.toUpperCase() ?? ""}
               </AvatarFallback>
             )}
           </Avatar>
@@ -41,7 +41,6 @@ export default function UserAvatarPopover() {
       >
         <h3 className="mb-2 font-semibold">Account</h3>
         <Content
-          loading={isLoading}
           noUsername={!data?.username}
           notLoggedIn={!data}
           setOpen={setOpen}
@@ -54,25 +53,16 @@ export default function UserAvatarPopover() {
 function Content({
   noUsername,
   notLoggedIn,
-  loading,
   setOpen,
 }: {
   noUsername: boolean;
   notLoggedIn: boolean;
-  loading: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const apiUtils = api.useUtils();
 
   const cachedUserData = apiUtils.user.currentBySession;
   const data = cachedUserData.getData();
-
-  if (loading)
-    return (
-      <>
-        <p className="text-gray-500">Loading...</p>
-      </>
-    );
 
   if (notLoggedIn)
     return (

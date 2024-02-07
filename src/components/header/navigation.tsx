@@ -61,7 +61,7 @@ function NavItems({ onClick }: { onClick?: () => void }) {
 
   return (
     <>
-      {!data && <UnauthedNav onClick={onClick} loading={isLoading} />}
+      {!data && <UnauthedNav onClick={onClick} />}
       {data && !isLoading && <AuthedNav onClick={onClick} />}
     </>
   );

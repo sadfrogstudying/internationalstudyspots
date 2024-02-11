@@ -83,6 +83,11 @@ const MapInfoPanel = ({
                 </p>
                 <br />
                 <p>
+                  If you recently created a spot, refresh the page in a minute
+                  to see it on the map.
+                </p>
+                <br />
+                <p>
                   Last updated <strong>{localeTimeString}</strong>
                 </p>
               </div>

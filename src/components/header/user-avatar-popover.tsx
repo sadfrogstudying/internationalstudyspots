@@ -104,27 +104,23 @@ function Content({
         Signed in as <span className="font-semibold">{data?.username}</span>
       </p>
       <p className="text-gray-500">
-        Edit your account{" "}
         <Link
           href={`/account/edit`}
           className="underline"
           onClick={() => setOpen(false)}
         >
-          here
+          Edit account
         </Link>
-        .
       </p>
-      <br />
       <p className="text-gray-500">
-        Check out your account{" "}
         <Link
           href={`/account/${data?.username}`}
           className="underline"
           onClick={() => setOpen(false)}
         >
-          here
+          View account
         </Link>{" "}
-        (work in progress).
+        (WIP)
       </p>
 
       <div className="space-y-4">

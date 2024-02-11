@@ -1,5 +1,8 @@
+import ReactQueryHydrate from "@/components/react-query-hydrate";
 import StudySpotDetail from "@/components/study-spot-detail";
+import { createSSRHelper } from "@/server/api/ssr";
 import { db } from "@/server/db";
+import { dehydrate } from "@tanstack/react-query";
 import { type Metadata } from "next";
 
 /**
@@ -45,6 +48,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function StudySpotPage({ params }: Props) {
-  return <StudySpotDetail slug={params.slug} />;
+export default async function StudySpotPage({ params }: Props) {
+  const helpers = await createSSRHelper();
+  await Promise.all([
+    helpers.user.currentBySession.prefetch(),
+    helpers.studySpot.bySlug.prefetch(params.slug),
+    // helpers.studySpot.authorBySlug.prefetch(params.slug),
+  ]);
+  const dehydratedState = dehydrate(helpers.queryClient);
+
+  return (
+    <ReactQueryHydrate state={dehydratedState}>
+      <StudySpotDetail slug={params.slug} />
+    </ReactQueryHydrate>
+  );
 }

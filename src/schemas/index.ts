@@ -188,6 +188,19 @@ const imagePayloadSchema = z
       message: "The spot needs at least one image.",
       path: ["newImages"],
     },
+  )
+  .refine(
+    ({ newImages, existingImages }) => {
+      const featuredCount = [...newImages, ...existingImages].filter(
+        (image) => image.featured,
+      ).length;
+
+      return featuredCount > 0;
+    },
+    {
+      message: "The spot needs at least one featured image.",
+      path: ["newImages"],
+    },
   );
 
 const createUpdateFormSchema = baseSpotSchema.extend({

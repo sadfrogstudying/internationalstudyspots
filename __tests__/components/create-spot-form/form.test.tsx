@@ -99,6 +99,8 @@ it("should not display error when value is valid", async () => {
 
   await uploadImageViaDropzone();
 
+  await user.click(await screen.findByLabelText(/featured/i));
+
   // submit form
   await user.click(screen.getByRole("button", { name: /submit/i }));
   expect(mockCreate).toHaveBeenCalledTimes(1);

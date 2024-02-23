@@ -50,11 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function StudySpotPage({ params }: Props) {
   const helpers = await createSSRHelper();
-  await Promise.all([
-    helpers.user.currentBySession.prefetch(),
-    helpers.studySpot.bySlug.prefetch(params.slug),
-    // helpers.studySpot.authorBySlug.prefetch(params.slug),
-  ]);
+  await helpers.studySpot.bySlug.prefetch(params.slug);
   const dehydratedState = dehydrate(helpers.queryClient);
 
   return (

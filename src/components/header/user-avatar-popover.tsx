@@ -59,10 +59,7 @@ function Content({
   notLoggedIn: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const apiUtils = api.useUtils();
-
-  const cachedUserData = apiUtils.user.currentBySession;
-  const data = cachedUserData.getData();
+  const { data } = api.user.currentBySession.useQuery(undefined);
 
   if (notLoggedIn)
     return (

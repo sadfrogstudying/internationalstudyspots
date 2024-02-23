@@ -35,10 +35,7 @@ export default function StudySpotDetail({ slug }: Props) {
     api.studySpot.authorBySlug.useQuery(slug, {
       enabled: !!data,
     });
-  const { data: user, isLoading: userLoading } =
-    api.user.currentBySession.useQuery(undefined, {
-      staleTime: 1 * 1000, // 1 second
-    });
+  const { data: user } = api.user.currentBySession.useQuery(undefined);
 
   const isAuthor =
     author?.username == null ? false : user?.username === author?.username;
@@ -74,7 +71,7 @@ export default function StudySpotDetail({ slug }: Props) {
           >
             <Link href={`/study-spot/${slug}/edit`}>Edit Spot</Link>
           </Button>
-          {!!isAuthor && !userLoading && data?.id && (
+          {!!isAuthor && data?.id && (
             <DeleteAlertDialog
               className="animate-fade-in duration-500"
               id={data?.id}

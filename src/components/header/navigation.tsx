@@ -55,9 +55,7 @@ export default function Navigation({}) {
 }
 
 function NavItems({ onClick }: { onClick?: () => void }) {
-  const { data, isLoading } = api.user.currentBySession.useQuery(undefined, {
-    retry: 1,
-  });
+  const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
 
   return (
     <>

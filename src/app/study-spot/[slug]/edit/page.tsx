@@ -1,22 +1,11 @@
-import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
-
 import { getServerAuthSession } from "@/server/auth";
-
-import { Skeleton } from "@/components/ui/skeleton";
 import UserStatusWrapper from "./user-status-wrapper";
 import ReactQueryHydrate from "@/components/react-query-hydrate";
 import { createSSRHelper } from "@/server/api/ssr";
 import { dehydrate } from "@tanstack/react-query";
 
-const EditSpotFormController = dynamic(
-  () =>
-    import("@/components/create-update-spot-form/edit-spot-form-controller"),
-  {
-    ssr: false,
-    loading: () => <Skeleton className="h-96 w-full" />,
-  },
-);
+import EditSpotFormController from "@/components/create-update-spot-form/edit-spot-form-controller";
 
 export default async function EditSpotPage({
   params,

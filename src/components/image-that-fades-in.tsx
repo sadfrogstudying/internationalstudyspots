@@ -11,13 +11,11 @@ type NextImageProps = React.ComponentProps<typeof Image>;
  */
 interface ImageThatFadesInProps extends Omit<NextImageProps, "src"> {
   src: NextImageProps["src"] | undefined;
-  imageReady: boolean;
   skeletonClassName?: string;
 }
 
 export function ImageThatFadesIn({
   src,
-  imageReady,
   className,
   skeletonClassName,
   ...props
@@ -40,7 +38,7 @@ export function ImageThatFadesIn({
           )}
         />
       )}
-      <UnmountAfter delay={1250} ready={imageReady}>
+      <UnmountAfter delay={1250} ready={loaded}>
         <div
           className={cn(
             "h-full w-full rounded-md bg-white transition-opacity duration-500",

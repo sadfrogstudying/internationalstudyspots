@@ -19,7 +19,6 @@ export default function AllImages({ studySpot }: { studySpot?: StudySpot }) {
                 src={image.url}
                 alt={`Image of ${studySpot?.name}`}
                 className="object-contain p-4"
-                imageReady
                 fill
                 sizes="(max-width: 767px) 33vw, 12.5vw"
                 priority={false}

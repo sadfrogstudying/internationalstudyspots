@@ -38,7 +38,6 @@ export default function AccountDetails() {
           src={profileCover?.image?.url}
           alt="Profile cover"
           fill
-          imageReady={!!profileCover?.image}
           className="h-full w-full object-cover"
           skeletonClassName="h-full w-full opacity-40"
         />
@@ -53,7 +52,6 @@ export default function AccountDetails() {
               alt={name ?? "User profile picture"}
               width={200}
               height={200}
-              imageReady={!!data}
               className="absolute bottom-0 left-0 aspect-square h-auto w-32 object-cover sm:w-56"
               skeletonClassName="h-full w-full"
             />

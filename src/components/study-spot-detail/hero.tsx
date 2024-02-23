@@ -16,7 +16,6 @@ export default function Hero({ studySpot }: { studySpot?: StudySpot }) {
               <div className="relative aspect-[3/4]" key={image.id}>
                 <ImageThatFadesIn
                   className="object-cover"
-                  imageReady
                   src={image.url}
                   alt={`Image of ${studySpot?.name}`}
                   sizes="(max-width: 767px) 50vw, 100vw"

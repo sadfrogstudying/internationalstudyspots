@@ -21,7 +21,7 @@ export function TRPCReactProvider(props: {
           queries: {
             refetchOnWindowFocus: false,
             staleTime: 1000,
-            retry: 2,
+            retry: 1,
           },
         },
       }),

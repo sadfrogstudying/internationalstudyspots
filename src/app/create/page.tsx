@@ -1,10 +1,9 @@
+// import { redirect } from "next/navigation";
+// import { getServerAuthSession } from "@/server/auth";
 import dynamic from "next/dynamic";
-import { redirect } from "next/navigation";
-
-import { getServerAuthSession } from "@/server/auth";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import UserStatusWrapper from "./user-status-wrapper";
+import UserOptionalWrapper from "@/components/user-optional-wrapper";
 import ReactQueryHydrate from "@/components/react-query-hydrate";
 import { createSSRHelper } from "@/server/api/ssr";
 import { dehydrate } from "@tanstack/react-query";
@@ -19,8 +18,8 @@ const CreateSpotFormController = dynamic(
 );
 
 export default async function CreateSpotPage() {
-  const session = await getServerAuthSession();
-  if (!session) redirect("/auth/signin");
+  // const session = await getServerAuthSession();
+  // if (!session) redirect("/auth/signin");
 
   const helpers = await createSSRHelper();
   await helpers.user.currentBySession.prefetch();
@@ -28,9 +27,9 @@ export default async function CreateSpotPage() {
 
   return (
     <ReactQueryHydrate state={dehydratedState}>
-      <UserStatusWrapper>
+      <UserOptionalWrapper>
         <CreateSpotFormController />
-      </UserStatusWrapper>
+      </UserOptionalWrapper>
     </ReactQueryHydrate>
   );
 }

@@ -1,9 +1,15 @@
+import dynamic from "next/dynamic";
 import type { SetValueConfig, UseFormReturn } from "react-hook-form";
 
 import type { CreateUpdateFormValues } from "@/schemas";
 
 import TextInput from "@/components/input/text-input";
-import LocationSearchInput from "@/components/input/location-search";
+import { Skeleton } from "../ui/skeleton";
+
+const LocationSearchInput = dynamic(
+  () => import("@/components/input/location-search"),
+  { ssr: false, loading: () => <Skeleton className="h-9 w-full" /> },
+);
 
 export default function InputsLocation({
   form,

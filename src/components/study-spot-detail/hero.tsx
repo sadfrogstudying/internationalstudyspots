@@ -1,11 +1,13 @@
+"use client";
+
 import { Skeleton } from "../ui/skeleton";
 
-import { type RouterOutputs } from "@/trpc/shared";
 import { ImageThatFadesIn } from "@/components/image-that-fades-in";
+import { api } from "@/trpc/react";
 
-type StudySpot = RouterOutputs["studySpot"]["bySlug"];
+export default function Hero({ slug }: { slug: string }) {
+  const { data: studySpot } = api.studySpot.bySlug.useQuery(slug);
 
-export default function Hero({ studySpot }: { studySpot?: StudySpot }) {
   return (
     <>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">

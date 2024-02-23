@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AirVent,
   Armchair,
@@ -26,13 +28,14 @@ import {
   Zap,
 } from "lucide-react";
 
-import { type RouterOutputs } from "@/trpc/shared";
 import UnmountAfter from "../unmount-after";
 import { Skeleton, SkeletonText } from "../ui/skeleton";
 import { cn } from "@/lib/utils";
-type StudySpot = RouterOutputs["studySpot"]["bySlug"];
+import { api } from "@/trpc/react";
 
-export default function List({ studySpot }: { studySpot?: StudySpot }) {
+export default function List({ slug }: { slug: string }) {
+  const { data: spot } = api.studySpot.bySlug.useQuery(slug);
+
   const ignoredKeys = [
     "id",
     "name",
@@ -47,7 +50,7 @@ export default function List({ studySpot }: { studySpot?: StudySpot }) {
     "placeId",
   ];
 
-  const list = Object.entries(studySpot ?? {})
+  const list = Object.entries(spot ?? {})
     .filter((entry) => !ignoredKeys.includes(entry[0]))
     .map((entry) => {
       if (typeof entry[1] === "boolean") {
@@ -59,7 +62,7 @@ export default function List({ studySpot }: { studySpot?: StudySpot }) {
 
   return (
     <ul className="w-full overflow-hidden">
-      {studySpot ? (
+      {spot ? (
         list.map((x, i) => {
           const animationDelay = 0;
           const durationTiming = 500;

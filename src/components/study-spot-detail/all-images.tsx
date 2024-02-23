@@ -1,15 +1,16 @@
-// Eventually this will use it's own query for the images
+"use client";
 
-import { type RouterOutputs } from "@/trpc/shared";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageThatFadesIn } from "@/components/image-that-fades-in";
-type StudySpot = RouterOutputs["studySpot"]["bySlug"];
+import { api } from "@/trpc/react";
 
-export default function AllImages({ studySpot }: { studySpot?: StudySpot }) {
+export default function AllImages({ slug }: { slug: string }) {
+  const { data: spot } = api.studySpot.bySlug.useQuery(slug);
+
   return (
     <div className="grid h-fit grid-cols-3 gap-2 md:grid-cols-5">
-      {studySpot ? (
-        studySpot?.images.slice(0, 15).map((image) => {
+      {spot ? (
+        spot?.images.slice(0, 15).map((image) => {
           return (
             <div
               className="relative aspect-square bg-neutral-100"
@@ -17,7 +18,7 @@ export default function AllImages({ studySpot }: { studySpot?: StudySpot }) {
             >
               <ImageThatFadesIn
                 src={image.url}
-                alt={`Image of ${studySpot?.name}`}
+                alt={`Image of ${spot?.name}`}
                 className="object-contain p-4"
                 fill
                 sizes="(max-width: 767px) 33vw, 12.5vw"

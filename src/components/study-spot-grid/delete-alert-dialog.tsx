@@ -1,4 +1,6 @@
-import { useState } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 
 import { api } from "@/trpc/react";
 
@@ -22,9 +24,14 @@ const DeleteAlertDialog = ({
   className,
 }: {
   id: number;
-  className: string;
+  className?: string;
 }) => {
-  const [token] = useState(sessionStorage.getItem("sadfrogs_admin") ?? "");
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    if (typeof window == "undefined") return;
+    setToken(sessionStorage.getItem("sadfrogs_admin") ?? "");
+  }, []);
 
   const apiUtils = api.useUtils();
   const {

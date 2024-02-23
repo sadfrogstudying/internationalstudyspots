@@ -30,7 +30,7 @@ interface Props {
 }
 
 export default function StudySpotDetail({ slug }: Props) {
-  const { data, isLoading: spotLoading } = api.studySpot.bySlug.useQuery(slug);
+  const { data } = api.studySpot.bySlug.useQuery(slug);
   const { data: author, isLoading: authorLoading } =
     api.studySpot.authorBySlug.useQuery(slug, {
       enabled: !!data,
@@ -56,7 +56,7 @@ export default function StudySpotDetail({ slug }: Props) {
     ?.pages?.flatMap((page) => page)
     .find((studySpot) => studySpot.slug === slug);
 
-  if (!data && !spotLoading) notFound();
+  if (!data) notFound(); // data will always be true (unless bad slug) due to SSR
 
   return (
     <div className="space-y-12">
@@ -91,25 +91,23 @@ export default function StudySpotDetail({ slug }: Props) {
       <div>
         <Separator className="mb-2" />
         <div className="relative h-96 w-full bg-primary/10">
-          {data && (
-            <Link
-              href={`/map?lat=${data.latitude}&lng=${data.longitude}&id=${data.id}`}
-              className="block h-full w-full cursor-pointer"
-            >
-              <div className="h-96 w-full overflow-hidden">
-                <Map
-                  markerData={data ? [data] : []}
-                  center={[data.latitude, data.longitude]}
-                  dragging={false}
-                  boxZoom={false}
-                  doubleClickZoom={false}
-                  scrollWheelZoom={false}
-                  touchZoom={false}
-                  keyboard={false}
-                />
-              </div>
-            </Link>
-          )}
+          <Link
+            href={`/map?lat=${data.latitude}&lng=${data.longitude}&id=${data.id}`}
+            className="block h-full w-full cursor-pointer"
+          >
+            <div className="h-96 w-full overflow-hidden">
+              <Map
+                markerData={data ? [data] : []}
+                center={[data.latitude, data.longitude]}
+                dragging={false}
+                boxZoom={false}
+                doubleClickZoom={false}
+                scrollWheelZoom={false}
+                touchZoom={false}
+                keyboard={false}
+              />
+            </div>
+          </Link>
         </div>
       </div>
 

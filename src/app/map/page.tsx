@@ -1,21 +1,19 @@
 import { api } from "@/trpc/server";
 import type { MarkerData } from "@/types/map-types";
 import { type Metadata } from "next";
+import { unstable_cache } from "next/cache";
 import { default as nextDynamic } from "next/dynamic";
 const Map = nextDynamic(() => import("@/components/map"), {
   ssr: false,
 });
 
-/**
- * https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic
- *
- * force-static: Force static rendering and cache the data of a
- * layout or page by forcing cookies(), headers() and
- * useSearchParams() to return empty values.
- */
-export const dynamic = "force-static";
-/** Revalidate the data at most every 60 seconds */
-export const revalidate = 60;
+const getSpots = unstable_cache(
+  async () => await api.studySpot.getAll.query(),
+  undefined,
+  // force this function to cache for ISR
+  // https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#fetching-data-on-the-server-with-third-party-libraries
+  { revalidate: 15 },
+);
 
 export function generateMetadata(): Metadata {
   return {
@@ -26,7 +24,7 @@ export function generateMetadata(): Metadata {
 }
 
 export default async function MapPage() {
-  const spots = await api.studySpot.getAll.query();
+  const spots = await getSpots();
 
   const markerData: MarkerData[] = spots.map((spot) => spot);
 

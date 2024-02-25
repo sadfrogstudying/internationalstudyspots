@@ -7,13 +7,12 @@ import Header from "@/components/header";
 import { FilterController } from "@/components/study-spot-grid/filter-context";
 
 import {
-  // Abel,
-  Inter,
+  Abel,
+  // Inter
 } from "next/font/google";
 import Footer from "@/components/footer";
-import { createSSRHelper } from "@/server/api/ssr";
-import { dehydrate } from "@tanstack/react-query";
-import ReactQueryHydrate from "@/components/react-query-hydrate";
+import { Suspense } from "react";
+import HeaderSkeleton from "@/components/header/skeleton";
 
 export const metadata = {
   title: "International Study Spots",
@@ -22,39 +21,36 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-// const abel = Abel({
-//   subsets: ["latin"],
-//   weight: ["400"],
-// });
-const inter = Inter({
+const abel = Abel({
   subsets: ["latin"],
+  weight: ["400"],
 });
+// const inter = Inter({
+//   subsets: ["latin"],
+// });
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const helpers = await createSSRHelper();
-  await helpers.user.currentBySession.prefetch();
-  const dehydratedState = dehydrate(helpers.queryClient);
-
   return (
     <html lang="en" className="h-full">
       <body
-        className={`flex min-h-full flex-col justify-between antialiased ${inter.className}`}
+        className={`flex min-h-full flex-col justify-between antialiased ${abel.className}`}
       >
         <TRPCReactProvider cookies={cookies().toString()}>
-          <ReactQueryHydrate state={dehydratedState}>
-            <FilterController>
-              <div>
+          <FilterController>
+            <div>
+              <Suspense fallback={<HeaderSkeleton />}>
                 <Header />
-                {children}
-              </div>
+              </Suspense>
 
-              <Footer />
-            </FilterController>
-          </ReactQueryHydrate>
+              {children}
+            </div>
+
+            <Footer />
+          </FilterController>
         </TRPCReactProvider>
       </body>
     </html>

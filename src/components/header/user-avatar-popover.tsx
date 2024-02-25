@@ -7,10 +7,16 @@ import React, { useState } from "react";
 import { Link } from "@/components/ui/link";
 import { Button } from "../ui/button";
 import { signIn, signOut } from "next-auth/react";
+import type { RouterOutputs } from "@/trpc/shared";
 
-export default function UserAvatarPopover() {
+type User = RouterOutputs["user"]["currentBySession"];
+
+export default function UserAvatarPopover({
+  user,
+}: {
+  user: User | undefined;
+}) {
   const [open, setOpen] = useState(false);
-  const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
 
   return (
     <Popover onOpenChange={setOpen} open={open}>
@@ -23,12 +29,12 @@ export default function UserAvatarPopover() {
         <PopoverTrigger className="pointer-events-auto">
           <Avatar className="h-9 w-9">
             <AvatarImage
-              src={data?.profileImage?.url}
+              src={user?.profileImage?.url}
               className="object-cover"
             />
-            {!isLoading && !data?.profileImage?.url && (
+            {!user?.profileImage?.url && (
               <AvatarFallback>
-                {data?.name?.[0]?.toUpperCase() ?? ""}
+                {user?.name?.[0]?.toUpperCase() ?? ""}
               </AvatarFallback>
             )}
           </Avatar>
@@ -41,8 +47,8 @@ export default function UserAvatarPopover() {
       >
         <h3 className="mb-2 font-semibold">Account</h3>
         <Content
-          noUsername={!data?.username}
-          notLoggedIn={!data}
+          noUsername={!user?.username}
+          notLoggedIn={!user}
           setOpen={setOpen}
         />
       </PopoverContent>
@@ -59,7 +65,9 @@ function Content({
   notLoggedIn: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { data } = api.user.currentBySession.useQuery(undefined);
+  const { data } = api.user.currentBySession.useQuery(undefined, {
+    retryOnMount: false,
+  });
 
   if (notLoggedIn)
     return (

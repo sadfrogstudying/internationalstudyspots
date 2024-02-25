@@ -110,6 +110,32 @@ In the terminal, the URL should be under `Forwarding`.
 
 You can now fire requests to: `https://8e3b-49-255-185-210.ngrok-free.app/` and `https://8e3b-49-255-185-210.ngrok-free.app/api/studyspots.getall`.
 
+## Pattern
+
+In nested components that use data from the same query, can either call the useQuery hook to get the value in every component to save from passing props to multiple components.
+
+```tsx
+const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
+```
+
+But can get into an infinite loop if you're conditionally rendering child component, as it will refetch on mount.
+
+```tsx
+const { data, isLoading } = api.user.currentBySession.useQuery(undefined, {
+  refetchOnMount: false,
+});
+```
+
+I decided to just pass the data as props to children as remembering to add `refetchOnMount` is error prone.
+
+```tsx
+type User = RouterOutputs["user"]["currentBySession"];
+
+export default function Navigation({ user }: { user: User | undefined }) {
+  // ...
+}
+```
+
 ## Useful Links
 
 - [Docs: Route Segment Config](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#options)

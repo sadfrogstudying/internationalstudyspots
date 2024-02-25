@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { api } from "@/trpc/react";
 import { Menu, X } from "lucide-react";
 
 import MobileMenu from "@/components/header/mobile-menu";
@@ -9,6 +8,7 @@ import UnauthedNav from "@/components/header/unauthed-nav";
 import AuthedNav from "@/components/header/authed-nav";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { RouterOutputs } from "@/trpc/shared";
 
 const UserAvatarPopover = dynamic(
   () => import("@/components/header/user-avatar-popover"),
@@ -18,7 +18,9 @@ const UserAvatarPopover = dynamic(
   },
 );
 
-export default function Navigation({}) {
+type User = RouterOutputs["user"]["currentBySession"];
+
+export default function Navigation({ user }: { user: User | undefined }) {
   return (
     <div className="flex items-center gap-4">
       <MobileMenu
@@ -38,7 +40,7 @@ export default function Navigation({}) {
             <>
               <div className="mb-4 font-bold">Menu</div>
               <nav className="flex flex-col gap-4">
-                <NavItems onClick={close} />
+                <NavItems onClick={close} user={user} />
               </nav>
             </>
           );
@@ -46,21 +48,25 @@ export default function Navigation({}) {
       />
 
       <nav className="pointer-events-auto hidden h-9 items-center gap-4 text-base md:flex">
-        <NavItems />
+        <NavItems user={user} />
       </nav>
 
-      <UserAvatarPopover />
+      <UserAvatarPopover user={user} />
     </div>
   );
 }
 
-function NavItems({ onClick }: { onClick?: () => void }) {
-  const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
-
+function NavItems({
+  onClick,
+  user,
+}: {
+  onClick?: () => void;
+  user: User | undefined;
+}) {
   return (
     <>
-      {!data && <UnauthedNav onClick={onClick} />}
-      {data && !isLoading && <AuthedNav onClick={onClick} />}
+      {!user && <UnauthedNav onClick={onClick} />}
+      {user && <AuthedNav onClick={onClick} />}
     </>
   );
 }

@@ -50,7 +50,7 @@ export default function HeaderContent() {
             <AvatarFallback />
           </Avatar>
         ) : (
-          <Navigation />
+          <Navigation user={data} />
         )}
       </header>
 

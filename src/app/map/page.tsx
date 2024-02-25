@@ -15,6 +15,8 @@ const getSpots = unstable_cache(
   { revalidate: 15 },
 );
 
+export const dynamic = "force-static";
+
 export function generateMetadata(): Metadata {
   return {
     title: "Map - International Study Spots",

@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 import Navigation from "@/components/header/navigation";
 import { Link } from "@/components/ui/link";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 
 const NewUserAnnouncementBar = dynamic(
   () => import("@/components/header/new-user-announcement-bar"),
@@ -44,7 +45,13 @@ export default function HeaderContent() {
           </h1>
         </div>
 
-        <Navigation />
+        {isLoading ? (
+          <Avatar className="pointer-events-auto h-9 w-9 cursor-wait">
+            <AvatarFallback />
+          </Avatar>
+        ) : (
+          <Navigation />
+        )}
       </header>
 
       {data && !data.username && !isLoading && <NewUserAnnouncementBar />}

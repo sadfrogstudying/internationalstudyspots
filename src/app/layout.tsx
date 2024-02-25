@@ -11,8 +11,6 @@ import {
   // Inter
 } from "next/font/google";
 import Footer from "@/components/footer";
-import { Suspense } from "react";
-import HeaderSkeleton from "@/components/header/skeleton";
 
 export const metadata = {
   title: "International Study Spots",
@@ -42,9 +40,7 @@ export default function RootLayout({
         <TRPCReactProvider cookies={cookies().toString()}>
           <FilterController>
             <div>
-              <Suspense fallback={<HeaderSkeleton />}>
-                <Header />
-              </Suspense>
+              <Header />
 
               {children}
             </div>

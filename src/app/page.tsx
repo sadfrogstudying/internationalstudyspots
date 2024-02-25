@@ -3,6 +3,8 @@ import HolyGrailLayout from "@/components/study-spot-grid/holy-grail-layout";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+export const dynamic = "force-static";
+
 export default function Home() {
   return (
     <main className="mx-auto flex max-w-screen-4xl flex-col gap-12 text-sm">

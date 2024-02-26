@@ -11,8 +11,13 @@ const DeleteAlertDialog = dynamic(
 
 export default function Controls({ slug }: { slug: string }) {
   const { data: spot } = api.studySpot.bySlug.useQuery(slug);
-  const { data: user } = api.user.currentBySession.useQuery(undefined);
-  const { data: author } = api.studySpot.authorBySlug.useQuery(slug);
+  const { data: user } = api.user.currentBySession.useQuery(undefined, {
+    retryOnMount: false,
+    staleTime: 1000 * 60,
+  });
+  const { data: author } = api.studySpot.authorBySlug.useQuery(slug, {
+    staleTime: Infinity,
+  });
 
   const currUserIsAuthor =
     user?.username == null || author?.username == null

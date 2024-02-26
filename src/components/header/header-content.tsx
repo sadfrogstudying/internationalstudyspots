@@ -16,7 +16,8 @@ const NewUserAnnouncementBar = dynamic(
 );
 
 export default function HeaderContent() {
-  const { data, isLoading } = api.user.currentBySession.useQuery(undefined);
+  const { data, isInitialLoading } =
+    api.user.currentBySession.useQuery(undefined);
   const pathname = usePathname();
 
   return (
@@ -45,7 +46,7 @@ export default function HeaderContent() {
           </h1>
         </div>
 
-        {isLoading ? (
+        {isInitialLoading ? (
           <Avatar className="pointer-events-auto h-9 w-9 cursor-wait">
             <AvatarFallback />
           </Avatar>
@@ -54,7 +55,9 @@ export default function HeaderContent() {
         )}
       </header>
 
-      {data && !data.username && !isLoading && <NewUserAnnouncementBar />}
+      {data && !data.username && !isInitialLoading && (
+        <NewUserAnnouncementBar />
+      )}
     </>
   );
 }

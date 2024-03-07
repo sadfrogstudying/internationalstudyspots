@@ -24,12 +24,28 @@ export async function getAllHandler({
   ctx: Context;
   input: GetAllInput;
 }) {
-  const { cursor, ...rest } = input ?? {};
+  const { cursor, countries, filters: filtersInput, ...rest } = input ?? {};
+
+  // Prevent from querying "no countries"
+  const countryFilter =
+    countries?.length === 0
+      ? undefined
+      : countries?.map((c) => ({ country: c }));
+
+  // Prevent from querying "no plugs, no wifi, no nature, etc."
+  const filters =
+    filtersInput && Object.values(filtersInput).every((val) => !val)
+      ? undefined
+      : filtersInput;
 
   const spots = await ctx.db.studySpot.findMany({
     ...rest,
     skip: cursor ? 1 : undefined,
     cursor: cursor ? { id: cursor } : undefined,
+    where: {
+      ...filters,
+      OR: countryFilter,
+    },
     orderBy: {
       createdAt: "desc",
     },

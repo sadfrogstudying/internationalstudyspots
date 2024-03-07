@@ -1,6 +1,9 @@
 "use client";
 
-import { type SpotBooleanSchema } from "@/schemas";
+/**
+ * This filter context utilises "split providers" to prevent excessive re-renders for the spot grid
+ */
+
 import {
   type ReactNode,
   createContext,
@@ -8,84 +11,107 @@ import {
   useMemo,
   useState,
 } from "react";
+import { type SpotBooleanSchema } from "@/schemas";
 
-type Filters = Partial<SpotBooleanSchema>;
+type BooleanFilters = Partial<SpotBooleanSchema>;
+type CountriesFilters = string[];
 
-const defaultFilters: Filters = {
+interface FiltersData extends BooleanFilters {
+  countries: CountriesFilters;
+}
+
+interface FiltersApi {
+  toggleCountryFilter: (country: string) => void;
+  toggleBooleanFilter: (_: keyof BooleanFilters) => void;
+  confirmFilters: () => void;
+  clearFilters: () => void;
+}
+
+const defaultBooleanFilters = {
   powerOutlets: false,
   wifi: false,
   naturalViews: false,
 };
 
-const FilterContextData = createContext<{
-  appliedFilters: Filters | null;
-}>({
-  appliedFilters: {
-    ...defaultFilters,
-  },
-});
+const defaultCountriesFilters = {
+  countries: [],
+};
 
-const FilterContextApi = createContext({
-  toggleFilter: (_: keyof Filters) => {
-    void null;
-  },
-  confirmFilters: () => {
-    void null;
-  },
-  clearFilters: () => {
-    void null;
-  },
-  filters: {
-    ...defaultFilters,
-  },
-});
+const defaultFilters: FiltersData = {
+  ...defaultBooleanFilters,
+  ...defaultCountriesFilters,
+};
+
+const FilterContextData = createContext<FiltersData | null>(null);
+const FilterContextApi = createContext<FiltersApi | null>(null);
 
 export const FilterController = ({ children }: { children: ReactNode }) => {
-  const [filters, setFilters] = useState<Filters>(defaultFilters);
-  const [appliedFilters, setAppliedFilters] = useState<Filters>(filters);
+  const [booleanFilters, setBooleanFilters] = useState<BooleanFilters>(
+    defaultBooleanFilters,
+  );
+  const [countryFilters, setCountryFilters] = useState<CountriesFilters>([]);
+  const [appliedFilters, setAppliedFilters] =
+    useState<FiltersData>(defaultFilters);
 
-  const data = useMemo(() => {
-    /**
-     * Conversion to ensure filter values are either `true` or `undefined`
-     * E.g. not allowing people to search "No Wifi"
-     */
-    const filterEntries: [string, true | undefined][] = Object.entries(
-      appliedFilters,
-    ).map(([key, value]) => [key, !value ? undefined : true]);
+  /** Filter Data */
+  const filterData = useMemo(() => appliedFilters, [appliedFilters]);
 
-    const filterTransformed = Object.fromEntries(filterEntries);
-
-    return { appliedFilters: filterTransformed };
-  }, [appliedFilters]);
-
-  const api = useMemo(() => {
-    const toggleFilter = (filter: keyof Filters) => {
-      setFilters((prev) => ({
-        ...prev,
-        [filter]: !prev[filter],
-      }));
+  /** Filter Api */
+  const filterApi = useMemo(() => {
+    const filterApiInner: FiltersApi = {
+      toggleBooleanFilter: (filter: keyof BooleanFilters) => {
+        setBooleanFilters((prev) => ({
+          ...prev,
+          [filter]: !prev[filter],
+        }));
+      },
+      clearFilters: () => {
+        setBooleanFilters(defaultFilters);
+        setAppliedFilters(defaultFilters);
+      },
+      confirmFilters: () => {
+        setAppliedFilters({
+          ...booleanFilters,
+          countries: [...countryFilters],
+        });
+      },
+      toggleCountryFilter: (countryToToggle: string) => {
+        if (countryFilters.includes(countryToToggle)) {
+          setCountryFilters((c) =>
+            c.filter((country) => country !== countryToToggle),
+          );
+        } else {
+          setCountryFilters((c) => [...c, countryToToggle]);
+        }
+      },
     };
 
-    const clearFilters = () => {
-      setFilters(defaultFilters);
-      setAppliedFilters(defaultFilters);
-    };
-
-    const confirmFilters = () => {
-      setAppliedFilters(filters);
-    };
-
-    return { toggleFilter, confirmFilters, clearFilters, filters };
-  }, [filters]);
+    return filterApiInner;
+  }, [booleanFilters, countryFilters]);
 
   return (
-    <FilterContextData.Provider value={data}>
-      <FilterContextApi.Provider value={api}>
+    <FilterContextData.Provider value={filterData}>
+      <FilterContextApi.Provider value={filterApi}>
         {children}
       </FilterContextApi.Provider>
     </FilterContextData.Provider>
   );
 };
 
-export const useFilterData = () => useContext(FilterContextData);
-export const useFilterApi = () => useContext(FilterContextApi);
+export const useFilterData = () => {
+  const filterDataContext = useContext(FilterContextData);
+
+  if (!filterDataContext)
+    throw new Error("useFilterData has to be used within <FilterController>");
+
+  return filterDataContext;
+};
+
+export const useFilterApi = () => {
+  const filterApiContext = useContext(FilterContextApi);
+
+  if (!filterApiContext)
+    throw new Error("useFilterApi has to be used within <FilterController>");
+
+  return filterApiContext;
+};

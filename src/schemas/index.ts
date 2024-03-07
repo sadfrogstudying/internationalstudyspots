@@ -72,13 +72,13 @@ const createSchema = baseSpotSchema.extend({
 });
 type CreateInput = z.infer<typeof createSchema>;
 
-const getAllSchema = z
-  .object({
-    cursor: z.number().optional(),
-    where: spotBooleanSchema.partial().optional(),
-    take: z.number().optional(),
-  })
-  .optional();
+const getAllSchema = z.object({
+  cursor: z.number().optional(),
+  take: z.number().optional(),
+  filters: spotBooleanSchema.partial().optional(),
+  countries: z.string().array().optional(),
+});
+
 type GetAllInput = z.infer<typeof getAllSchema>;
 
 const bySlugSchema = z.string();

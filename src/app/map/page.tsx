@@ -8,7 +8,7 @@ const Map = nextDynamic(() => import("@/components/map"), {
 });
 
 const getSpots = unstable_cache(
-  async () => await api.studySpot.getAll.query(),
+  async () => await api.studySpot.getAll.query({}),
   undefined,
   // force this function to cache for ISR
   // https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#fetching-data-on-the-server-with-third-party-libraries

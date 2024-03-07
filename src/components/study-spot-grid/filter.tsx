@@ -8,28 +8,26 @@ import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { cn } from "@/lib/utils";
 
-const filtersToRender = [
-  { readable: "Power Outlets", name: "powerOutlets" },
-  { readable: "Wifi", name: "wifi" },
-  { readable: "Natural Views", name: "naturalViews" },
-] as const;
-
 export default function Filter() {
-  const { toggleFilter, confirmFilters, clearFilters, filters } =
-    useFilterApi();
+  const { toggleBooleanFilter, confirmFilters, clearFilters } = useFilterApi();
+
+  const booleanFiltersForRender = [
+    { readable: "Power Outlets", name: "powerOutlets" },
+    { readable: "Wifi", name: "wifi" },
+    { readable: "Natural Views", name: "naturalViews" },
+  ] as const;
 
   return (
     <div className="space-y-4 pt-0">
       <div>
         <h3 className="font-bold">Filter</h3>
         <ul>
-          {filtersToRender.map((filter) => {
+          {booleanFiltersForRender.map((filter) => {
             return (
               <li key={filter.name} className="flex items-center gap-2">
                 <Checkbox
                   id={filter.name.toLowerCase()}
-                  onCheckedChange={() => toggleFilter(filter.name)}
-                  checked={filters[filter.name]}
+                  onCheckedChange={() => toggleBooleanFilter(filter.name)}
                 />
                 <label htmlFor={filter.name.toLowerCase()}>
                   {filter.readable}
@@ -56,6 +54,8 @@ export default function Filter() {
 }
 
 function CountriesFilter() {
+  const { toggleCountryFilter } = useFilterApi();
+
   const {
     data: countries,
     isInitialLoading,
@@ -76,19 +76,12 @@ function CountriesFilter() {
     <>
       <ul>
         {countries?.map((country, i) => (
-          <ListItem
-            key={country}
-            className="flex items-center gap-2 text-neutral-500"
-            i={i}
-          >
-            <Checkbox id={country.toLowerCase()} disabled />
-            <label
-              aria-disabled
-              className="cursor-not-allowed"
-              htmlFor={country.toLowerCase()}
-            >
-              {country}
-            </label>
+          <ListItem key={country} className="flex items-center gap-2" i={i}>
+            <Checkbox
+              id={country.toLowerCase()}
+              onCheckedChange={() => toggleCountryFilter(country)}
+            />
+            <label htmlFor={country.toLowerCase()}>{country}</label>
           </ListItem>
         ))}
       </ul>

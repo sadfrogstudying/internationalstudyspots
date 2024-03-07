@@ -18,13 +18,13 @@ const GridItem = dynamic(() => import("./grid-item"), {
 const PAGE_SIZE = 16;
 
 export default function StudySpotGrid() {
-  const { appliedFilters } = useFilterData();
+  const appliedFilters = useFilterData();
+  const { countries, ...filters } = appliedFilters ?? {};
   const { data, isFetching, fetchNextPage, isInitialLoading } =
     api.studySpot.getAll.useInfiniteQuery(
       {
-        where: {
-          ...appliedFilters,
-        },
+        filters,
+        countries,
         take: PAGE_SIZE,
       },
       {

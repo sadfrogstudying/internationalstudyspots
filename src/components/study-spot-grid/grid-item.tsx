@@ -52,6 +52,9 @@ export default function GridItem({
         key={id}
         href={`/study-spot/${slug}`}
         className="group relative block h-fit rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        prefetch={false}
+        target="_blank"
+        rel="noopener noreferrer"
       >
         {/* Add offset to prevent disgusting "flasing" umount */}
         <UnmountAfter delay={i * 50 + 200}>

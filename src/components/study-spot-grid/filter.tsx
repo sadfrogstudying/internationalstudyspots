@@ -115,27 +115,6 @@ function CountriesFilter() {
       </SelectContent>
     </Select>
   );
-
-  return (
-    <>
-      <ul>
-        {countries?.map((country, i) => (
-          <ListItem key={country} className="flex items-center gap-2" i={i}>
-            <Checkbox
-              id={country.toLowerCase()}
-              onCheckedChange={() => {
-                setFilters((p) => ({
-                  ...p,
-                  country,
-                }));
-              }}
-            />
-            <label htmlFor={country.toLowerCase()}>{country}</label>
-          </ListItem>
-        ))}
-      </ul>
-    </>
-  );
 }
 
 function ListItem({
@@ -168,16 +147,5 @@ function ListItem({
         {children}
       </span>
     </li>
-  );
-}
-
-function SkeletonList() {
-  return (
-    <ul>
-      <SkeletonText />
-      <SkeletonText />
-      <SkeletonText />
-      <SkeletonText />
-    </ul>
   );
 }

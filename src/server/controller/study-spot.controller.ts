@@ -15,7 +15,7 @@ import {
   getImagesMeta,
   getPresignedUrls,
   slugify,
-} from "@/lib/server-helpers";
+} from "@/server/lib/utils";
 
 export async function getAllHandler({
   ctx,

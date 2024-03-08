@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { api } from "@/trpc/react";
 import type { CreateUpdateFormValues } from "@/schemas";
-import { uploadFilesToS3UsingPresignedUrls } from "@/lib/helpers";
+import { uploadFilesToS3UsingPresignedUrls } from "@/lib/utils";
 
 import ServerErrorMessage from "@/components/server-error-message";
 import ServerZodError from "@/components/server-zod-error";

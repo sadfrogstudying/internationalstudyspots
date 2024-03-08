@@ -5,7 +5,7 @@ import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
 
 import type { UpdateUserClient } from "@/schemas/user";
-import { uploadFilesToS3UsingPresignedUrls } from "@/lib/helpers";
+import { uploadFilesToS3UsingPresignedUrls } from "@/lib/utils";
 
 import ServerZodError from "@/components/server-zod-error";
 import ServerErrorMessage from "@/components/server-error-message";

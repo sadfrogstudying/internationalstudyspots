@@ -10,7 +10,7 @@ import {
   deleteImagesFromBucket,
   getImagesMeta,
   getPresignedUrls,
-} from "@/lib/server-helpers";
+} from "@/server/lib/utils";
 
 export async function currentBySessionHandler({
   ctx,

@@ -11,7 +11,7 @@ import {
 } from "react";
 import { type SpotBooleanSchema } from "@/schemas";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { createUrl } from "@/lib/helpers";
+import { createUrl } from "@/lib/utils";
 import { filterKeys } from "@/lib/constants";
 
 /** Used to set default input value */

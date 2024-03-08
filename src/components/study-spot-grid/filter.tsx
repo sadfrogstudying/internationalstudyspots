@@ -1,33 +1,37 @@
 "use client";
 
 import { api } from "@/trpc/react";
-import { SkeletonText } from "../ui/skeleton";
+import { Skeleton, SkeletonText } from "../ui/skeleton";
 import UnmountAfter from "../unmount-after";
-import { useFilterApi } from "./filter-context";
+import { useFilterApi, useFilterData } from "./filter-context";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { cn } from "@/lib/utils";
 
 export default function Filter() {
-  const { toggleBooleanFilter, confirmFilters, clearFilters } = useFilterApi();
-
-  const booleanFiltersForRender = [
-    { readable: "Power Outlets", name: "powerOutlets" },
-    { readable: "Wifi", name: "wifi" },
-    { readable: "Natural Views", name: "naturalViews" },
-  ] as const;
+  const currentFilters = useFilterData();
+  const { setFilters, confirmFilters, clearFilters, filters } = useFilterApi();
 
   return (
     <div className="space-y-4 pt-0">
       <div>
         <h3 className="font-bold">Filter</h3>
         <ul>
-          {booleanFiltersForRender.map((filter) => {
+          {spotBooleanFilters.map((filter) => {
             return (
               <li key={filter.name} className="flex items-center gap-2">
                 <Checkbox
                   id={filter.name.toLowerCase()}
-                  onCheckedChange={() => toggleBooleanFilter(filter.name)}
+                  checked={filters[filter.name] ?? false}
+                  onCheckedChange={() => {
+                    setFilters((p) => ({
+                      ...p,
+                      [filter.name]: !p[filter.name],
+                    }));
+                  }}
+                  defaultChecked={
+                    currentFilters ? currentFilters[filter.name] : false
+                  }
                 />
                 <label htmlFor={filter.name.toLowerCase()}>
                   {filter.readable}
@@ -53,8 +57,20 @@ export default function Filter() {
   );
 }
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { spotBooleanFilters } from "@/lib/constants";
+
 function CountriesFilter() {
-  const { toggleCountryFilter } = useFilterApi();
+  const { country } = useFilterData();
+  const { setFilters, filters } = useFilterApi();
 
   const {
     data: countries,
@@ -64,7 +80,7 @@ function CountriesFilter() {
     refetchOnMount: false,
   });
 
-  if (isInitialLoading) return <SkeletonList />;
+  if (isInitialLoading) return <Skeleton className="h-9 w-full" />;
 
   if (isError)
     return <div className="text-destructive">Error getting countries...</div>;
@@ -73,13 +89,46 @@ function CountriesFilter() {
     return <div className="text-neutral-500">No countries found</div>;
 
   return (
+    <Select
+      defaultValue={country}
+      value={filters.country ?? ""}
+      onValueChange={(newValue) => {
+        setFilters((p) => ({
+          ...p,
+          country: newValue,
+        }));
+      }}
+    >
+      <SelectTrigger>
+        <SelectValue placeholder="Select a country" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Countries</SelectLabel>
+          <SelectItem value={"all"}>All</SelectItem>
+          {countries?.map((country) => (
+            <SelectItem value={country} key={country}>
+              {country}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+
+  return (
     <>
       <ul>
         {countries?.map((country, i) => (
           <ListItem key={country} className="flex items-center gap-2" i={i}>
             <Checkbox
               id={country.toLowerCase()}
-              onCheckedChange={() => toggleCountryFilter(country)}
+              onCheckedChange={() => {
+                setFilters((p) => ({
+                  ...p,
+                  country,
+                }));
+              }}
             />
             <label htmlFor={country.toLowerCase()}>{country}</label>
           </ListItem>

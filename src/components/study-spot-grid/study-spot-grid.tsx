@@ -19,12 +19,12 @@ const PAGE_SIZE = 16;
 
 export default function StudySpotGrid() {
   const appliedFilters = useFilterData();
-  const { countries, ...filters } = appliedFilters ?? {};
+  const { country, ...filters } = appliedFilters ?? {};
   const { data, isFetching, fetchNextPage, isInitialLoading } =
     api.studySpot.getAll.useInfiniteQuery(
       {
         filters,
-        countries,
+        country,
         take: PAGE_SIZE,
       },
       {

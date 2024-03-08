@@ -1,93 +1,113 @@
 "use client";
 
-/**
- * This filter context utilises "split providers" to prevent excessive re-renders for the spot grid
- */
-
 import {
   type ReactNode,
+  type SetStateAction,
+  type Dispatch,
   createContext,
   useContext,
   useMemo,
   useState,
 } from "react";
 import { type SpotBooleanSchema } from "@/schemas";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { createUrl } from "@/lib/helpers";
+import { filterKeys } from "@/lib/constants";
 
-type BooleanFilters = Partial<SpotBooleanSchema>;
-type CountriesFilters = string[];
-
-interface FiltersData extends BooleanFilters {
-  countries: CountriesFilters;
+/** Used to set default input value */
+interface FilterData extends Partial<SpotBooleanSchema> {
+  country?: string;
 }
 
-interface FiltersApi {
-  toggleCountryFilter: (country: string) => void;
-  toggleBooleanFilter: (_: keyof BooleanFilters) => void;
+interface FilterApi {
+  setFilters: Dispatch<SetStateAction<FilterData>>;
   confirmFilters: () => void;
   clearFilters: () => void;
+  /** Used to make the inputs controlled */
+  filters: FilterData;
 }
 
-const defaultBooleanFilters = {
-  powerOutlets: false,
-  wifi: false,
-  naturalViews: false,
-};
-
-const defaultCountriesFilters = {
-  countries: [],
-};
-
-const defaultFilters: FiltersData = {
-  ...defaultBooleanFilters,
-  ...defaultCountriesFilters,
-};
-
-const FilterContextData = createContext<FiltersData | null>(null);
-const FilterContextApi = createContext<FiltersApi | null>(null);
+const FilterContextData = createContext<FilterData | null>(null);
+const FilterContextApi = createContext<FilterApi | null>(null);
 
 export const FilterController = ({ children }: { children: ReactNode }) => {
-  const [booleanFilters, setBooleanFilters] = useState<BooleanFilters>(
-    defaultBooleanFilters,
-  );
-  const [countryFilters, setCountryFilters] = useState<CountriesFilters>([]);
-  const [appliedFilters, setAppliedFilters] =
-    useState<FiltersData>(defaultFilters);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  /** Filter Data */
-  const filterData = useMemo(() => appliedFilters, [appliedFilters]);
+  // Gets search params, transforms it to an object with the correct type
+  const filterData = useMemo((): FilterData => {
+    const entriesIterable = searchParams.entries();
 
-  /** Filter Api */
-  const filterApi = useMemo(() => {
-    const filterApiInner: FiltersApi = {
-      toggleBooleanFilter: (filter: keyof BooleanFilters) => {
-        setBooleanFilters((prev) => ({
-          ...prev,
-          [filter]: !prev[filter],
-        }));
-      },
+    function transform(value: string) {
+      if (value === "true") return true;
+      if (value === "false") return null;
+      if (typeof value === "string" && !!value.trim()) return value;
+      return null;
+    }
+
+    function isKeyOfFilterData(key: string): key is keyof FilterData {
+      return filterKeys.includes(key);
+    }
+
+    const obj: Record<string, string | boolean> = {};
+
+    for (const [key, v] of entriesIterable) {
+      // Ensure key is key of filter data
+      if (!isKeyOfFilterData(key)) continue;
+
+      // Transform param to usable type
+      const value = transform(v);
+
+      if (value === null) continue;
+
+      obj[key] = value;
+    }
+
+    return obj;
+  }, [searchParams]);
+
+  // Set default state to param state
+  const [filters, setFilters] = useState<FilterData>(filterData);
+
+  const filterApi = useMemo(
+    (): FilterApi => ({
+      setFilters,
+      filters,
       clearFilters: () => {
-        setBooleanFilters(defaultFilters);
-        setAppliedFilters(defaultFilters);
+        router.replace(pathname, {
+          scroll: false,
+        });
+
+        // Set form state to param state
+        setFilters({});
       },
       confirmFilters: () => {
-        setAppliedFilters({
-          ...booleanFilters,
-          countries: [...countryFilters],
+        // Base option params on current params so we can preserve any other param state in the url.
+        const filterSearchParams = new URLSearchParams();
+
+        // Update the url params from state
+        let key: keyof FilterData;
+        for (key in filters) {
+          let value = filters[key];
+
+          // If the value is falsy, don't add it to the url params
+          if (!value) continue;
+          if (key === "country" && value === "all") continue;
+          if (typeof value === "boolean") value = "true";
+
+          filterSearchParams.set(key, value);
+        }
+
+        // Update route
+        const filterUrl = createUrl(pathname, filterSearchParams);
+        router.replace(filterUrl, {
+          scroll: false,
         });
       },
-      toggleCountryFilter: (countryToToggle: string) => {
-        if (countryFilters.includes(countryToToggle)) {
-          setCountryFilters((c) =>
-            c.filter((country) => country !== countryToToggle),
-          );
-        } else {
-          setCountryFilters((c) => [...c, countryToToggle]);
-        }
-      },
-    };
-
-    return filterApiInner;
-  }, [booleanFilters, countryFilters]);
+    }),
+    [filters, pathname, router],
+  );
 
   return (
     <FilterContextData.Provider value={filterData}>

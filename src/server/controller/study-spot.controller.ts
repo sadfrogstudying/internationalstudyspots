@@ -24,13 +24,7 @@ export async function getAllHandler({
   ctx: Context;
   input: GetAllInput;
 }) {
-  const { cursor, countries, filters: filtersInput, ...rest } = input ?? {};
-
-  // Prevent from querying "no countries"
-  const countryFilter =
-    countries?.length === 0
-      ? undefined
-      : countries?.map((c) => ({ country: c }));
+  const { cursor, country, filters: filtersInput, ...rest } = input ?? {};
 
   // Prevent from querying "no plugs, no wifi, no nature, etc."
   const filters =
@@ -44,7 +38,7 @@ export async function getAllHandler({
     cursor: cursor ? { id: cursor } : undefined,
     where: {
       ...filters,
-      OR: countryFilter,
+      country,
     },
     orderBy: {
       createdAt: "desc",

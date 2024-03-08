@@ -76,7 +76,7 @@ const getAllSchema = z.object({
   cursor: z.number().optional(),
   take: z.number().optional(),
   filters: spotBooleanSchema.partial().optional(),
-  countries: z.string().array().optional(),
+  country: z.string().optional(),
 });
 
 type GetAllInput = z.infer<typeof getAllSchema>;

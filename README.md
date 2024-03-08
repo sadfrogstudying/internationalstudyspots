@@ -136,6 +136,10 @@ export default function Navigation({ user }: { user: User | undefined }) {
 }
 ```
 
+## Loops
+
+Careful of returning in different loops. In `for..of`, return will stop the loop entirely, use `continue` if you just want to go to next cycle.
+
 ## Useful Links
 
 - [Docs: Route Segment Config](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#options)

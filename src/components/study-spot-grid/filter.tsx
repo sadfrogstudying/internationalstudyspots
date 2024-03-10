@@ -1,12 +1,10 @@
 "use client";
 
 import { api } from "@/trpc/react";
-import { Skeleton, SkeletonText } from "../ui/skeleton";
-import UnmountAfter from "../unmount-after";
+import { Skeleton } from "../ui/skeleton";
 import { useFilterApi, useFilterData } from "./filter-context";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
-import { cn } from "@/lib/utils";
 
 export default function Filter() {
   const currentFilters = useFilterData();
@@ -114,38 +112,5 @@ function CountriesFilter() {
         </SelectGroup>
       </SelectContent>
     </Select>
-  );
-}
-
-function ListItem({
-  i,
-  children,
-  className,
-}: {
-  i: number;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <li className="relative">
-      <UnmountAfter delay={i * 50 + 200}>
-        <SkeletonText
-          className="duration-250 absolute -z-10 w-full animate-fade-out opacity-0"
-          style={{
-            animationDelay: `${i * 50}ms`,
-            animationFillMode: "backwards",
-          }}
-        />
-      </UnmountAfter>
-      <span
-        className={cn(`animate-fade-in duration-500`, className)}
-        style={{
-          animationDelay: `${i * 50}ms`,
-          animationFillMode: "backwards",
-        }}
-      >
-        {children}
-      </span>
-    </li>
   );
 }

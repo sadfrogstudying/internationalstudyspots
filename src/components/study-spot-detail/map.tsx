@@ -15,7 +15,7 @@ export default function StudySpotDetailMap({ slug }: { slug: string }) {
 
   return (
     <Link
-      href={`/map?lat=${spot.latitude}&lng=${spot.longitude}&id=${spot.id}`}
+      href={`/map?lat=${spot.latitude}&lng=${spot.longitude}&id=${spot.id}&zoom=${18}`}
       className="block h-full w-full cursor-pointer"
     >
       <div className="h-96 w-full overflow-hidden">

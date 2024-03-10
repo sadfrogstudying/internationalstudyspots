@@ -6,10 +6,7 @@ import { TRPCReactProvider } from "@/trpc/react";
 import Header from "@/components/header";
 import { FilterController } from "@/components/study-spot-grid/filter-context";
 
-import {
-  Abel,
-  // Inter
-} from "next/font/google";
+import { Inter } from "next/font/google";
 import Footer from "@/components/footer";
 
 export const metadata = {
@@ -19,13 +16,9 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-const abel = Abel({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400"],
 });
-// const inter = Inter({
-//   subsets: ["latin"],
-// });
 
 export default function RootLayout({
   children,
@@ -35,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body
-        className={`flex min-h-full flex-col justify-between antialiased ${abel.className}`}
+        className={`flex min-h-full flex-col justify-between antialiased ${inter.className}`}
       >
         <TRPCReactProvider cookies={cookies().toString()}>
           <FilterController>

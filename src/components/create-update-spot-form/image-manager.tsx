@@ -42,7 +42,13 @@ export default function ImageManager({
           required: true,
         }}
         transformValue={(files) =>
-          files.map((file) => ({ file, featured: false }))
+          files.map((file, i) => {
+            return {
+              file,
+              featured:
+                i + 1 + featuredCount > MAX_FEATURED_IMAGES ? false : true,
+            };
+          })
         }
         maxFiles={8}
       >

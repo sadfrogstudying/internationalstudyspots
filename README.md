@@ -140,6 +140,10 @@ export default function Navigation({ user }: { user: User | undefined }) {
 
 Careful of returning in different loops. In `for..of`, return will stop the loop entirely, use `continue` if you just want to go to next cycle.
 
+## Brittle tests caused by React Dropzone
+
+The combination of react hook form, react dropzone and image browser compression, with value transformations makes for extremely brittle tests. Changing to dropzone component from react aria by Adobe as it's better maintained.
+
 ## Useful Links
 
 - [Docs: Route Segment Config](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#options)

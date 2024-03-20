@@ -60,7 +60,7 @@ function ExistingImageInputImplementationComponent({
         items={list.items}
         dragAndDropHooks={dragAndDropHooks}
         disabledBehavior="all"
-        className="border border-black"
+        className="border border-neutral-400"
       >
         {list.items.map((item, i) => (
           <ImageInputRow

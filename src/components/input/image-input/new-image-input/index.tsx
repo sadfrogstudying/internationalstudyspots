@@ -58,7 +58,6 @@ export default function NewImageInput<
                 featuredCount={featuredCount}
                 onChange={field.onChange}
                 maxFiles={maxFiles}
-                name={field.name}
               />
             </FormControl>
             <FormMessage />

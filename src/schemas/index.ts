@@ -162,7 +162,6 @@ const imagePayloadSchema = z
     },
     {
       message: `You can't have more than ${MAX_FEATURED_IMAGES} featured images.`,
-      path: ["newImages"],
     },
   )
   .refine(
@@ -186,7 +185,6 @@ const imagePayloadSchema = z
     },
     {
       message: "The spot needs at least one image.",
-      path: ["newImages"],
     },
   )
   .refine(
@@ -198,8 +196,7 @@ const imagePayloadSchema = z
       return featuredCount > 0;
     },
     {
-      message: "The spot needs at least one featured image.",
-      path: ["newImages"],
+      message: "The spot needs at least one FEATURED image.",
     },
   );
 

@@ -9,10 +9,12 @@ import { Accordion } from "@/components/ui/accordion";
 import InputsRequired from "@/components/create-update-spot-form/inputs-required";
 import InputsLocation from "@/components/create-update-spot-form/inputs-location";
 import InputsGeneral from "@/components/create-update-spot-form/inputs-general";
-import ImageManager from "@/components/create-update-spot-form/image-manager";
 import { AccordionItem } from "@/components/form/accordion-item";
 import InputGrid from "@/components/form/input-grid";
 import type { RouterOutputs } from "@/trpc/shared";
+
+import NewImageInput from "../input/image-input/new-image-input";
+import ExistingImageInput from "../input/image-input/existing-image-input";
 
 export default function CreateUpdateSpotForm({
   onSubmit,
@@ -85,9 +87,9 @@ export default function CreateUpdateSpotForm({
   function handleSubmit(formValues: CreateUpdateFormValues) {
     onSubmit(formValues);
   }
-
   const images = form.watch("images");
   const featuredCount = getTotalFeaturedCount(images);
+  const existingImages = form.watch("images.existingImages");
 
   return (
     <Form {...form}>
@@ -104,7 +106,37 @@ export default function CreateUpdateSpotForm({
           <h2 className="py-4 text-lg font-bold">Images 🌅</h2>
           <div className="rounded border border-l-4 border-neutral-400">
             <div className="flex flex-col gap-4 p-4">
-              <ImageManager form={form} featuredCount={featuredCount} />
+              <NewImageInput
+                name="images.newImages"
+                featuredCount={featuredCount}
+                control={form.control}
+                input={{
+                  label: "New Images",
+                  required: true,
+                }}
+                maxFiles={8}
+              />
+
+              {existingImages.length > 0 && (
+                <ExistingImageInput
+                  name="images.existingImages"
+                  control={form.control}
+                  input={{
+                    label: "Existing Images",
+                    required: false,
+                  }}
+                  featuredCount={featuredCount}
+                />
+              )}
+              {/* Not really accessible since there's no ID, but will use this for now, to handle general images errors */}
+              {form.formState.errors.images?.root?.message && (
+                <p
+                  className="text-[0.8rem] font-medium text-destructive"
+                  role="alert"
+                >
+                  {form.formState.errors.images?.root?.message}
+                </p>
+              )}
             </div>
           </div>
 

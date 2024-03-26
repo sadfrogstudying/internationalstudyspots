@@ -75,7 +75,7 @@ export default async function StudySpotPage({ params }: Props) {
   return (
     <ReactQueryHydrate state={dehydratedState}>
       <RedirectWrapper slug={params.slug}>
-        <div className="space-y-12 p-4">
+        <div className="space-y-12">
           <Hero slug={params.slug} />
 
           <div>

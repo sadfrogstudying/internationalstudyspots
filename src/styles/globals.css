@@ -107,3 +107,7 @@
   background-color: transparent !important;
   box-shadow: none !important;
 }
+
+#nprogress .peg {
+  box-shadow: initial !important;
+}

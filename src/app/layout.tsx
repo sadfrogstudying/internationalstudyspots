@@ -9,6 +9,8 @@ import { FilterController } from "@/components/study-spot-grid/filter-context";
 import { Inter } from "next/font/google";
 import Footer from "@/components/footer";
 
+import Providers from "@/components/progress-bar-provider";
+
 export const metadata = {
   title: "International Study Spots",
   description:
@@ -34,8 +36,7 @@ export default function RootLayout({
           <FilterController>
             <div>
               <Header />
-
-              {children}
+              <Providers>{children}</Providers>
             </div>
 
             <Footer />

@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { api } from "@/trpc/react";
 import dynamic from "next/dynamic";
@@ -10,6 +8,8 @@ import SkeletonGridItem from "./grid-item-skeleton";
 
 import { useFilterData } from "@/components/study-spot-grid/filter-context";
 import { useWindowSize } from "@/hooks/use-window-size";
+import { db } from "@/server/db";
+import { unstable_cache } from "next/cache";
 
 const GridItem = dynamic(() => import("./grid-item"), {
   loading: () => <SkeletonGridItem />,
@@ -17,47 +17,68 @@ const GridItem = dynamic(() => import("./grid-item"), {
 
 const PAGE_SIZE = 16;
 
-export default function StudySpotGrid() {
-  const appliedFilters = useFilterData();
-  const { country, ...filters } = appliedFilters ?? {};
-  const { data, isFetching, fetchNextPage, isInitialLoading } =
-    api.studySpot.getAll.useInfiniteQuery(
-      {
-        filters,
-        country,
-        take: PAGE_SIZE,
-      },
-      {
-        getNextPageParam: (lastQuery) => lastQuery[lastQuery.length - 1]?.id,
-      },
-    );
-
-  const noNextPage = data?.pages.some((page) => page.length < PAGE_SIZE);
-
-  const debouncedRequest = useDebounce(() => {
-    void fetchNextPage();
-  }, 250);
-
-  const { width } = useWindowSize();
-
-  const getRootMargin = () => {
-    if (width < 768) return 4500;
-    return 1400;
-  };
-
-  const { ref } = useInView({
-    rootMargin: `${getRootMargin()}px`,
-    onChange: (inView) => {
-      if (inView) debouncedRequest();
+async function getAllSpots() {
+  const spots = await db.studySpot.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      images: true,
     },
   });
 
-  const noResults = data?.pages.length === 1 && data?.pages[0]?.length === 0;
+  return spots;
+}
+
+const getAllCachedSpots = unstable_cache(async () => getAllSpots(), undefined, {
+  revalidate: false,
+});
+
+export default async function StudySpotGrid() {
+  const spots = await getAllCachedSpots();
+  // const appliedFilters = useFilterData();
+  // const { country, ...filters } = appliedFilters ?? {};
+  // const { data, isFetching, fetchNextPage, isInitialLoading } =
+  //   api.studySpot.getAll.useInfiniteQuery(
+  //     {
+  //       filters,
+  //       country,
+  //       take: PAGE_SIZE,
+  //     },
+  //     {
+  //       getNextPageParam: (lastQuery) => lastQuery[lastQuery.length - 1]?.id,
+  //     },
+  //   );
+
+  // const noNextPage = data?.pages.some((page) => page.length < PAGE_SIZE);
+
+  // const debouncedRequest = useDebounce(() => {
+  //   void fetchNextPage();
+  // }, 250);
+
+  // const { width } = useWindowSize();
+
+  // const getRootMargin = () => {
+  //   if (width < 768) return 4500;
+  //   return 1400;
+  // };
+
+  // const { ref } = useInView({
+  //   rootMargin: `${getRootMargin()}px`,
+  //   onChange: (inView) => {
+  //     if (inView) debouncedRequest();
+  //   },
+  // });
+
+  // const noResults = data?.pages.length === 1 && data?.pages[0]?.length === 0;
 
   return (
     <div className="relative grid w-full animate-fade-in gap-4 gap-y-8 duration-1000 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6">
-      {isInitialLoading && <SkeletonGridItems />}
-      {data?.pages.map((page, i) => (
+      {spots.map((spot, i) => (
+        <GridItem studySpot={spot} i={i} key={`study-spot-${spot.id}`} />
+      ))}
+      {/* {isInitialLoading && <SkeletonGridItems />} */}
+      {/* {data?.pages.map((page, i) => (
         <React.Fragment key={`page-${i}`}>
           {page.map((studySpot, i) => {
             return (
@@ -69,8 +90,8 @@ export default function StudySpotGrid() {
             );
           })}
         </React.Fragment>
-      ))}
-
+      ))} */}
+      {/* 
       {noResults && (
         <div className="col-span-full">
           <h2 className="text-center text-2xl font-bold">
@@ -83,12 +104,13 @@ export default function StudySpotGrid() {
       {!isFetching && !noNextPage && <SkeletonGridItems />}
 
       <div ref={ref} />
+      */}
     </div>
   );
 }
 
-function SkeletonGridItems() {
-  return Array.from(Array(PAGE_SIZE / 2).keys()).map((x) => (
-    <SkeletonGridItem key={`skele-${x}`} />
-  ));
-}
+// function SkeletonGridItems() {
+//   return Array.from(Array(PAGE_SIZE / 2).keys()).map((x) => (
+//     <SkeletonGridItem key={`skele-${x}`} />
+//   ));
+// }

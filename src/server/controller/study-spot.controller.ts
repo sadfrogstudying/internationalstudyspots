@@ -220,6 +220,8 @@ export async function createHandler({
         },
       },
     });
+
+    revalidatePath("/");
   } catch (error: unknown) {
     await deleteImagesFromBucket(
       input.images.map(({ url }) => getBucketObjectNameFromUrl(url)),
@@ -276,6 +278,8 @@ export async function deleteHandler({
     spot.images.map((image) => image.name),
     ctx.s3,
   );
+
+  revalidatePath("/");
 
   return true;
 }
@@ -392,9 +396,27 @@ export async function updateHandler({
     },
   });
 
+  const fieldsThatShouldRevalidateHome: (keyof UpdateInput)[] = [
+    "name",
+    "venueType",
+    "state",
+    "country",
+    "wifi",
+    "powerOutlets",
+    "naturalViews",
+  ];
+
+  const shouldRevalidateHome = fieldsThatShouldRevalidateHome.find((field) =>
+    Object.hasOwn(input, field),
+  );
+
+  if (shouldRevalidateHome) {
+    console.log("🏡 Revalidating home...");
+    revalidatePath("/");
+  }
+
   // TODO: If we're changing the name, we should ensure the previous page is gone
   // revalidatePath("/", "layout");
-  console.log(updatedSpot.id);
   revalidatePath(`/study-spot/${updatedSpot.id}`);
 
   return updatedSpot;

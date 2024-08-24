@@ -80,7 +80,7 @@ async function getSpot(id: number) {
 const getCachedSpot = unstable_cache(
   async (id: number) => getSpot(id),
   undefined,
-  {},
+  { revalidate: false },
 );
 
 export default async function StudySpotPage({ params }: Params) {

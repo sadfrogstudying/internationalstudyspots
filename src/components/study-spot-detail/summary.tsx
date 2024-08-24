@@ -38,7 +38,7 @@ export default function Summary({ spot }: { spot: StudySpotWithImage }) {
             )}
           />
         </UnmountAfter>
-        <h2 className="truncate bg-red-500">{spot.name}</h2>
+        <h2 className="truncate">{spot.name}</h2>
       </li>
       <li className="relative truncate">
         <UnmountAfter delay={timingOffset}>

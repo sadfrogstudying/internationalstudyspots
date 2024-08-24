@@ -11,14 +11,14 @@ import ServerErrorMessage from "@/components/server-error-message";
 import ServerZodError from "@/components/server-zod-error";
 import CreateUpdateSpotForm from "@/components/create-update-spot-form";
 
-export default function EditSpotFormController({ slug }: { slug: string }) {
+export default function EditSpotFormController({ id }: { id: number }) {
   // To capture the form data from the form component
   const [formData, setFormData] = useState<CreateUpdateFormValues>();
 
   const apiUtils = api.useUtils();
   const router = useRouter();
 
-  const { data, isLoading } = api.studySpot.bySlug.useQuery(slug);
+  const { data, isLoading } = api.studySpot.byId.useQuery(id);
 
   const {
     mutate: update,
@@ -27,8 +27,9 @@ export default function EditSpotFormController({ slug }: { slug: string }) {
     isSuccess: updateSuccess,
   } = api.studySpot.update.useMutation({
     onSuccess: (res) => {
-      void apiUtils.studySpot.bySlug.invalidate(res.slug);
-      router.push(`/study-spot/${res.slug}`);
+      void apiUtils.studySpot.byId.invalidate(res.id);
+      router.push(`/study-spot/${res.id}`);
+      router.refresh();
     },
   });
 

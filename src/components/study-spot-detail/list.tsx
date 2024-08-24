@@ -33,8 +33,8 @@ import { Skeleton, SkeletonText } from "../ui/skeleton";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 
-export default function List({ slug }: { slug: string }) {
-  const { data: spot } = api.studySpot.bySlug.useQuery(slug);
+export default function List({ id }: { id: number }) {
+  const { data: spot } = api.studySpot.byId.useQuery(id);
 
   const ignoredKeys = [
     "id",

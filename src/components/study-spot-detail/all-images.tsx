@@ -4,8 +4,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ImageThatFadesIn } from "@/components/image-that-fades-in";
 import { api } from "@/trpc/react";
 
-export default function AllImages({ slug }: { slug: string }) {
-  const { data: spot } = api.studySpot.bySlug.useQuery(slug);
+export default function AllImages({ id }: { id: number }) {
+  const { data: spot } = api.studySpot.byId.useQuery(id);
 
   return (
     <div className="grid h-fit grid-cols-3 gap-2 md:grid-cols-5">

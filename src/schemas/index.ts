@@ -84,6 +84,9 @@ type GetAllInput = z.infer<typeof getAllSchema>;
 const bySlugSchema = z.string();
 type BySlugInput = z.infer<typeof bySlugSchema>;
 
+const byIdSchema = z.number();
+type ByIdInput = z.infer<typeof byIdSchema>;
+
 const getPresignedUrlsSchema = baseSpotSchema.extend({
   images: z
     .object({
@@ -226,6 +229,8 @@ export {
   type GetAllInput,
   bySlugSchema,
   type BySlugInput,
+  byIdSchema,
+  type ByIdInput,
   createSchema,
   type CreateInput,
   getPresignedUrlsSchema,

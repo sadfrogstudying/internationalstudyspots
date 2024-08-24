@@ -1,5 +1,6 @@
 import type { Context, ContextProtected } from "@/server/api/context";
 import type {
+  ByIdInput,
   BySlugInput,
   CreateInput,
   DeleteInput,
@@ -16,6 +17,7 @@ import {
   getPresignedUrls,
   slugify,
 } from "@/server/lib/utils";
+import { revalidatePath } from "next/cache";
 
 export async function getAllHandler({
   ctx,
@@ -51,6 +53,16 @@ export async function getAllHandler({
   return spots;
 }
 
+export async function getAllSlugsHandler({ ctx }: { ctx: Context }) {
+  const spots = await ctx.db.studySpot.findMany({
+    select: {
+      slug: true,
+    },
+  });
+
+  return spots;
+}
+
 export async function bySlugHandler({
   ctx,
   input,
@@ -70,16 +82,35 @@ export async function bySlugHandler({
   return spot;
 }
 
-export async function authorBySlugHandler({
+export async function byIdHandler({
   ctx,
   input,
 }: {
   ctx: Context;
-  input: BySlugInput;
+  input: ByIdInput;
 }) {
   const spot = await ctx.db.studySpot.findUnique({
     where: {
-      slug: input,
+      id: input,
+    },
+    include: {
+      images: true,
+    },
+  });
+
+  return spot;
+}
+
+export async function authorByIdHandler({
+  ctx,
+  input,
+}: {
+  ctx: Context;
+  input: ByIdInput;
+}) {
+  const spot = await ctx.db.studySpot.findUnique({
+    where: {
+      id: input,
     },
     select: {
       author: {
@@ -346,7 +377,7 @@ export async function updateHandler({
     }
   }
 
-  return await ctx.db.studySpot.update({
+  const updatedSpot = await ctx.db.studySpot.update({
     where: { id: input.id },
     data: {
       ...input,
@@ -360,4 +391,11 @@ export async function updateHandler({
       },
     },
   });
+
+  // TODO: If we're changing the name, we should ensure the previous page is gone
+  // revalidatePath("/", "layout");
+  console.log(updatedSpot.id);
+  revalidatePath(`/study-spot/${updatedSpot.id}`);
+
+  return updatedSpot;
 }

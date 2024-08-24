@@ -8,8 +8,8 @@ const Map = dynamic(() => import("@/components/map"), {
   ssr: false,
 });
 
-export default function StudySpotDetailMap({ slug }: { slug: string }) {
-  const { data: spot } = api.studySpot.bySlug.useQuery(slug);
+export default function StudySpotDetailMap({ id }: { id: number }) {
+  const { data: spot } = api.studySpot.byId.useQuery(id);
 
   if (!spot) return null;
 

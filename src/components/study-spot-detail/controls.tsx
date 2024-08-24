@@ -9,13 +9,13 @@ const DeleteAlertDialog = dynamic(
   () => import("../study-spot-grid/delete-alert-dialog"),
 );
 
-export default function Controls({ slug }: { slug: string }) {
-  const { data: spot } = api.studySpot.bySlug.useQuery(slug);
+export default function Controls({ id }: { id: number }) {
+  const { data: spot } = api.studySpot.byId.useQuery(id);
   const { data: user } = api.user.currentBySession.useQuery(undefined, {
     retryOnMount: false,
     staleTime: 1000 * 60,
   });
-  const { data: author } = api.studySpot.authorBySlug.useQuery(slug, {
+  const { data: author } = api.studySpot.authorById.useQuery(id, {
     staleTime: Infinity,
   });
 
@@ -27,7 +27,7 @@ export default function Controls({ slug }: { slug: string }) {
   return (
     <>
       <Button asChild>
-        <Link href={`/study-spot/${slug}/edit`}>Edit Spot</Link>
+        <Link href={`/study-spot/${id}/edit`}>Edit Spot</Link>
       </Button>
       {!!currUserIsAuthor && spot?.id && <DeleteAlertDialog id={spot.id} />}
     </>

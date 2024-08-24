@@ -50,7 +50,7 @@ export default function GridItem({
     <div className="relative">
       <Link
         key={id}
-        href={`/study-spot/${slug}`}
+        href={`/study-spot/${id}`}
         className="group relative block h-fit rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         prefetch={false}
       >

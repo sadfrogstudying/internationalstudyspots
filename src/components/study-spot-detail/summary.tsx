@@ -5,16 +5,14 @@ import { Wifi, WifiOff, Zap, ZapOff } from "lucide-react";
 import UnmountAfter from "../unmount-after";
 import { Skeleton, SkeletonText } from "../ui/skeleton";
 import { cn, isEmptyString } from "@/lib/utils";
-import { api } from "@/trpc/react";
+import type { StudySpotWithImage } from "@/types/payloads";
 
-export default function Summary({ slug }: { slug: string }) {
-  const { data: studySpot } = api.studySpot.bySlug.useQuery(slug);
-
+export default function Summary({ spot }: { spot: StudySpotWithImage }) {
   const durationTiming = 500;
   const animationDuration = `duration-${durationTiming}`;
   const timingOffset = 200;
 
-  if (!studySpot) return null;
+  if (!spot) return null;
 
   return (
     <ul>
@@ -27,7 +25,7 @@ export default function Summary({ slug }: { slug: string }) {
             )}
           />
         </UnmountAfter>
-        {[studySpot.state, studySpot.country]
+        {[spot.state, spot.country]
           .filter((str) => !isEmptyString(str))
           .join(", ") || "No Location"}
       </li>
@@ -40,7 +38,7 @@ export default function Summary({ slug }: { slug: string }) {
             )}
           />
         </UnmountAfter>
-        <h2 className="truncate">{studySpot.name}</h2>
+        <h2 className="truncate bg-red-500">{spot.name}</h2>
       </li>
       <li className="relative truncate">
         <UnmountAfter delay={timingOffset}>
@@ -51,7 +49,7 @@ export default function Summary({ slug }: { slug: string }) {
             )}
           />
         </UnmountAfter>
-        {studySpot.venueType}
+        {spot.venueType}
       </li>
       <li>
         <ul className="flex gap-2">
@@ -65,7 +63,7 @@ export default function Summary({ slug }: { slug: string }) {
               />
             </UnmountAfter>
 
-            {studySpot.wifi ? <Wifi /> : <WifiOff />}
+            {spot.wifi ? <Wifi /> : <WifiOff />}
           </li>
           <li className="relative">
             <UnmountAfter delay={timingOffset}>
@@ -77,7 +75,7 @@ export default function Summary({ slug }: { slug: string }) {
               />
             </UnmountAfter>
 
-            {studySpot.powerOutlets ? <Zap /> : <ZapOff />}
+            {spot.powerOutlets ? <Zap /> : <ZapOff />}
           </li>
         </ul>
       </li>

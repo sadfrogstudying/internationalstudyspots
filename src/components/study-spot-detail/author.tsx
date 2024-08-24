@@ -10,10 +10,10 @@ import { SkeletonText } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { api } from "@/trpc/react";
 
-type Author = RouterOutputs["studySpot"]["authorBySlug"];
+type Author = RouterOutputs["studySpot"]["authorById"];
 
-export default function Author({ slug }: { slug: string }) {
-  const { data: author } = api.studySpot.authorBySlug.useQuery(slug);
+export default function Author({ id }: { id: number }) {
+  const { data: author } = api.studySpot.authorById.useQuery(id);
 
   const durationTiming = 500;
   const animationDuration = `duration-${durationTiming}`;

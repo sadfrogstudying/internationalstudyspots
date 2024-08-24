@@ -5,6 +5,7 @@ import {
 } from "@/server/api/trpc";
 
 import {
+  byIdSchema,
   bySlugSchema,
   createSchema,
   deleteSchema,
@@ -14,11 +15,13 @@ import {
 } from "@/schemas";
 
 import {
-  authorBySlugHandler,
+  authorByIdHandler,
+  byIdHandler,
   bySlugHandler,
   createHandler,
   deleteHandler,
   getAllHandler,
+  getAllSlugsHandler,
   getCountriesHandler,
   getPresignedUrlHandler,
   updateHandler,
@@ -26,8 +29,10 @@ import {
 
 export const studySpotRouter = createTRPCRouter({
   getAll: publicProcedure.input(getAllSchema).query(getAllHandler),
+  getAllSlugs: publicProcedure.input(getAllSchema).query(getAllSlugsHandler),
   bySlug: publicProcedure.input(bySlugSchema).query(bySlugHandler),
-  authorBySlug: publicProcedure.input(bySlugSchema).query(authorBySlugHandler),
+  byId: publicProcedure.input(byIdSchema).query(byIdHandler),
+  authorById: publicProcedure.input(byIdSchema).query(authorByIdHandler),
   getCountries: publicProcedure.query(getCountriesHandler),
   getPresignedUrls: protectedProcedure
     .input(getPresignedUrlsSchema)

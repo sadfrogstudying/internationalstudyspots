@@ -106,7 +106,7 @@ const MapInfoPanel = ({
                 <ul className="flex flex-grow flex-col gap-1 truncate p-4 pr-12 text-sm md:w-full md:p-0 md:text-xs">
                   <li>
                     <Link
-                      href={`/study-spot/${selectedMarker.slug}`}
+                      href={`/study-spot/${selectedMarker.id}`}
                       className="block w-full truncate rounded-md font-bold underline hover:bg-gray-100 active:bg-gray-200 md:text-xs"
                     >
                       {selectedMarker.name}

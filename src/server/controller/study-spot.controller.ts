@@ -280,6 +280,7 @@ export async function deleteHandler({
   );
 
   revalidatePath("/");
+  revalidatePath(`/study-spot/${input.id}`);
 
   return true;
 }
